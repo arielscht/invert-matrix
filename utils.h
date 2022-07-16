@@ -34,4 +34,10 @@ typedef double rtime_t;
 double timestamp(void);
 string_t markerName(string_t baseName, int n);
 
+void initIdentityMatrix(real_t **matrix, unsigned int size);
+void copyMatrix(real_t **origin, real_t **destination, uint size);
+void freeMatrix(real_t **matrix, uint size);
+real_t **allocMatrix(uint size);
+void printMatrix(real_t **matrix, uint size);
+
 #endif // __UTILS_H__

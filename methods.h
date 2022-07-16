@@ -4,6 +4,10 @@
 
 #include "sislin.h"
 
-int gaussElimination(SistLinear_t *SL, real_t *solution, real_t *tTotal);
+int factorizationLU(SistLinear_t *SL,
+                    real_t **L,
+                    real_t **U,
+                    real_t **identity,
+                    real_t *tTotal);
 
 #endif

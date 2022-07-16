@@ -2,6 +2,7 @@
     "files.associations": {
         "math.h": "c",
         "stdlib.h": "c",
-        "sislin.h": "c"
+        "sislin.h": "c",
+        "functional": "c"
     },
 }

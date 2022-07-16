@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "methods.h"
 #include "utils.h"
 
@@ -13,14 +14,14 @@ uint findPivot(SistLinear_t *SL, uint curColumn)
     return pivot;
 }
 
-void swapLines(SistLinear_t *SL, uint line1, uint line2)
+void swapLines(real_t **matrix, uint line1, uint line2)
 {
-    real_t *auxLine = SL->A[line1];
-    real_t auxTerm = SL->b[line1];
-    SL->A[line1] = SL->A[line2];
-    SL->A[line2] = auxLine;
-    SL->b[line1] = SL->b[line2];
-    SL->b[line2] = auxTerm;
+    real_t *auxLine = matrix[line1];
+    // real_t auxTerm = SL->b[line1];
+    matrix[line1] = matrix[line2];
+    matrix[line2] = auxLine;
+    // SL->b[line1] = SL->b[line2];
+    // SL->b[line2] = auxTerm;
 }
 
 void retroSubstitution(SistLinear_t *SL, real_t *solution)
@@ -39,30 +40,31 @@ void retroSubstitution(SistLinear_t *SL, real_t *solution)
     }
 }
 
-/*!
-    \brief          Gauss elimination method
-
-    \param SL       Linear system pointer
-    \param solution Solution(array) pointer
-    \param tTotal   Total time during the execution of this method
-
-    \return         Error code. 0 to success
-*/
-int gaussElimination(SistLinear_t *SL, real_t *solution, real_t *tTotal)
+int gaussElimination(SistLinear_t *SL,
+                     real_t **L,
+                     real_t **identityMatrix)
 {
     uint size = SL->n;
-    *tTotal = timestamp();
 
     for (uint line = 0; line < size - 1; line++)
     {
-        uint pivot = findPivot(SL, line);
-        if (pivot != line)
-            swapLines(SL, line, pivot);
+        uint pivotLine = findPivot(SL, line);
+        if (pivotLine != line)
+        {
+            swapLines(SL->A, line, pivotLine);
+            if (identityMatrix != NULL)
+                swapLines(identityMatrix, line, pivotLine);
+            if (L != NULL)
+                swapLines(L, line, pivotLine);
+        }
 
         for (uint auxLine = line + 1; auxLine < size; auxLine++)
         {
             real_t m = SL->A[auxLine][line] / SL->A[line][line];
             SL->A[auxLine][line] = 0.0;
+
+            if (L != NULL)
+                L[auxLine][line] = m;
 
             for (uint column = line + 1; column < size; column++)
                 SL->A[auxLine][column] -= SL->A[line][column] * m;
@@ -70,7 +72,23 @@ int gaussElimination(SistLinear_t *SL, real_t *solution, real_t *tTotal)
         }
     }
 
-    retroSubstitution(SL, solution);
+    return 0;
+}
+
+int factorizationLU(SistLinear_t *SL,
+                    real_t **L,
+                    real_t **U,
+                    real_t **identity,
+                    real_t *tTotal)
+{
+    uint size = SL->n;
+    *tTotal = timestamp();
+
+    initIdentityMatrix(identity, size);
+    initIdentityMatrix(L, size);
+
+    gaussElimination(SL, L, identity);
+    copyMatrix(SL->A, U, size);
 
     *tTotal = timestamp() - *tTotal;
     return 0;
