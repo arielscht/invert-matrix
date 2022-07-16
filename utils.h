@@ -39,5 +39,9 @@ void copyMatrix(real_t **origin, real_t **destination, uint size);
 void freeMatrix(real_t **matrix, uint size);
 real_t **allocMatrix(uint size);
 void printMatrix(real_t **matrix, uint size);
+void copyArray(real_t *origin, real_t *destination, uint size);
+void copyColumnToArray(real_t **matrix, real_t *array, uint column, uint size);
+void setMainDiagonal(real_t **matrix, real_t value, uint size);
+void cleanMatrix(real_t **matrix, uint size);
 
 #endif // __UTILS_H__

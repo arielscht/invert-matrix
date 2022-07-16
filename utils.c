@@ -61,6 +61,27 @@ void initIdentityMatrix(real_t **matrix, uint size)
     }
 }
 
+void cleanMatrix(real_t **matrix, uint size)
+{
+  for (uint i = 0; i < size; i++)
+    for (uint j = 0; j < size; j++)
+      matrix[i][j] = 0.0;
+}
+
+void setMainDiagonal(real_t **matrix, real_t value, uint size)
+{
+  for (uint i = 0; i < size; i++)
+    for (uint j = 0; j < size; j++)
+      if (i == j)
+        matrix[i][j] = value;
+}
+
+void copyArray(real_t *origin, real_t *destination, uint size)
+{
+  for (uint i = 0; i < size; i++)
+    destination[i] = origin[i];
+}
+
 void copyMatrix(real_t **origin, real_t **destination, uint size)
 {
   for (uint i = 0; i < size; i++)
@@ -102,4 +123,10 @@ void printMatrix(real_t **matrix, uint size)
       printf("%10g ", matrix[i][j]);
     printf("\n");
   }
+}
+
+void copyColumnToArray(real_t **matrix, real_t *array, uint column, uint size)
+{
+  for (uint i = 0; i < size; i++)
+    array[i] = matrix[i][column];
 }

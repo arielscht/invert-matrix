@@ -5,7 +5,7 @@
 #include "methods.h"
 #include "utils.h"
 
-#define SYSTEM_SIZE 5
+#define SYSTEM_SIZE 3
 
 int main()
 {
@@ -20,7 +20,18 @@ int main()
     real_t **U = allocMatrix(SL->n);
     real_t **identity = allocMatrix(SL->n);
 
-    factorizationLU(SL, L, U, identity, &tTotal);
+    // factorizationLU(SL, L, U, identity);
+
+    // printf("U: \n");
+    // printMatrix(U, SL->n);
+    // printf("L: \n");
+    // printMatrix(L, SL->n);
+    // printf("Identity: \n");
+    // printMatrix(identity, SL->n);
+
+    prnSisLin(SL);
+
+    reverseMatrix(SL, L, U, identity, &tTotal);
 
     liberaSisLin(SL);
     freeMatrix(L, SYSTEM_SIZE);

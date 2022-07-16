@@ -40,6 +40,19 @@ void retroSubstitution(SistLinear_t *SL, real_t *solution)
     }
 }
 
+void reverseRetroSubstitution(SistLinear_t *SL, real_t *solution)
+{
+    uint size = SL->n;
+
+    for (int line = 0; line < size; line++)
+    {
+        solution[line] = SL->b[line];
+        for (int column = 0; column < line; column++)
+            solution[line] -= SL->A[line][column] * solution[column];
+        solution[line] /= SL->A[line][line];
+    }
+}
+
 int gaussElimination(SistLinear_t *SL,
                      real_t **L,
                      real_t **identityMatrix)
@@ -78,18 +91,57 @@ int gaussElimination(SistLinear_t *SL,
 int factorizationLU(SistLinear_t *SL,
                     real_t **L,
                     real_t **U,
-                    real_t **identity,
-                    real_t *tTotal)
+                    real_t **identity)
 {
     uint size = SL->n;
-    *tTotal = timestamp();
 
     initIdentityMatrix(identity, size);
-    initIdentityMatrix(L, size);
+    cleanMatrix(L, size);
 
     gaussElimination(SL, L, identity);
     copyMatrix(SL->A, U, size);
+    setMainDiagonal(L, 1.0, size);
 
-    *tTotal = timestamp() - *tTotal;
+    printMatrix(identity, size);
+
     return 0;
+}
+
+int reverseMatrix(SistLinear_t *SL,
+                  real_t **L,
+                  real_t **U,
+                  real_t **identity,
+                  real_t *tTotal)
+{
+    uint size = SL->n;
+
+    factorizationLU(SL, L, U, identity);
+
+    SistLinear_t *testSL = alocaSisLin(size, pontPont);
+    real_t *sol = calloc(size, sizeof(real_t));
+    real_t **reverseMatrix = allocMatrix(size);
+
+    for (uint i = 0; i < size; i++)
+    {
+        copyColumnToArray(identity, testSL->b, i, size);
+        copyMatrix(L, testSL->A, size);
+
+        reverseRetroSubstitution(testSL, sol);
+        // prnSisLin(testSL);
+        // prnVetor(sol, size);
+
+        copyMatrix(U, testSL->A, size);
+        copyArray(sol, testSL->b, size);
+
+        retroSubstitution(testSL, sol);
+        for (uint j = 0; j < size; j++)
+            reverseMatrix[j][i] = sol[j];
+    }
+
+    prnSisLin(testSL);
+    printMatrix(reverseMatrix, size);
+
+    liberaSisLin(testSL);
+    freeMatrix(reverseMatrix, size);
+    free(sol);
 }

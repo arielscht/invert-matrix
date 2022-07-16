@@ -7,7 +7,12 @@
 int factorizationLU(SistLinear_t *SL,
                     real_t **L,
                     real_t **U,
-                    real_t **identity,
-                    real_t *tTotal);
+                    real_t **identity);
+
+int reverseMatrix(SistLinear_t *SL,
+                  real_t **L,
+                  real_t **U,
+                  real_t **identity,
+                  real_t *tTotal);
 
 #endif
