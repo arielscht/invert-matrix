@@ -2,13 +2,12 @@
 #include "methods.h"
 #include "utils.h"
 
-uint findPivot(SistLinear_t *SL, uint curColumn)
+uint findPivot(real_t **A, uint curColumn, uint size)
 {
-    uint size = SL->n;
     uint pivot = curColumn;
 
     for (uint line = curColumn + 1; line < size; line++)
-        if ((SL->A[line][curColumn] - SL->A[pivot][curColumn]) > ERRO_COMPARISON)
+        if ((A[line][curColumn] - A[pivot][curColumn]) > ERRO_COMPARISON)
             pivot = line;
 
     return pivot;
@@ -53,18 +52,17 @@ void reverseRetroSubstitution(SistLinear_t *SL, real_t *solution)
     }
 }
 
-int gaussElimination(SistLinear_t *SL,
+int gaussElimination(real_t **A,
                      real_t **L,
-                     real_t **identityMatrix)
+                     real_t **identityMatrix,
+                     uint size)
 {
-    uint size = SL->n;
-
     for (uint line = 0; line < size - 1; line++)
     {
-        uint pivotLine = findPivot(SL, line);
+        uint pivotLine = findPivot(A, line, size);
         if (pivotLine != line)
         {
-            swapLines(SL->A, line, pivotLine);
+            swapLines(A, line, pivotLine);
             if (identityMatrix != NULL)
                 swapLines(identityMatrix, line, pivotLine);
             if (L != NULL)
@@ -73,50 +71,48 @@ int gaussElimination(SistLinear_t *SL,
 
         for (uint auxLine = line + 1; auxLine < size; auxLine++)
         {
-            real_t m = SL->A[auxLine][line] / SL->A[line][line];
-            SL->A[auxLine][line] = 0.0;
+            real_t m = A[auxLine][line] / A[line][line];
+            A[auxLine][line] = 0.0;
 
             if (L != NULL)
                 L[auxLine][line] = m;
 
             for (uint column = line + 1; column < size; column++)
-                SL->A[auxLine][column] -= SL->A[line][column] * m;
-            SL->b[auxLine] -= SL->b[line] * m;
+                A[auxLine][column] -= A[line][column] * m;
         }
     }
 
     return 0;
 }
 
-int factorizationLU(SistLinear_t *SL,
+int factorizationLU(real_t **A,
                     real_t **L,
                     real_t **U,
-                    real_t **identity)
+                    real_t **identity,
+                    uint size)
 {
-    uint size = SL->n;
-
     initIdentityMatrix(identity, size);
     cleanMatrix(L, size);
 
-    gaussElimination(SL, L, identity);
-    copyMatrix(SL->A, U, size);
+    gaussElimination(A, L, identity, size);
+    copyMatrix(A, U, size);
     setMainDiagonal(L, 1.0, size);
 
     return 0;
 }
 
-int reverseMatrix(SistLinear_t *SL,
+int reverseMatrix(real_t **A,
                   real_t **L,
                   real_t **U,
                   real_t **identity,
                   real_t **invertedMatrix,
+                  uint size,
                   real_t *tTotal)
 {
-    uint size = SL->n;
     real_t **originalA = allocMatrix(size);
-    copyMatrix(SL->A, originalA, size);
+    copyMatrix(A, originalA, size);
 
-    factorizationLU(SL, L, U, identity);
+    factorizationLU(A, L, U, identity, size);
 
     SistLinear_t *testSL = alocaSisLin(size, pontPont);
     real_t *sol = calloc(size, sizeof(real_t));
@@ -133,7 +129,7 @@ int reverseMatrix(SistLinear_t *SL,
             invertedMatrix[j][i] = sol[j];
     }
 
-    copyMatrix(originalA, SL->A, size);
+    copyMatrix(originalA, A, size);
     liberaSisLin(testSL);
     freeMatrix(originalA, size);
     free(sol);

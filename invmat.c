@@ -24,7 +24,7 @@ int main()
 
     prnSisLin(SL);
 
-    reverseMatrix(SL, L, U, identity, invertedMatrix, &tTotal);
+    reverseMatrix(SL->A, L, U, identity, invertedMatrix, SL->n, &tTotal);
 
     printMatrix(invertedMatrix, SYSTEM_SIZE);
 
