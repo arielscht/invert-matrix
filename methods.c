@@ -102,8 +102,6 @@ int factorizationLU(SistLinear_t *SL,
     copyMatrix(SL->A, U, size);
     setMainDiagonal(L, 1.0, size);
 
-    printMatrix(identity, size);
-
     return 0;
 }
 
@@ -111,37 +109,32 @@ int reverseMatrix(SistLinear_t *SL,
                   real_t **L,
                   real_t **U,
                   real_t **identity,
+                  real_t **invertedMatrix,
                   real_t *tTotal)
 {
     uint size = SL->n;
+    real_t **originalA = allocMatrix(size);
+    copyMatrix(SL->A, originalA, size);
 
     factorizationLU(SL, L, U, identity);
 
     SistLinear_t *testSL = alocaSisLin(size, pontPont);
     real_t *sol = calloc(size, sizeof(real_t));
-    real_t **reverseMatrix = allocMatrix(size);
 
     for (uint i = 0; i < size; i++)
     {
         copyColumnToArray(identity, testSL->b, i, size);
         copyMatrix(L, testSL->A, size);
-
         reverseRetroSubstitution(testSL, sol);
-        // prnSisLin(testSL);
-        // prnVetor(sol, size);
-
         copyMatrix(U, testSL->A, size);
         copyArray(sol, testSL->b, size);
-
         retroSubstitution(testSL, sol);
         for (uint j = 0; j < size; j++)
-            reverseMatrix[j][i] = sol[j];
+            invertedMatrix[j][i] = sol[j];
     }
 
-    prnSisLin(testSL);
-    printMatrix(reverseMatrix, size);
-
+    copyMatrix(originalA, SL->A, size);
     liberaSisLin(testSL);
-    freeMatrix(reverseMatrix, size);
+    freeMatrix(originalA, size);
     free(sol);
 }

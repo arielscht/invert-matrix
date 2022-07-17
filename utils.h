@@ -43,5 +43,6 @@ void copyArray(real_t *origin, real_t *destination, uint size);
 void copyColumnToArray(real_t **matrix, real_t *array, uint column, uint size);
 void setMainDiagonal(real_t **matrix, real_t value, uint size);
 void cleanMatrix(real_t **matrix, uint size);
+void multiplyMatrix(real_t **result, real_t **matrix1, real_t **matrix2, uint size);
 
 #endif // __UTILS_H__

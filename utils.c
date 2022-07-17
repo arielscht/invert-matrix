@@ -130,3 +130,19 @@ void copyColumnToArray(real_t **matrix, real_t *array, uint column, uint size)
   for (uint i = 0; i < size; i++)
     array[i] = matrix[i][column];
 }
+
+void multiplyMatrix(real_t **result, real_t **matrix1, real_t **matrix2, uint size)
+{
+  for (uint i = 0; i < size; i++)
+  {
+    for (uint j = 0; j < size; j++)
+    {
+      real_t sum = 0.0;
+      for (uint k = 0; k < size; k++)
+      {
+        sum += matrix1[i][k] * matrix2[k][j];
+      }
+      result[i][j] = sum;
+    }
+  }
+}
