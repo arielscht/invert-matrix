@@ -4,39 +4,42 @@
 #include "sislin.h"
 #include "methods.h"
 #include "utils.h"
+#include "interface.h"
 
-#define SYSTEM_SIZE 7
-
-int main()
+int main(int argc, char *argv[])
 {
     srand(20221);
-    SistLinear_t *SL;
-    real_t tTotal;
+    char inputFilename[200];
+    char *outputFilename;
+    int iterations;
 
-    SL = alocaSisLin(SYSTEM_SIZE, pontPont);
-    iniSisLin(SL, generico, COEF_MAX);
+    real_t **A;
+    uint size;
 
-    real_t **L = allocMatrix(SL->n);
-    real_t **U = allocMatrix(SL->n);
-    real_t **identity = allocMatrix(SL->n);
-    real_t **invertedMatrix = allocMatrix(SL->n);
-    real_t **multiplication = allocMatrix(SL->n);
+    handleArgs(argc, argv, inputFilename, outputFilename, &iterations);
+    handleInput(inputFilename, A, &size);
+    printf("OUTSIDE:\n");
+    printMatrix(A, size);
+    return 0;
 
-    prnSisLin(SL);
+    // scanf("%u", &size);
 
-    reverseMatrix(SL->A, L, U, identity, invertedMatrix, SL->n, &tTotal);
+    // // real_t **A = allocMatrix(size);
+    // real_t **L = allocMatrix(size);
+    // real_t **U = allocMatrix(size);
+    // real_t **identity = allocMatrix(size);
+    // real_t **invertedMatrix = allocMatrix(size);
+    // real_t tTotal;
 
-    printMatrix(invertedMatrix, SYSTEM_SIZE);
+    // readMatrix(A, size);
 
-    multiplyMatrix(multiplication, SL->A, invertedMatrix, SYSTEM_SIZE);
-    printf("\n");
-    printMatrix(multiplication, SYSTEM_SIZE);
+    // reverseMatrix(A, L, U, identity, invertedMatrix, size, &tTotal);
 
-    liberaSisLin(SL);
-    freeMatrix(L, SYSTEM_SIZE);
-    freeMatrix(U, SYSTEM_SIZE);
-    freeMatrix(identity, SYSTEM_SIZE);
-    freeMatrix(invertedMatrix, SYSTEM_SIZE);
-    freeMatrix(multiplication, SYSTEM_SIZE);
+    // printMatrix(invertedMatrix, size);
+
+    // freeMatrix(L, size);
+    // freeMatrix(U, size);
+    // freeMatrix(identity, size);
+    // freeMatrix(invertedMatrix, size);
     return 0;
 }

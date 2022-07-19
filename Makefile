@@ -5,6 +5,7 @@
       PROG = invmat
       OBJS = utils.o \
              sislin.o \
+             interface.o \
              methods.o \
              $(PROG).o
 

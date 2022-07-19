@@ -8,6 +8,8 @@
 			"args": [
 				"-g",
 				"invmat.c",
+				"interface.c",
+				"interface.h",
 				"methods.c",
 				"methods.h",
 				"utils.c",

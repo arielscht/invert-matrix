@@ -4,6 +4,7 @@
         "stdlib.h": "c",
         "sislin.h": "c",
         "functional": "c",
-        "methods.h": "c"
+        "methods.h": "c",
+        "utils.h": "c"
     },
 }

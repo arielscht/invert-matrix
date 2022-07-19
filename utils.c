@@ -146,3 +146,14 @@ void multiplyMatrix(real_t **result, real_t **matrix1, real_t **matrix2, uint si
     }
   }
 }
+
+void readMatrix(real_t **matrix, uint size)
+{
+  for (int i = 0; i < size; i++)
+  {
+    for (int j = 0; j < size; j++)
+    {
+      scanf("%lg", &matrix[i][j]);
+    }
+  }
+}
