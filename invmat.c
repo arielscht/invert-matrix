@@ -17,9 +17,10 @@ int main(int argc, char *argv[])
     uint size;
 
     handleArgs(argc, argv, inputFilename, outputFilename, &iterations);
-    handleInput(inputFilename, A, &size);
+    handleInput("input.txt", &A, &size);
     printf("OUTSIDE:\n");
     printMatrix(A, size);
+    freeMatrix(A, size);
     return 0;
 
     // scanf("%u", &size);

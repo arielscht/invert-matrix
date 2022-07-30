@@ -63,7 +63,7 @@ void handleArgs(int argc,
     }
 }
 
-int handleInput(char *filename, real_t **A, uint *size)
+int handleInput(char *filename, real_t ***A, uint *size)
 {
     FILE *inputFile = stdin;
     if (filename)
@@ -78,11 +78,11 @@ int handleInput(char *filename, real_t **A, uint *size)
 
     fscanf(inputFile, "%u", size);
     printf("SIZE: %u\n", *size);
-    A = allocMatrix(*size);
+    *A = allocMatrix(*size);
 
     for (uint i = 0; i < *size; i++)
         for (uint j = 0; j < *size; j++)
-            fscanf(inputFile, "%lg", &A[i][j]);
+            fscanf(inputFile, "%lg", &((*A)[i][j]));
 
-    printMatrix(A, *size);
+    fclose(inputFile);
 }
