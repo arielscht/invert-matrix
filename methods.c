@@ -114,23 +114,23 @@ int reverseMatrix(real_t **A,
 
     factorizationLU(A, L, U, identity, size);
 
-    SistLinear_t *testSL = alocaSisLin(size, pontPont);
+    SistLinear_t *auxSL = alocaSisLin(size, pontPont);
     real_t *sol = calloc(size, sizeof(real_t));
 
     for (uint i = 0; i < size; i++)
     {
-        copyColumnToArray(identity, testSL->b, i, size);
-        copyMatrix(L, testSL->A, size);
-        reverseRetroSubstitution(testSL, sol);
-        copyMatrix(U, testSL->A, size);
-        copyArray(sol, testSL->b, size);
-        retroSubstitution(testSL, sol);
+        copyColumnToArray(identity, auxSL->b, i, size);
+        copyMatrix(L, auxSL->A, size);
+        reverseRetroSubstitution(auxSL, sol);
+        copyMatrix(U, auxSL->A, size);
+        copyArray(sol, auxSL->b, size);
+        retroSubstitution(auxSL, sol);
         for (uint j = 0; j < size; j++)
             invertedMatrix[j][i] = sol[j];
     }
 
     copyMatrix(originalA, A, size);
-    liberaSisLin(testSL);
+    liberaSisLin(auxSL);
     freeMatrix(originalA, size);
     free(sol);
 }
