@@ -37,6 +37,7 @@ string_t markerName(string_t baseName, int n);
 void initIdentityMatrix(real_t **matrix, unsigned int size);
 void initArrayWithIndexes(int *array, uint size);
 void applyLineSwaps(int *lineSwaps, real_t **matrix, uint size);
+void applyLineSwapsOnArray(int *lineSwaps, real_t *array, uint size);
 void copyMatrix(real_t **origin, real_t **destination, uint size);
 void freeMatrix(real_t **matrix, uint size);
 real_t **allocMatrix(uint size);

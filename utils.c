@@ -92,6 +92,16 @@ void applyLineSwaps(int *lineSwaps, real_t **matrix, uint size)
     matrix[i] = curLines[lineSwaps[i]];
 }
 
+void applyLineSwapsOnArray(int *lineSwaps, real_t *array, uint size)
+{
+  real_t curValues[size];
+  for (int i = 0; i < size; i++)
+    curValues[i] = array[i];
+
+  for (int i = 0; i < size; i++)
+    array[i] = curValues[lineSwaps[i]];
+}
+
 void copyArray(real_t *origin, real_t *destination, uint size)
 {
   for (uint i = 0; i < size; i++)

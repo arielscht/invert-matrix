@@ -16,6 +16,7 @@
 				"utils.h",
 				"sislin.c",
 				"sislin.h",
+				"-lm",
 				"-o",
 				"${fileDirname}/bin/${fileBasenameNoExtension}"
 			],

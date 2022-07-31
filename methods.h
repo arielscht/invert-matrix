@@ -14,4 +14,12 @@ int reverseMatrix(real_t **A,
                   uint size,
                   real_t *tTotal);
 
+void refinement(real_t **A,
+                real_t **L,
+                real_t **U,
+                real_t **solution,
+                int *lineSwaps,
+                uint size,
+                real_t erro);
+
 #endif

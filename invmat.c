@@ -41,6 +41,14 @@ int main(int argc, char *argv[])
     printf("\nINVERTED MATRIX: \n");
     printMatrix(invertedMatrix, size);
 
+    printf("\nREFINING...\n");
+    refinement(A, L, U, invertedMatrix, lineSwaps, size, 1.0e-6);
+
+    printf("\nORIGINAL MATRIX: \n");
+    printMatrix(A, size);
+    printf("\nINVERTED MATRIX: \n");
+    printMatrix(invertedMatrix, size);
+
     freeMatrix(A, size);
     freeMatrix(L, size);
     freeMatrix(U, size);

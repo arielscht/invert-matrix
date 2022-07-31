@@ -70,26 +70,73 @@ void calcResidual(SistLinear_t *SL, real_t *solution, real_t *residual)
     }
 }
 
-void refinement(real_t **A, real_t **solution, uint size, real_t erro)
+void refinement(real_t **A, real_t **L, real_t **U, real_t **solution,
+                int *lineSwaps,
+                uint size, real_t erro)
 {
-    // loop calculando o residuo para cada coluna da inversa
-    // armazena o resíduo em uma matriz
-    //  calcula a normal2 que é a soma de cada elemento da matriz ao quadrado
-    //  testa condicao de parada
-    //  resolve para o resíduo atual
-    //  soma a solução do resíduo com a solução do sistema anterior
-    // repete
     real_t **residuals = allocMatrix(size);
     real_t *curSol = allocArray(size);
     real_t norm = 0.0;
     int counter = 0;
+
     SistLinear_t *auxSL = alocaSisLin(size, pontPont);
     copyMatrix(A, auxSL->A, size);
+
     real_t **identity = allocMatrix(size);
     initIdentityMatrix(identity, size);
 
-    do
+    // Calcula resíduo e norma
+    for (int i = 0; i < size; i++)
     {
+        copyColumnToArray(identity, auxSL->b, i, size);
+        copyColumnToArray(solution, curSol, i, size);
+        calcResidual(auxSL, curSol, residuals[i]);
+    }
+
+    norm = calcL2Norm(residuals, size);
+
+    while (counter < MAXIT)
+    {
+        printf("\nNORM: %1.103f\n", norm); //
+        // char s1[100];
+        // sprintf(s1, "%lg", norm)
+        // printf("\nRESIDUALS: \n");     //
+        // printMatrix(residuals, size);  //
+
+        // Calcula nova aproximação
+        for (int i = 0; i < size; i++)
+        {
+            // printf("\nRESIDUALS BEFORE: \n"); //
+            // prnVetor(residuals[i], size);     //
+
+            applyLineSwapsOnArray(lineSwaps, residuals[i], size);
+
+            // printf("\nRESIDUALS AFTER: \n"); //
+            // prnVetor(residuals[i], size);    //
+
+            copyArray(residuals[i], auxSL->b, size);
+            copyMatrix(L, auxSL->A, size);
+            // prnSisLin(auxSL); //
+
+            reverseRetroSubstitution(auxSL, curSol);
+
+            // printf("\nFIRST SOL:\n"); //
+            // prnVetor(curSol, size);   //
+
+            copyMatrix(U, auxSL->A, size);
+            copyArray(curSol, auxSL->b, size);
+            // prnSisLin(auxSL); //
+
+            retroSubstitution(auxSL, curSol);
+            // printf("\nSECOND SOL:\n"); //
+            // prnVetor(curSol, size);    //
+            // soma a solução do resíduo com a solução anterior para obter a nova apromixação
+            for (int j = 0; j < size; j++)
+                solution[j][i] += curSol[j];
+        }
+
+        // Calcula resíduo e norma
+        copyMatrix(A, auxSL->A, size);
         for (int i = 0; i < size; i++)
         {
             copyColumnToArray(identity, auxSL->b, i, size);
@@ -98,11 +145,10 @@ void refinement(real_t **A, real_t **solution, uint size, real_t erro)
         }
 
         norm = calcL2Norm(residuals, size);
+        counter++;
+    };
 
-        for (int i = 0; i < size; i++)
-        {
-        }
-    } while (counter < MAXIT && norm > erro);
+    printf("\nCOUNTER: %d\n", counter);
 
     freeMatrix(identity, size);
     liberaSisLin(auxSL);
