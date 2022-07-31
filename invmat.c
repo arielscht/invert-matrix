@@ -28,21 +28,23 @@ int main(int argc, char *argv[])
     real_t **A = allocMatrix(size);
     real_t **L = allocMatrix(size);
     real_t **U = allocMatrix(size);
-    real_t **identity = allocMatrix(size);
+    int *lineSwaps = allocIntArray(size);
     real_t **invertedMatrix = allocMatrix(size);
     real_t tTotal;
 
     readMatrix(A, size);
 
-    reverseMatrix(A, L, U, identity, invertedMatrix, size, &tTotal);
+    reverseMatrix(A, L, U, lineSwaps, invertedMatrix, size, &tTotal);
 
+    printf("\nORIGINAL MATRIX: \n");
     printMatrix(A, size);
+    printf("\nINVERTED MATRIX: \n");
     printMatrix(invertedMatrix, size);
 
     freeMatrix(A, size);
     freeMatrix(L, size);
     freeMatrix(U, size);
-    freeMatrix(identity, size);
     freeMatrix(invertedMatrix, size);
+    free(lineSwaps);
     return 0;
 }

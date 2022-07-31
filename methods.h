@@ -9,7 +9,7 @@
 int reverseMatrix(real_t **A,
                   real_t **L,
                   real_t **U,
-                  real_t **identity,
+                  int *lineSwaps,
                   real_t **invertedMatrix,
                   uint size,
                   real_t *tTotal);

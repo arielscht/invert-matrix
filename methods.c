@@ -110,7 +110,7 @@ void refinement(real_t **A, real_t **solution, uint size, real_t erro)
 
 int gaussElimination(real_t **A,
                      real_t **L,
-                     real_t **identityMatrix,
+                     int *lineSwaps,
                      uint size)
 {
     for (uint line = 0; line < size - 1; line++)
@@ -119,8 +119,10 @@ int gaussElimination(real_t **A,
         if (pivotLine != line)
         {
             swapLines(A, line, pivotLine);
-            if (identityMatrix != NULL)
-                swapLines(identityMatrix, line, pivotLine);
+
+            real_t aux = lineSwaps[line];
+            lineSwaps[line] = lineSwaps[pivotLine];
+            lineSwaps[pivotLine] = aux;
             if (L != NULL)
                 swapLines(L, line, pivotLine);
         }
@@ -144,15 +146,13 @@ int gaussElimination(real_t **A,
 int factorizationLU(real_t **A,
                     real_t **L,
                     real_t **U,
-                    real_t **identity,
+                    int *lineSwaps,
                     uint size)
 {
     copyMatrix(A, U, size);
-
-    initIdentityMatrix(identity, size);
     cleanMatrix(L, size);
 
-    gaussElimination(U, L, identity, size);
+    gaussElimination(U, L, lineSwaps, size);
     setMainDiagonal(L, 1.0, size);
 
     return 0;
@@ -161,12 +161,17 @@ int factorizationLU(real_t **A,
 int reverseMatrix(real_t **A,
                   real_t **L,
                   real_t **U,
-                  real_t **identity,
+                  int *lineSwaps,
                   real_t **invertedMatrix,
                   uint size,
                   real_t *tTotal)
 {
-    factorizationLU(A, L, U, identity, size);
+    initArrayWithIndexes(lineSwaps, size);
+    real_t **identity = allocMatrix(size);
+    initIdentityMatrix(identity, size);
+
+    factorizationLU(A, L, U, lineSwaps, size);
+    applyLineSwaps(lineSwaps, identity, size);
 
     SistLinear_t *auxSL = alocaSisLin(size, pontPont);
     real_t *sol = calloc(size, sizeof(real_t));
@@ -185,4 +190,5 @@ int reverseMatrix(real_t **A,
 
     liberaSisLin(auxSL);
     free(sol);
+    freeMatrix(identity, size);
 }

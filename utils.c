@@ -76,6 +76,22 @@ void setMainDiagonal(real_t **matrix, real_t value, uint size)
         matrix[i][j] = value;
 }
 
+void initArrayWithIndexes(int *array, uint size)
+{
+  for (int i = 0; i < size; i++)
+    array[i] = i;
+}
+
+void applyLineSwaps(int *lineSwaps, real_t **matrix, uint size)
+{
+  real_t *curLines[size];
+  for (int i = 0; i < size; i++)
+    curLines[i] = matrix[i];
+
+  for (int i = 0; i < size; i++)
+    matrix[i] = curLines[lineSwaps[i]];
+}
+
 void copyArray(real_t *origin, real_t *destination, uint size)
 {
   for (uint i = 0; i < size; i++)
@@ -118,6 +134,11 @@ real_t **allocMatrix(uint size)
 real_t *allocArray(uint size)
 {
   return calloc(size, sizeof(real_t));
+}
+
+int *allocIntArray(uint size)
+{
+  return calloc(size, sizeof(int));
 }
 
 void printMatrix(real_t **matrix, uint size)
