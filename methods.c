@@ -147,11 +147,12 @@ int factorizationLU(real_t **A,
                     real_t **identity,
                     uint size)
 {
+    copyMatrix(A, U, size);
+
     initIdentityMatrix(identity, size);
     cleanMatrix(L, size);
 
-    gaussElimination(A, L, identity, size);
-    copyMatrix(A, U, size);
+    gaussElimination(U, L, identity, size);
     setMainDiagonal(L, 1.0, size);
 
     return 0;
@@ -165,9 +166,6 @@ int reverseMatrix(real_t **A,
                   uint size,
                   real_t *tTotal)
 {
-    real_t **originalA = allocMatrix(size);
-    copyMatrix(A, originalA, size);
-
     factorizationLU(A, L, U, identity, size);
 
     SistLinear_t *auxSL = alocaSisLin(size, pontPont);
@@ -185,8 +183,6 @@ int reverseMatrix(real_t **A,
             invertedMatrix[j][i] = sol[j];
     }
 
-    copyMatrix(originalA, A, size);
     liberaSisLin(auxSL);
-    freeMatrix(originalA, size);
     free(sol);
 }
