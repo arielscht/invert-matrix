@@ -115,6 +115,11 @@ real_t **allocMatrix(uint size)
   return matrix;
 }
 
+real_t *allocArray(uint size)
+{
+  return calloc(size, sizeof(real_t));
+}
+
 void printMatrix(real_t **matrix, uint size)
 {
   for (uint i = 0; i < size; i++)

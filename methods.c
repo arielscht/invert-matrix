@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "methods.h"
 #include "utils.h"
+#include "math.h"
 
 uint findPivot(real_t **A, uint curColumn, uint size)
 {
@@ -16,11 +17,8 @@ uint findPivot(real_t **A, uint curColumn, uint size)
 void swapLines(real_t **matrix, uint line1, uint line2)
 {
     real_t *auxLine = matrix[line1];
-    // real_t auxTerm = SL->b[line1];
     matrix[line1] = matrix[line2];
     matrix[line2] = auxLine;
-    // SL->b[line1] = SL->b[line2];
-    // SL->b[line2] = auxTerm;
 }
 
 void retroSubstitution(SistLinear_t *SL, real_t *solution)
@@ -50,6 +48,64 @@ void reverseRetroSubstitution(SistLinear_t *SL, real_t *solution)
             solution[line] -= SL->A[line][column] * solution[column];
         solution[line] /= SL->A[line][line];
     }
+}
+
+real_t calcL2Norm(real_t **residual, uint size)
+{
+    real_t sum = 0.0;
+    for (uint i = 0; i < size; i++)
+        for (uint j = 0; j < size; j++)
+            sum += residual[i][j] * residual[i][j];
+    return sqrt(sum);
+}
+
+void calcResidual(SistLinear_t *SL, real_t *solution, real_t *residual)
+{
+    uint size = SL->n;
+    for (size_t i = 0; i < size; i++)
+    {
+        residual[i] = SL->b[i];
+        for (size_t j = 0; j < size; j++)
+            residual[i] -= solution[j] * SL->A[i][j];
+    }
+}
+
+void refinement(real_t **A, real_t **solution, uint size, real_t erro)
+{
+    // loop calculando o residuo para cada coluna da inversa
+    // armazena o resíduo em uma matriz
+    //  calcula a normal2 que é a soma de cada elemento da matriz ao quadrado
+    //  testa condicao de parada
+    //  resolve para o resíduo atual
+    //  soma a solução do resíduo com a solução do sistema anterior
+    // repete
+    real_t **residuals = allocMatrix(size);
+    real_t *curSol = allocArray(size);
+    real_t norm = 0.0;
+    int counter = 0;
+    SistLinear_t *auxSL = alocaSisLin(size, pontPont);
+    copyMatrix(A, auxSL->A, size);
+    real_t **identity = allocMatrix(size);
+    initIdentityMatrix(identity, size);
+
+    do
+    {
+        for (int i = 0; i < size; i++)
+        {
+            copyColumnToArray(identity, auxSL->b, i, size);
+            copyColumnToArray(solution, curSol, i, size);
+            calcResidual(auxSL, curSol, residuals[i]);
+        }
+
+        norm = calcL2Norm(residuals, size);
+
+        for (int i = 0; i < size; i++)
+        {
+        }
+    } while (counter < MAXIT && norm > erro);
+
+    freeMatrix(identity, size);
+    liberaSisLin(auxSL);
 }
 
 int gaussElimination(real_t **A,
