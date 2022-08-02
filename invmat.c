@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     real_t **A = allocMatrix(size);
     real_t **L = allocMatrix(size);
     real_t **U = allocMatrix(size);
-    int *lineSwaps = allocIntArray(size);
+    uint *lineSwaps = calloc(size, sizeof(uint));
     real_t **invertedMatrix = allocMatrix(size);
     real_t tTotal;
 
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     printMatrix(invertedMatrix, size);
 
     printf("\nREFINING...\n");
-    refinement(A, L, U, invertedMatrix, lineSwaps, size, 1.0e-6);
+    refinement(A, L, U, invertedMatrix, lineSwaps, size, 10, 1.0e-6);
 
     printf("\nORIGINAL MATRIX: \n");
     printMatrix(A, size);

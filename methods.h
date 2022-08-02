@@ -9,7 +9,7 @@
 int reverseMatrix(real_t **A,
                   real_t **L,
                   real_t **U,
-                  int *lineSwaps,
+                  uint *lineSwaps,
                   real_t **invertedMatrix,
                   uint size,
                   real_t *tTotal);
@@ -18,8 +18,9 @@ void refinement(real_t **A,
                 real_t **L,
                 real_t **U,
                 real_t **solution,
-                int *lineSwaps,
+                uint *lineSwaps,
                 uint size,
+                int iterations,
                 real_t erro);
 
 #endif

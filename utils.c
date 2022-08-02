@@ -82,7 +82,7 @@ void initArrayWithIndexes(int *array, uint size)
     array[i] = i;
 }
 
-void applyLineSwaps(int *lineSwaps, real_t **matrix, uint size)
+void applyLineSwaps(uint *lineSwaps, real_t **matrix, uint size)
 {
   real_t *curLines[size];
   for (int i = 0; i < size; i++)
@@ -92,7 +92,7 @@ void applyLineSwaps(int *lineSwaps, real_t **matrix, uint size)
     matrix[i] = curLines[lineSwaps[i]];
 }
 
-void applyLineSwapsOnArray(int *lineSwaps, real_t *array, uint size)
+void applyLineSwapsOnArray(uint *lineSwaps, real_t *array, uint size)
 {
   real_t curValues[size];
   for (int i = 0; i < size; i++)
@@ -141,14 +141,9 @@ real_t **allocMatrix(uint size)
   return matrix;
 }
 
-real_t *allocArray(uint size)
+uint *allocUintArray(uint size)
 {
-  return calloc(size, sizeof(real_t));
-}
-
-int *allocIntArray(uint size)
-{
-  return calloc(size, sizeof(int));
+  return calloc(size, sizeof(uint));
 }
 
 void printMatrix(real_t **matrix, uint size)
