@@ -9,7 +9,8 @@ void handleArgs(int argc,
                 char *argv[],
                 char *inputFilename,
                 char *outputFilename,
-                int *iterations)
+                int *iterations,
+                uint *size)
 {
     int option;
     while ((option = getopt(argc, argv, "e:s:r:i:h::")) != -1)
@@ -17,14 +18,30 @@ void handleArgs(int argc,
         switch (option)
         {
         case 'e':
-            strcpy(inputFilename, optarg);
+            if (optarg)
+                strcpy(inputFilename, optarg);
             break;
         case 's':
-            strcpy(outputFilename, optarg);
+            if (optarg)
+                strcpy(outputFilename, optarg);
             break;
         case 'r':
-            /* code */
+        {
+            int arg = atoi(optarg);
+            if (!arg)
+            {
+                fprintf(stderr, "Error: the argument of -r must be a number.\n");
+                exit(1);
+            }
+            else if (arg <= 0)
+            {
+                fprintf(stderr, "Error: The dimension of the matrix must be greater than zero.\n");
+                exit(1);
+            }
+            else
+                *size = arg;
             break;
+        }
         case 'i':
         {
             int arg = atoi(optarg);
@@ -63,26 +80,30 @@ void handleArgs(int argc,
     }
 }
 
-int handleInput(char *filename, real_t ***A, uint *size)
+void handleInput(FILE **inputFile, char *filename)
 {
-    FILE *inputFile = stdin;
-    if (filename)
+    *inputFile = stdin;
+    if (filename[0] != '\0')
     {
-        inputFile = fopen(filename, "r");
+        *inputFile = fopen(filename, "r");
         if (!inputFile)
         {
             fprintf(stderr, "Error reading the input file.\n");
-            return 1;
+            exit(1);
         }
     }
+}
 
-    fscanf(inputFile, "%u", size);
-    printf("SIZE: %u\n", *size);
-    *A = allocMatrix(*size);
-
-    for (uint i = 0; i < *size; i++)
-        for (uint j = 0; j < *size; j++)
-            fscanf(inputFile, "%lg", &((*A)[i][j]));
-
-    fclose(inputFile);
+void handleOutput(FILE **outputFile, char *filename)
+{
+    *outputFile = stdout;
+    if (filename[0] != '\0')
+    {
+        *outputFile = fopen(filename, "w");
+        if (!outputFile)
+        {
+            fprintf(stderr, "Error reading the output file.\n");
+            exit(1);
+        }
+    }
 }

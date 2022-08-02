@@ -21,6 +21,8 @@ void refinement(real_t **A,
                 uint *lineSwaps,
                 uint size,
                 int iterations,
-                real_t erro);
+                real_t erro,
+                FILE *outputFile,
+                real_t *tTotal);
 
 #endif

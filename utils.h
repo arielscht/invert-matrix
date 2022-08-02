@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <time.h>
 
+#define END_OF_INPUT -1
+
 // Valor absoluto de um número. Alternativa ao uso da função 'fabs()'
 #define ABS(num) ((num) < 0.0 ? -(num) : (num))
 
@@ -49,5 +51,7 @@ void setMainDiagonal(real_t **matrix, real_t value, uint size);
 void cleanMatrix(real_t **matrix, uint size);
 void multiplyMatrix(real_t **result, real_t **matrix1, real_t **matrix2, uint size);
 void readMatrix(real_t **matrix, uint size);
+void readMatrixFromFile(real_t **matrix, uint size, FILE *outputFile);
+void printMatrixInFile(real_t **matrix, uint size, FILE *outputFile);
 
 #endif // __UTILS_H__

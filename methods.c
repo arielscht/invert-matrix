@@ -70,10 +70,18 @@ void calcResidual(SistLinear_t *SL, real_t *solution, real_t *residual)
     }
 }
 
-void refinement(real_t **A, real_t **L, real_t **U, real_t **solution,
+void refinement(real_t **A,
+                real_t **L,
+                real_t **U,
+                real_t **solution,
                 uint *lineSwaps,
-                uint size, int iterations, real_t erro)
+                uint size,
+                int iterations,
+                real_t erro,
+                FILE *outputFile,
+                real_t *tTotal)
 {
+    *tTotal = timestamp();
     real_t **residuals = allocMatrix(size);
     real_t *curSol = calloc(size, sizeof(real_t));
     real_t norm = 0.0;
@@ -112,9 +120,12 @@ void refinement(real_t **A, real_t **L, real_t **U, real_t **solution,
         }
 
         norm = calcL2Norm(residuals, size);
-        printf("\n# iter %d: <||%.15g||>\n", counter, norm); //
+        fprintf(outputFile, "# iter %d: <||%.15g||>\n", counter, norm); //
         counter++;
     };
+
+    *tTotal = timestamp() - *tTotal;
+    *tTotal /= counter;
     freeMatrix(identity, size);
     freeMatrix(residuals, size);
     free(curSol);
@@ -124,8 +135,11 @@ void refinement(real_t **A, real_t **L, real_t **U, real_t **solution,
 int gaussElimination(real_t **A,
                      real_t **L,
                      uint *lineSwaps,
-                     uint size)
+                     uint size,
+                     real_t *tTotal)
 {
+    *tTotal = timestamp();
+
     for (uint line = 0; line < size - 1; line++)
     {
         uint pivotLine = findPivot(A, line, size);
@@ -153,6 +167,7 @@ int gaussElimination(real_t **A,
         }
     }
 
+    *tTotal = timestamp() - *tTotal;
     return 0;
 }
 
@@ -160,12 +175,13 @@ int factorizationLU(real_t **A,
                     real_t **L,
                     real_t **U,
                     uint *lineSwaps,
-                    uint size)
+                    uint size,
+                    real_t *tTotal)
 {
     copyMatrix(A, U, size);
     cleanMatrix(L, size);
 
-    gaussElimination(U, L, lineSwaps, size);
+    gaussElimination(U, L, lineSwaps, size, tTotal);
     setMainDiagonal(L, 1.0, size);
 
     return 0;
@@ -183,7 +199,7 @@ int reverseMatrix(real_t **A,
     real_t **identity = allocMatrix(size);
     initIdentityMatrix(identity, size);
 
-    factorizationLU(A, L, U, lineSwaps, size);
+    factorizationLU(A, L, U, lineSwaps, size, tTotal);
     applyLineSwaps(lineSwaps, identity, size);
 
     SistLinear_t *auxSL = alocaSisLin(size, pontPont);

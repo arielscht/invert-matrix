@@ -188,3 +188,20 @@ void readMatrix(real_t **matrix, uint size)
     }
   }
 }
+
+void readMatrixFromFile(real_t **matrix, uint size, FILE *inputFile)
+{
+  for (uint i = 0; i < size; i++)
+    for (uint j = 0; j < size; j++)
+      fscanf(inputFile, "%lg", &matrix[i][j]);
+}
+
+void printMatrixInFile(real_t **matrix, uint size, FILE *outputFile)
+{
+  for (uint i = 0; i < size; i++)
+  {
+    for (uint j = 0; j < size; j++)
+      fprintf(outputFile, "%10g ", matrix[i][j]);
+    fprintf(outputFile, "\n");
+  }
+}
