@@ -7,4 +7,5 @@
         "methods.h": "c",
         "utils.h": "c"
     },
+    "files.exclude": "**/**.o"
 }

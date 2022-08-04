@@ -93,8 +93,19 @@ void refinement(real_t **A,
     real_t **identity = allocMatrix(size);
     initIdentityMatrix(identity, size);
 
+
+
     while (counter <= iterations)
     {
+        // Calcula resíduo e norma
+        copyMatrix(A, auxSL->A, size);
+        for (int i = 0; i < size; i++)
+        {
+            copyColumnToArray(identity, auxSL->b, i, size);
+            copyColumnToArray(solution, curSol, i, size);
+            calcResidual(auxSL, curSol, residuals[i]);
+        }
+
         // Calcula nova aproximação
         for (int i = 0; i < size; i++)
         {
@@ -110,14 +121,6 @@ void refinement(real_t **A,
                 solution[j][i] += curSol[j];
         }
 
-        // Calcula resíduo e norma
-        copyMatrix(A, auxSL->A, size);
-        for (int i = 0; i < size; i++)
-        {
-            copyColumnToArray(identity, auxSL->b, i, size);
-            copyColumnToArray(solution, curSol, i, size);
-            calcResidual(auxSL, curSol, residuals[i]);
-        }
 
         norm = calcL2Norm(residuals, size);
         fprintf(outputFile, "# iter %d: <||%.15g||>\n", counter, norm); //
