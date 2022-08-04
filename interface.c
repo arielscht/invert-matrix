@@ -78,6 +78,12 @@ void handleArgs(int argc,
             break;
         }
     }
+
+    if (!*iterations)
+    {
+        fprintf(stderr, "Option -i is required.\n");
+        exit(1);
+    }
 }
 
 void handleInput(FILE **inputFile, char *filename)

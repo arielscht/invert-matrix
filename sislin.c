@@ -85,17 +85,11 @@ void liberaSisLin(SistLinear_t *SL)
      comSolucao, eqNula, eqProporcional, eqCombLinear, hilbert
   \param coef_max Maior valor para coeficientes e termos independentes
 */
-void iniSisLin(SistLinear_t *SL, tipoSistLinear_t tipo, real_t coef_max)
+void initRandomMatrix(real_t **A, tipoSistLinear_t tipo, real_t coef_max, uint size)
 {
-  unsigned int n = SL->n;
+  unsigned int n = size;
   // para gerar valores no intervalo [0,coef_max]
   real_t invRandMax = ((real_t)coef_max / (real_t)RAND_MAX);
-
-  // inicializa vetor b
-  for (unsigned int i = 0; i < n; ++i)
-  {
-    SL->b[i] = (real_t)rand() * invRandMax;
-  }
 
   if (tipo == hilbert)
   {
@@ -103,7 +97,7 @@ void iniSisLin(SistLinear_t *SL, tipoSistLinear_t tipo, real_t coef_max)
     {
       for (unsigned int j = 0; j < n; ++j)
       {
-        SL->A[i][j] = 1.0 / (real_t)(i + j + 1);
+        A[i][j] = 1.0 / (real_t)(i + j + 1);
       }
     }
   }
@@ -114,7 +108,7 @@ void iniSisLin(SistLinear_t *SL, tipoSistLinear_t tipo, real_t coef_max)
     {
       for (unsigned int j = 0; j < n; ++j)
       {
-        SL->A[i][j] = (real_t)rand() * invRandMax;
+        A[i][j] = (real_t)rand() * invRandMax;
       }
     }
     if (tipo == eqNula)
@@ -123,9 +117,8 @@ void iniSisLin(SistLinear_t *SL, tipoSistLinear_t tipo, real_t coef_max)
       unsigned int nula = rand() % n;
       for (unsigned int j = 0; j < n; ++j)
       {
-        SL->A[nula][j] = 0.0;
+        A[nula][j] = 0.0;
       }
-      SL->b[nula] = 0.0;
     }
     else if (tipo == eqProporcional)
     {
@@ -135,9 +128,8 @@ void iniSisLin(SistLinear_t *SL, tipoSistLinear_t tipo, real_t coef_max)
       real_t mult = (real_t)rand() * invRandMax;
       for (unsigned int j = 0; j < n; ++j)
       {
-        SL->A[propDst][j] = SL->A[propSrc][j] * mult;
+        A[propDst][j] = A[propSrc][j] * mult;
       }
-      SL->b[propDst] = SL->b[propSrc] * mult;
     }
     else if (tipo == eqCombLinear)
     {
@@ -147,9 +139,8 @@ void iniSisLin(SistLinear_t *SL, tipoSistLinear_t tipo, real_t coef_max)
       unsigned int combSrc2 = (combDst + 2) % n;
       for (unsigned int j = 0; j < n; ++j)
       {
-        SL->A[combDst][j] = SL->A[combSrc1][j] + SL->A[combSrc2][j];
+        A[combDst][j] = A[combSrc1][j] + A[combSrc2][j];
       }
-      SL->b[combDst] = SL->b[combSrc1] + SL->b[combSrc2];
     }
     else if (tipo == diagDominante)
     {
@@ -158,10 +149,10 @@ void iniSisLin(SistLinear_t *SL, tipoSistLinear_t tipo, real_t coef_max)
       {
         real_t soma = 0.0;
         for (unsigned int j = 0; j < i; ++j)
-          soma += SL->A[i][j];
+          soma += A[i][j];
         for (unsigned int j = i + 1; j < n; ++j)
-          soma += SL->A[i][j];
-        SL->A[i][i] += soma;
+          soma += A[i][j];
+        A[i][i] += soma;
       }
     }
   }

@@ -36,7 +36,7 @@ typedef enum
 // Alocaçao e desalocação de matrizes
 SistLinear_t *alocaSisLin(unsigned int n, tipoAloc_t tipo);
 void liberaSisLin(SistLinear_t *SL);
-void iniSisLin(SistLinear_t *SL, tipoSistLinear_t tipo, real_t coef_max);
+void initRandomMatrix(real_t **A, tipoSistLinear_t tipo, real_t coef_max, uint size);
 
 // Leitura e impressão de sistemas lineares
 SistLinear_t *lerSisLin();

@@ -77,7 +77,6 @@ void refinement(real_t **A,
                 uint *lineSwaps,
                 uint size,
                 int iterations,
-                real_t erro,
                 FILE *outputFile,
                 real_t *tTotal)
 {
@@ -92,8 +91,6 @@ void refinement(real_t **A,
 
     real_t **identity = allocMatrix(size);
     initIdentityMatrix(identity, size);
-
-
 
     while (counter <= iterations)
     {
@@ -120,7 +117,6 @@ void refinement(real_t **A,
             for (int j = 0; j < size; j++)
                 solution[j][i] += curSol[j];
         }
-
 
         norm = calcL2Norm(residuals, size);
         fprintf(outputFile, "# iter %d: <||%.15g||>\n", counter, norm); //
