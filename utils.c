@@ -205,3 +205,11 @@ void printMatrixInFile(real_t **matrix, uint size, FILE *outputFile)
     fprintf(outputFile, "\n");
   }
 }
+
+real_t detTriangularMatrix(real_t **matrix, uint size)
+{
+  real_t det = 1;
+  for (uint i = 0; i < size; i++)
+    det *= matrix[i][i];
+  return det;
+}

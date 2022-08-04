@@ -53,5 +53,6 @@ void multiplyMatrix(real_t **result, real_t **matrix1, real_t **matrix2, uint si
 void readMatrix(real_t **matrix, uint size);
 void readMatrixFromFile(real_t **matrix, uint size, FILE *outputFile);
 void printMatrixInFile(real_t **matrix, uint size, FILE *outputFile);
+real_t detTriangularMatrix(real_t **matrix, uint size);
 
 #endif // __UTILS_H__
