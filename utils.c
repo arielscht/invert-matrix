@@ -133,17 +133,34 @@ void freeMatrix(real_t **matrix, uint size)
 real_t **allocMatrix(uint size)
 {
   real_t **matrix = calloc(size, sizeof(real_t *));
-  if (matrix)
+
+  if (!matrix)
+    return NULL;
+
+  for (uint i = 0; i < size; i++)
   {
-    for (uint i = 0; i < size; i++)
-      matrix[i] = calloc(size, sizeof(real_t));
+    matrix[i] = calloc(size, sizeof(real_t));
+
+    if (!matrix[i])
+    {
+      for (uint j = i - 1; j >= 0; j--)
+        free(matrix[j]);
+      free(matrix);
+
+      return NULL;
+    }
   }
+
   return matrix;
 }
 
 uint *allocUintArray(uint size)
 {
-  return calloc(size, sizeof(uint));
+  uint *array = calloc(size, sizeof(uint));
+
+  if (!array)
+    return NULL;
+  return array;
 }
 
 void printMatrix(real_t **matrix, uint size)
