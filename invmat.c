@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     real_t **L = allocMatrix(size);
     real_t **U = allocMatrix(size);
     real_t **invertedMatrix = allocMatrix(size);
-    uint *lineSwaps = calloc(size, sizeof(uint));
+    uint *lineSwaps = allocUintArray(size);
     real_t totalTimeFactorization;
     real_t averageTimeRefinement;
     // real_t totalTimeResidual;
