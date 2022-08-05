@@ -2,6 +2,7 @@
 #include "methods.h"
 #include "utils.h"
 #include "math.h"
+#include "float.h"
 
 uint findPivot(real_t **A, uint curColumn, uint size)
 {
@@ -199,6 +200,15 @@ int reverseMatrix(real_t **A,
     initIdentityMatrix(identity, size);
 
     factorizationLU(A, L, U, lineSwaps, size, tTotal);
+
+    printMatrix(U, size);
+    printMatrix(L, size);
+    if (detTriangularMatrix(U, size) < DBL_EPSILON)
+    {
+        fprintf(stderr, "The matrix is not invertible");
+        exit(1);
+    }
+
     applyLineSwaps(lineSwaps, identity, size);
 
     SistLinear_t *auxSL = alocaSisLin(size, pontPont);
