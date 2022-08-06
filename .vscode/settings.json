@@ -5,7 +5,8 @@
         "sislin.h": "c",
         "functional": "c",
         "methods.h": "c",
-        "utils.h": "c"
+        "utils.h": "c",
+        "sisutils.h": "c"
     },
     "files.exclude": "**/**.o"
 }
