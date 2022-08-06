@@ -225,42 +225,44 @@ void printMatrixInFile(real_t **matrix, uint size, FILE *outputFile)
   }
 }
 
-real_t multiplyDouble(real_t number1, real_t number2)
+FunctionStatus multiplyDouble(real_t *result, real_t number1, real_t number2)
 {
   real_t operation = number1 * number2;
 
-  if (isinf(operation) || isnan(operation))
-  {
-    fprintf(stderr, "Something went wrong during operations");
-    exit(1);
-  }
+  if (isinf(operation))
+    return infErr;
+  else if (isnan(operation))
+    return nanErr;
 
-  return operation;
+  *result = operation;
+  return success;
 }
 
-real_t divideDouble(real_t number1, real_t number2)
+FunctionStatus divideDouble(real_t *result, real_t number1, real_t number2)
 {
   real_t operation = number1 / number2;
 
-  if (isinf(operation) || isnan(operation))
-  {
-    fprintf(stderr, "Something went wrong during operations");
-    exit(1);
-  }
+  if (isinf(operation))
+    return infErr;
+  else if (isnan(operation))
+    return nanErr;
 
-  return operation;
+  *result = operation;
+  return success;
 }
 
-real_t detTriangularMatrix(real_t **matrix, uint size)
+FunctionStatus detTriangularMatrix(real_t *result, real_t **matrix, uint size)
 {
   real_t det = 1;
-  real_t operation;
+  int status = success;
 
   for (uint i = 0; i < size; i++)
   {
-    operation = multiplyDouble(det, matrix[i][i]);
-    det = operation;
+    status = multiplyDouble(&det, det, matrix[i][i]);
+    if (status != success)
+      return status;
   }
 
-  return det;
+  *result = det;
+  return status;
 }
