@@ -35,6 +35,19 @@ int main(int argc, char *argv[])
     real_t **U = allocMatrix(size);
     real_t **invertedMatrix = allocMatrix(size);
     uint *lineSwaps = allocUintArray(size);
+
+    if (!A || !L || !U || !invertedMatrix || !lineSwaps)
+    {
+        freeMatrix(A, size);
+        freeMatrix(L, size);
+        freeMatrix(U, size);
+        freeMatrix(invertedMatrix, size);
+        freeArray(lineSwaps);
+        fprintf(stderr, "Memory allocation error!\n");
+
+        return 1;
+    }
+
     real_t totalTimeFactorization;
     real_t averageTimeRefinement;
     // real_t totalTimeResidual;
