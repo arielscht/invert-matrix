@@ -36,14 +36,16 @@ int main(int argc, char *argv[])
     real_t **U = allocMatrix(size);
     real_t **invertedMatrix = allocMatrix(size);
     uint *lineSwaps = allocUintArray(size);
+    real_t *iterationsNorm = allocDoubleArray(iterations);
 
-    if (!A || !L || !U || !invertedMatrix || !lineSwaps)
+    if (!A || !L || !U || !invertedMatrix || !lineSwaps || !iterationsNorm)
     {
         freeMatrix(A, size);
         freeMatrix(L, size);
         freeMatrix(U, size);
         freeMatrix(invertedMatrix, size);
         freeArray(lineSwaps);
+        freeArray(iterationsNorm);
         fprintf(stderr, "Memory allocation error!\n");
 
         return 1;
@@ -59,20 +61,16 @@ int main(int argc, char *argv[])
         initRandomMatrix(A, generico, COEF_MAX, size);
 
     reverseMatrix(A, L, U, lineSwaps, invertedMatrix, size, &totalTimeFactorization);
-    refinement(A, L, U, invertedMatrix, lineSwaps, size, iterations, outputFile, &averageTimeRefinement);
-    fprintf(outputFile, "# Tempo LU: %10g\n", totalTimeFactorization);
-    fprintf(outputFile, "# Tempo iter: %10g\n", averageTimeRefinement);
-    fprintf(outputFile, "N: %d\n", size);
-    fprintf(outputFile, "MATRIZ A\n");
-    printMatrixInFile(A, size, outputFile);
-    fprintf(outputFile, "MATRIZ INVERSA DE A\n");
-    printMatrixInFile(invertedMatrix, size, outputFile);
+    refinement(A, L, U, invertedMatrix, lineSwaps, size, iterations, iterationsNorm, &averageTimeRefinement);
+
+    printFinalOutput(outputFile, iterationsNorm, totalTimeFactorization, averageTimeRefinement, 0.0, size, A, invertedMatrix, iterations);
 
     freeMatrix(A, size);
     freeMatrix(L, size);
     freeMatrix(U, size);
     freeMatrix(invertedMatrix, size);
-    free(lineSwaps);
+    freeArray(lineSwaps);
+    freeArray(iterationsNorm);
 
     fclose(inputFile);
     fclose(outputFile);

@@ -21,7 +21,7 @@ FunctionStatus refinement(real_t **A,
                           uint *lineSwaps,
                           uint size,
                           int iterations,
-                          FILE *outputFile,
+                          real_t *iterationsNorm,
                           real_t *tTotal);
 
 #endif
