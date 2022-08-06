@@ -34,12 +34,23 @@ typedef double rtime_t;
 double timestamp(void);
 string_t markerName(string_t baseName, int n);
 
+// ERROR_ENUM
+typedef enum
+{
+    success = 0,
+    infErr,
+    nanErr,
+    allocErr,
+    nonInvertibleErr,
+} FunctionStatus;
+
 void initIdentityMatrix(real_t **matrix, unsigned int size);
 void initArrayWithIndexes(int *array, uint size);
 void applyLineSwaps(uint *lineSwaps, real_t **matrix, uint size);
 void applyLineSwapsOnArray(uint *lineSwaps, real_t *array, uint size);
 void copyMatrix(real_t **origin, real_t **destination, uint size);
 void freeMatrix(real_t **matrix, uint size);
+void freeArray(void *array);
 real_t **allocMatrix(uint size);
 int *allocIntArray(uint size);
 void printMatrix(real_t **matrix, uint size);
@@ -50,10 +61,10 @@ void cleanMatrix(real_t **matrix, uint size);
 void readMatrix(real_t **matrix, uint size);
 void readMatrixFromFile(real_t **matrix, uint size, FILE *outputFile);
 void printMatrixInFile(real_t **matrix, uint size, FILE *outputFile);
-real_t detTriangularMatrix(real_t **matrix, uint size);
+FunctionStatus detTriangularMatrix(real_t *result, real_t **matrix, uint size);
 uint *allocUintArray(uint size);
 real_t *allocDoubleArray(uint size);
-real_t multiplyDouble(real_t number1, real_t number2);
-real_t divideDouble(real_t number1, real_t number2);
+FunctionStatus multiplyDouble(real_t *result, real_t number1, real_t number2);
+FunctionStatus divideDouble(real_t *result, real_t number1, real_t number2);
 
 #endif // __UTILS_H__

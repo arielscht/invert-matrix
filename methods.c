@@ -22,10 +22,11 @@ void swapLines(real_t **matrix, uint line1, uint line2)
     matrix[line2] = auxLine;
 }
 
-void retroSubstitution(SistLinear_t *SL, real_t *solution)
+FunctionStatus retroSubstitution(SistLinear_t *SL, real_t *solution)
 {
     uint size = SL->n;
-    real_t operation;
+    FunctionStatus status = success;
+    real_t mult;
 
     for (uint line = size; line >= 1; line--)
     {
@@ -34,82 +35,106 @@ void retroSubstitution(SistLinear_t *SL, real_t *solution)
         solution[actualLine] = SL->b[actualLine];
         for (uint column = size - 1; column > actualLine; column--)
         {
-            solution[actualLine] -= multiplyDouble(SL->A[actualLine][column], solution[column]);
+            if (status = multiplyDouble(&mult, SL->A[actualLine][column], solution[column]) != success)
+                return status;
+            solution[actualLine] -= mult;
         }
-        operation = divideDouble(solution[actualLine], SL->A[actualLine][actualLine]);
-
-        solution[actualLine] = operation;
+        if (status = divideDouble(&solution[actualLine], solution[actualLine], SL->A[actualLine][actualLine]) != success)
+            return status;
     }
+    return status;
 }
 
-void reverseRetroSubstitution(SistLinear_t *SL, real_t *solution)
+FunctionStatus reverseRetroSubstitution(SistLinear_t *SL, real_t *solution)
 {
     uint size = SL->n;
-    real_t operation;
+    FunctionStatus status = success;
+    real_t mult;
 
     for (int line = 0; line < size; line++)
     {
         solution[line] = SL->b[line];
         for (int column = 0; column < line; column++)
         {
-            operation = multiplyDouble(SL->A[line][column], solution[column]);
-            solution[line] -= operation;
+            if (status = multiplyDouble(&mult, SL->A[line][column], solution[column]) != success)
+                return status;
+            solution[line] -= mult;
         }
-        operation = divideDouble(solution[line], SL->A[line][line]);
-        solution[line] = operation;
+        if (status = divideDouble(&solution[line], solution[line], SL->A[line][line]) != success)
+            return status;
     }
+
+    return status;
 }
 
-real_t calcL2Norm(real_t **residual, uint size)
+FunctionStatus calcL2Norm(real_t **residual, uint size, real_t *result)
 {
     real_t sum = 0.0;
-    real_t operation;
+    FunctionStatus status = success;
+    real_t mult;
 
     for (uint i = 0; i < size; i++)
         for (uint j = 0; j < size; j++)
         {
-            operation = multiplyDouble(residual[i][j], residual[i][j]);
-            sum += operation;
+            if (status = multiplyDouble(&mult, residual[i][j], residual[i][j]) != success)
+                return status;
+            sum += mult;
         }
-    return sqrt(sum);
+    *result = sqrt(sum);
+    return status;
 }
 
-void calcResidual(SistLinear_t *SL, real_t *solution, real_t *residual)
+FunctionStatus calcResidual(SistLinear_t *SL, real_t *solution, real_t *residual)
 {
     uint size = SL->n;
-    real_t operation;
+    FunctionStatus status = success;
+    real_t mult;
 
     for (size_t i = 0; i < size; i++)
     {
         residual[i] = SL->b[i];
         for (size_t j = 0; j < size; j++)
         {
-            operation = multiplyDouble(solution[j], SL->A[i][j]);
-            residual[i] -= operation;
+            if (status = multiplyDouble(&mult, solution[j], SL->A[i][j]) != success)
+                return status;
+            residual[i] -= mult;
         }
     }
+
+    return status;
 }
 
-void refinement(real_t **A,
-                real_t **L,
-                real_t **U,
-                real_t **solution,
-                uint *lineSwaps,
-                uint size,
-                int iterations,
-                FILE *outputFile,
-                real_t *tTotal)
+FunctionStatus refinement(real_t **A,
+                          real_t **L,
+                          real_t **U,
+                          real_t **solution,
+                          uint *lineSwaps,
+                          uint size,
+                          int iterations,
+                          FILE *outputFile,
+                          real_t *tTotal)
 {
     *tTotal = timestamp();
+    FunctionStatus status = success;
+    real_t **identity = allocMatrix(size);
     real_t **residuals = allocMatrix(size);
     real_t *curSol = allocDoubleArray(size);
+    SistLinear_t *auxSL = alocaSisLin(size, pontPont);
     real_t norm = 0.0;
     int counter = 1;
 
-    SistLinear_t *auxSL = alocaSisLin(size, pontPont);
-    copyMatrix(A, auxSL->A, size);
+    if (!identity || !residuals || !curSol || !auxSL)
+    {
+        freeMatrix(identity, size);
+        freeMatrix(residuals, size);
+        freeArray(curSol);
+        liberaSisLin(auxSL);
 
-    real_t **identity = allocMatrix(size);
+        status = allocErr;
+        return status;
+    }
+
+    copyMatrix(A, auxSL->A, size);
     initIdentityMatrix(identity, size);
 
     while (counter <= iterations)
@@ -120,7 +145,9 @@ void refinement(real_t **A,
         {
             copyColumnToArray(identity, auxSL->b, i, size);
             copyColumnToArray(solution, curSol, i, size);
-            calcResidual(auxSL, curSol, residuals[i]);
+
+            if (status = calcResidual(auxSL, curSol, residuals[i]) != success)
+                return status;
         }
 
         // Calcula nova aproximação
@@ -129,35 +156,45 @@ void refinement(real_t **A,
             applyLineSwapsOnArray(lineSwaps, residuals[i], size);
             copyArray(residuals[i], auxSL->b, size);
             copyMatrix(L, auxSL->A, size);
-            reverseRetroSubstitution(auxSL, curSol);
+
+            if (status = reverseRetroSubstitution(auxSL, curSol) != success)
+                return status;
+
             copyMatrix(U, auxSL->A, size);
             copyArray(curSol, auxSL->b, size);
-            retroSubstitution(auxSL, curSol);
+
+            if (status = retroSubstitution(auxSL, curSol) != success)
+                return status;
             // soma a solução do resíduo com a solução anterior para obter a nova apromixação
             for (int j = 0; j < size; j++)
                 solution[j][i] += curSol[j];
         }
 
-        norm = calcL2Norm(residuals, size);
+        if (status = calcL2Norm(residuals, size, &norm) != success)
+            return status;
         fprintf(outputFile, "# iter %d: <||%.15g||>\n", counter, norm); //
         counter++;
     };
 
     *tTotal = timestamp() - *tTotal;
     *tTotal /= counter;
+
     freeMatrix(identity, size);
     freeMatrix(residuals, size);
     free(curSol);
     liberaSisLin(auxSL);
+    return status;
 }
 
-int gaussElimination(real_t **A,
-                     real_t **L,
-                     uint *lineSwaps,
-                     uint size,
-                     real_t *tTotal)
+FunctionStatus gaussElimination(real_t **A,
+                                real_t **L,
+                                uint *lineSwaps,
+                                uint size,
+                                real_t *tTotal)
 {
     *tTotal = timestamp();
+    FunctionStatus status = success;
+    real_t mult;
 
     for (uint line = 0; line < size - 1; line++)
     {
@@ -175,72 +212,98 @@ int gaussElimination(real_t **A,
 
         for (uint auxLine = line + 1; auxLine < size; auxLine++)
         {
-            real_t m = divideDouble(A[auxLine][line], A[line][line]);
+            real_t m;
+            if (status = divideDouble(&m, A[auxLine][line], A[line][line]) != success)
+                return status;
             A[auxLine][line] = 0.0;
 
             if (L != NULL)
                 L[auxLine][line] = m;
 
             for (uint column = line + 1; column < size; column++)
-                A[auxLine][column] -= multiplyDouble(A[line][column], m);
+            {
+                if (status = multiplyDouble(&mult, A[line][column], m) != success)
+                    return status;
+                A[auxLine][column] -= mult;
+            }
         }
     }
 
     *tTotal = timestamp() - *tTotal;
-    return 0;
+    return status;
 }
 
-int factorizationLU(real_t **A,
-                    real_t **L,
-                    real_t **U,
-                    uint *lineSwaps,
-                    uint size,
-                    real_t *tTotal)
+FunctionStatus factorizationLU(real_t **A,
+                               real_t **L,
+                               real_t **U,
+                               uint *lineSwaps,
+                               uint size,
+                               real_t *tTotal)
 {
+    FunctionStatus status = success;
+
     copyMatrix(A, U, size);
     cleanMatrix(L, size);
-
-    gaussElimination(U, L, lineSwaps, size, tTotal);
+    if (status = gaussElimination(U, L, lineSwaps, size, tTotal) != success)
+        return status;
     setMainDiagonal(L, 1.0, size);
 
-    return 0;
+    return status;
 }
 
-int reverseMatrix(real_t **A,
-                  real_t **L,
-                  real_t **U,
-                  uint *lineSwaps,
-                  real_t **invertedMatrix,
-                  uint size,
-                  real_t *tTotal)
+FunctionStatus reverseMatrix(real_t **A,
+                             real_t **L,
+                             real_t **U,
+                             uint *lineSwaps,
+                             real_t **invertedMatrix,
+                             uint size,
+                             real_t *tTotal)
 {
-    initArrayWithIndexes(lineSwaps, size);
+    FunctionStatus status = success;
+    SistLinear_t *auxSL = alocaSisLin(size, pontPont);
+    real_t *sol = allocDoubleArray(size);
     real_t **identity = allocMatrix(size);
+    real_t det;
+
+    if (!auxSL || !sol || !identity)
+    {
+        liberaSisLin(auxSL);
+        freeArray(sol);
+        freeMatrix(identity, size);
+
+        status = allocErr;
+        return status;
+    }
+
+    initArrayWithIndexes(lineSwaps, size);
     initIdentityMatrix(identity, size);
 
-    factorizationLU(A, L, U, lineSwaps, size, tTotal);
-
-    printMatrix(U, size);
-    printMatrix(L, size);
-    if (detTriangularMatrix(U, size) < DBL_EPSILON)
+    if (status = factorizationLU(A, L, U, lineSwaps, size, tTotal) != success)
+        return status;
+    if (status = detTriangularMatrix(&det, U, size) != success)
+        return status;
+    if (fabs(det) < DBL_EPSILON)
     {
-        fprintf(stderr, "The matrix is not invertible");
-        exit(1);
+        status = nonInvertibleErr;
+        return status;
     }
 
     applyLineSwaps(lineSwaps, identity, size);
-
-    SistLinear_t *auxSL = alocaSisLin(size, pontPont);
-    real_t *sol = allocDoubleArray(size);
 
     for (uint i = 0; i < size; i++)
     {
         copyColumnToArray(identity, auxSL->b, i, size);
         copyMatrix(L, auxSL->A, size);
-        reverseRetroSubstitution(auxSL, sol);
+
+        if (status = reverseRetroSubstitution(auxSL, sol) != success)
+            return status;
+
         copyMatrix(U, auxSL->A, size);
         copyArray(sol, auxSL->b, size);
-        retroSubstitution(auxSL, sol);
+
+        if (status = retroSubstitution(auxSL, sol) != success)
+            return status;
+
         for (uint j = 0; j < size; j++)
             invertedMatrix[j][i] = sol[j];
     }
@@ -248,4 +311,5 @@ int reverseMatrix(real_t **A,
     liberaSisLin(auxSL);
     free(sol);
     freeMatrix(identity, size);
+    return status;
 }
