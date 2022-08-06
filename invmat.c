@@ -5,6 +5,7 @@
 #include "methods.h"
 #include "utils.h"
 #include "interface.h"
+#include "memoryAlloc.h"
 
 int main(int argc, char *argv[])
 {

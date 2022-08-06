@@ -1,8 +1,9 @@
 #include <stdio.h>
+#include <math.h>
 #include "methods.h"
 #include "utils.h"
-#include "math.h"
 #include "float.h"
+#include "memoryAlloc.h"
 
 uint findPivot(real_t **A, uint curColumn, uint size)
 {
