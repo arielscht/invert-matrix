@@ -66,5 +66,13 @@ uint *allocUintArray(uint size);
 real_t *allocDoubleArray(uint size);
 FunctionStatus multiplyDouble(real_t *result, real_t number1, real_t number2);
 FunctionStatus divideDouble(real_t *result, real_t number1, real_t number2);
-
+void printFinalOutput(FILE *outputFile,
+                      real_t *iterationsNorm,
+                      real_t totalTimeFactorization,
+                      real_t averageTimeRefinement,
+                      real_t averageTimeNorm,
+                      uint size,
+                      real_t **A,
+                      real_t **invertedMatrix,
+                      uint iterations);
 #endif // __UTILS_H__

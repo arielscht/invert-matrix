@@ -111,7 +111,7 @@ FunctionStatus refinement(real_t **A,
                           uint *lineSwaps,
                           uint size,
                           int iterations,
-                          FILE *outputFile,
+                          real_t *iterationsNorm,
                           real_t *tTotal)
 {
     *tTotal = timestamp();
@@ -172,7 +172,7 @@ FunctionStatus refinement(real_t **A,
 
         if (status = calcL2Norm(residuals, size, &norm) != success)
             return status;
-        fprintf(outputFile, "# iter %d: <||%.15g||>\n", counter, norm); //
+        iterationsNorm[counter - 1] = norm;
         counter++;
     };
 

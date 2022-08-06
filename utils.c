@@ -235,3 +235,26 @@ FunctionStatus detTriangularMatrix(real_t *result, real_t **matrix, uint size)
   *result = det;
   return status;
 }
+
+void printFinalOutput(FILE *outputFile,
+                      real_t *iterationsNorm,
+                      real_t totalTimeFactorization,
+                      real_t averageTimeRefinement,
+                      real_t averageTimeNorm,
+                      uint size,
+                      real_t **A,
+                      real_t **invertedMatrix,
+                      uint iterations)
+{
+  for (uint i = 0; i < iterations; i++)
+    fprintf(outputFile, "# iter %d: <||%.15g||>\n", i + 1, iterationsNorm[i]);
+
+  fprintf(outputFile, "# Tempo LU: %10g\n", totalTimeFactorization);
+  fprintf(outputFile, "# Tempo iter: %10g\n", averageTimeRefinement);
+  fprintf(outputFile, "# Tempo norma: %10g\n", 0.0);
+  fprintf(outputFile, "N: %d\n", size);
+  fprintf(outputFile, "MATRIZ A\n");
+  printMatrixInFile(A, size, outputFile);
+  fprintf(outputFile, "MATRIZ INVERSA DE A\n");
+  printMatrixInFile(invertedMatrix, size, outputFile);
+}
