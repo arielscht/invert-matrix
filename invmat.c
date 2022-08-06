@@ -17,14 +17,17 @@ int main(int argc, char *argv[])
     int iterations = 0;
     uint size = 0;
     int skipInputFile = 0;
-
+    FunctionStatus status = success;
     inputFilename[0] = '\0';
     outputFilename[0] = '\0';
 
     handleArgs(argc, argv, inputFilename, outputFilename, &iterations, &size);
-    handleInput(&inputFile, inputFilename);
-    handleOutput(&outputFile, outputFilename);
 
+    if (status = handleInput(&inputFile, inputFilename) != success)
+    {
+        fprintf(stderr, "Fail to handle the input file");
+        return status;
+    }
     if (!size)
     {
         fscanf(inputFile, "%d", &size);
@@ -40,12 +43,8 @@ int main(int argc, char *argv[])
 
     if (!A || !L || !U || !invertedMatrix || !lineSwaps || !iterationsNorm)
     {
-        freeMatrix(A, size);
-        freeMatrix(L, size);
-        freeMatrix(U, size);
-        freeMatrix(invertedMatrix, size);
-        freeArray(lineSwaps);
-        freeArray(iterationsNorm);
+        freeMainMemory(A, L, U, invertedMatrix, lineSwaps, iterationsNorm, size);
+        fclose(inputFile);
         fprintf(stderr, "Memory allocation error!\n");
 
         return 1;
@@ -63,14 +62,15 @@ int main(int argc, char *argv[])
     reverseMatrix(A, L, U, lineSwaps, invertedMatrix, size, &totalTimeFactorization);
     refinement(A, L, U, invertedMatrix, lineSwaps, size, iterations, iterationsNorm, &averageTimeRefinement);
 
-    printFinalOutput(outputFile, iterationsNorm, totalTimeFactorization, averageTimeRefinement, 0.0, size, A, invertedMatrix, iterations);
+    if (status = handleOutput(&outputFile, outputFilename) != success)
+    {
+        fprintf(stderr, "Fail to handle the output file");
+        return status;
+    }
 
-    freeMatrix(A, size);
-    freeMatrix(L, size);
-    freeMatrix(U, size);
-    freeMatrix(invertedMatrix, size);
-    freeArray(lineSwaps);
-    freeArray(iterationsNorm);
+    printFinalOutput(outputFile, iterationsNorm, totalTimeFactorization, averageTimeRefinement, 0.0, size, invertedMatrix, iterations);
+
+    freeMainMemory(A, L, U, invertedMatrix, lineSwaps, iterationsNorm, size);
 
     fclose(inputFile);
     fclose(outputFile);

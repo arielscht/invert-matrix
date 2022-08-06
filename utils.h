@@ -42,6 +42,8 @@ typedef enum
     nanErr,
     allocErr,
     nonInvertibleErr,
+    fileInputErr,
+    fileOutputErr,
 } FunctionStatus;
 
 void initIdentityMatrix(real_t **matrix, unsigned int size);
@@ -60,13 +62,5 @@ void printMatrixInFile(real_t **matrix, uint size, FILE *outputFile);
 FunctionStatus detTriangularMatrix(real_t *result, real_t **matrix, uint size);
 FunctionStatus multiplyDouble(real_t *result, real_t number1, real_t number2);
 FunctionStatus divideDouble(real_t *result, real_t number1, real_t number2);
-void printFinalOutput(FILE *outputFile,
-                      real_t *iterationsNorm,
-                      real_t totalTimeFactorization,
-                      real_t averageTimeRefinement,
-                      real_t averageTimeNorm,
-                      uint size,
-                      real_t **A,
-                      real_t **invertedMatrix,
-                      uint iterations);
+
 #endif // __UTILS_H__
