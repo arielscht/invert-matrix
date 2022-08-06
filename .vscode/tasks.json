@@ -18,6 +18,8 @@
 				"sislin.h",
 				"memoryAlloc.c",
 				"memoryAlloc.h",
+				"sisUtils.c",
+				"sisUtils.h",
 				"-lm",
 				"-o",
 				"${fileDirname}/bin/${fileBasenameNoExtension}"
