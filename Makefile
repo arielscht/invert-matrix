@@ -7,11 +7,12 @@
              sislin.o \
              interface.o \
              methods.o \
+             memoryAlloc.o \
              $(PROG).o
 
 .PHONY: limpa faxina clean distclean purge all
 
-%.o: %.c %.h utils.h sislin.h
+%.o: %.c %.h utils.h sislin.h memoryAlloc.h
 	$(CC) -c $(CFLAGS) $<
 
 $(PROG):  $(OBJS)
