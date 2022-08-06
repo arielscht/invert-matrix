@@ -10,12 +10,21 @@ void handleArgs(int argc,
                 int *iterations,
                 uint *size);
 
-void handleInput(
+FunctionStatus handleInput(
     FILE **inputFile,
     char *filename);
 
-void handleOutput(
+FunctionStatus handleOutput(
     FILE **outputFile,
     char *filename);
+
+void printFinalOutput(FILE *outputFile,
+                      real_t *iterationsNorm,
+                      real_t totalTimeFactorization,
+                      real_t averageTimeRefinement,
+                      real_t averageTimeNorm,
+                      uint size,
+                      real_t **invertedMatrix,
+                      uint iterations);
 
 #endif

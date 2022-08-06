@@ -86,7 +86,7 @@ void handleArgs(int argc,
     }
 }
 
-void handleInput(FILE **inputFile, char *filename)
+FunctionStatus handleInput(FILE **inputFile, char *filename)
 {
     *inputFile = stdin;
     if (filename[0] != '\0')
@@ -95,12 +95,12 @@ void handleInput(FILE **inputFile, char *filename)
         if (!inputFile)
         {
             fprintf(stderr, "Error reading the input file.\n");
-            exit(1);
+            return fileInputErr;
         }
     }
 }
 
-void handleOutput(FILE **outputFile, char *filename)
+FunctionStatus handleOutput(FILE **outputFile, char *filename)
 {
     *outputFile = stdout;
     if (filename[0] != '\0')
@@ -109,7 +109,26 @@ void handleOutput(FILE **outputFile, char *filename)
         if (!outputFile)
         {
             fprintf(stderr, "Error reading the output file.\n");
-            exit(1);
+            return fileOutputErr;
         }
     }
+}
+
+void printFinalOutput(FILE *outputFile,
+                      real_t *iterationsNorm,
+                      real_t totalTimeFactorization,
+                      real_t averageTimeRefinement,
+                      real_t averageTimeNorm,
+                      uint size,
+                      real_t **invertedMatrix,
+                      uint iterations)
+{
+    for (uint i = 0; i < iterations; i++)
+        fprintf(outputFile, "# iter %d: <||%.15g||>\n", i + 1, iterationsNorm[i]);
+
+    fprintf(outputFile, "# Tempo LU: %10g\n", totalTimeFactorization);
+    fprintf(outputFile, "# Tempo iter: %10g\n", averageTimeRefinement);
+    fprintf(outputFile, "# Tempo norma: %10g\n", 0.0);
+    fprintf(outputFile, "N: %d\n", size);
+    printMatrixInFile(invertedMatrix, size, outputFile);
 }

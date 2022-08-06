@@ -16,4 +16,6 @@ uint *allocUintArray(uint size);
 
 real_t *allocDoubleArray(uint size);
 
+void freeMainMemory(real_t **A, real_t **L, real_t **U, real_t **invertedMatrix, uint *lineSwaps, real_t *iterationsNorm, uint size);
+
 #endif

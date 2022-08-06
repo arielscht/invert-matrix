@@ -62,3 +62,13 @@ real_t *allocDoubleArray(uint size)
         return NULL;
     return array;
 }
+
+void freeMainMemory(real_t **A, real_t **L, real_t **U, real_t **invertedMatrix, uint *lineSwaps, real_t *iterationsNorm, uint size)
+{
+    freeMatrix(A, size);
+    freeMatrix(L, size);
+    freeMatrix(U, size);
+    freeMatrix(invertedMatrix, size);
+    freeArray(lineSwaps);
+    freeArray(iterationsNorm);
+}
