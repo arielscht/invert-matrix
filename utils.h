@@ -47,10 +47,13 @@ void copyArray(real_t *origin, real_t *destination, uint size);
 void copyColumnToArray(real_t **matrix, real_t *array, uint column, uint size);
 void setMainDiagonal(real_t **matrix, real_t value, uint size);
 void cleanMatrix(real_t **matrix, uint size);
-void multiplyMatrix(real_t **result, real_t **matrix1, real_t **matrix2, uint size);
 void readMatrix(real_t **matrix, uint size);
 void readMatrixFromFile(real_t **matrix, uint size, FILE *outputFile);
 void printMatrixInFile(real_t **matrix, uint size, FILE *outputFile);
 real_t detTriangularMatrix(real_t **matrix, uint size);
+uint *allocUintArray(uint size);
+real_t *allocDoubleArray(uint size);
+real_t multiplyDouble(real_t number1, real_t number2);
+real_t divideDouble(real_t number1, real_t number2);
 
 #endif // __UTILS_H__

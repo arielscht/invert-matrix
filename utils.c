@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-
 #include "utils.h"
 
 /*  Retorna tempo em milisegundos
@@ -133,17 +132,53 @@ void freeMatrix(real_t **matrix, uint size)
 real_t **allocMatrix(uint size)
 {
   real_t **matrix = calloc(size, sizeof(real_t *));
-  if (matrix)
+
+  if (!matrix)
   {
-    for (uint i = 0; i < size; i++)
-      matrix[i] = calloc(size, sizeof(real_t));
+    fprintf(stderr, "Some error during memory allocation occurred");
+    exit(1);
   }
+
+  for (uint i = 0; i < size; i++)
+  {
+    matrix[i] = calloc(size, sizeof(real_t));
+
+    if (!matrix[i])
+    {
+      for (uint j = i - 1; j >= 0; j--)
+        free(matrix[j]);
+      free(matrix);
+
+      fprintf(stderr, "Some error during memory allocation occurred");
+      exit(1);
+    }
+  }
+
   return matrix;
 }
 
 uint *allocUintArray(uint size)
 {
-  return calloc(size, sizeof(uint));
+  uint *array = calloc(size, sizeof(uint));
+
+  if (!array)
+  {
+    fprintf(stderr, "Some error during memory allocation occurred");
+    exit(1);
+  }
+  return array;
+}
+
+real_t *allocDoubleArray(uint size)
+{
+  real_t *array = calloc(size, sizeof(real_t));
+
+  if (!array)
+  {
+    fprintf(stderr, "Some error during memory allocation occurred");
+    exit(1);
+  }
+  return array;
 }
 
 void printMatrix(real_t **matrix, uint size)
@@ -160,22 +195,6 @@ void copyColumnToArray(real_t **matrix, real_t *array, uint column, uint size)
 {
   for (uint i = 0; i < size; i++)
     array[i] = matrix[i][column];
-}
-
-void multiplyMatrix(real_t **result, real_t **matrix1, real_t **matrix2, uint size)
-{
-  for (uint i = 0; i < size; i++)
-  {
-    for (uint j = 0; j < size; j++)
-    {
-      real_t sum = 0.0;
-      for (uint k = 0; k < size; k++)
-      {
-        sum += matrix1[i][k] * matrix2[k][j];
-      }
-      result[i][j] = sum;
-    }
-  }
 }
 
 void readMatrix(real_t **matrix, uint size)
@@ -206,10 +225,42 @@ void printMatrixInFile(real_t **matrix, uint size, FILE *outputFile)
   }
 }
 
+real_t multiplyDouble(real_t number1, real_t number2)
+{
+  real_t operation = number1 * number2;
+
+  if (isinf(operation) || isnan(operation))
+  {
+    fprintf(stderr, "Something went wrong during operations");
+    exit(1);
+  }
+
+  return operation;
+}
+
+real_t divideDouble(real_t number1, real_t number2)
+{
+  real_t operation = number1 / number2;
+
+  if (isinf(operation) || isnan(operation))
+  {
+    fprintf(stderr, "Something went wrong during operations");
+    exit(1);
+  }
+
+  return operation;
+}
+
 real_t detTriangularMatrix(real_t **matrix, uint size)
 {
   real_t det = 1;
+  real_t operation;
+
   for (uint i = 0; i < size; i++)
-    det *= matrix[i][i];
+  {
+    operation = multiplyDouble(det, matrix[i][i]);
+    det = operation;
+  }
+
   return det;
 }

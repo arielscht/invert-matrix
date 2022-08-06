@@ -24,6 +24,8 @@ void swapLines(real_t **matrix, uint line1, uint line2)
 void retroSubstitution(SistLinear_t *SL, real_t *solution)
 {
     uint size = SL->n;
+    real_t operation;
+
     for (uint line = size; line >= 1; line--)
     {
         // variable used due to uint never being less than 0
@@ -31,42 +33,59 @@ void retroSubstitution(SistLinear_t *SL, real_t *solution)
         solution[actualLine] = SL->b[actualLine];
         for (uint column = size - 1; column > actualLine; column--)
         {
-            solution[actualLine] -= SL->A[actualLine][column] * solution[column];
+            solution[actualLine] -= multiplyDouble(SL->A[actualLine][column], solution[column]);
         }
-        solution[actualLine] /= SL->A[actualLine][actualLine];
+        operation = divideDouble(solution[actualLine], SL->A[actualLine][actualLine]);
+
+        solution[actualLine] = operation;
     }
 }
 
 void reverseRetroSubstitution(SistLinear_t *SL, real_t *solution)
 {
     uint size = SL->n;
+    real_t operation;
 
     for (int line = 0; line < size; line++)
     {
         solution[line] = SL->b[line];
         for (int column = 0; column < line; column++)
-            solution[line] -= SL->A[line][column] * solution[column];
-        solution[line] /= SL->A[line][line];
+        {
+            operation = multiplyDouble(SL->A[line][column], solution[column]);
+            solution[line] -= operation;
+        }
+        operation = divideDouble(solution[line], SL->A[line][line]);
+        solution[line] = operation;
     }
 }
 
 real_t calcL2Norm(real_t **residual, uint size)
 {
     real_t sum = 0.0;
+    real_t operation;
+
     for (uint i = 0; i < size; i++)
         for (uint j = 0; j < size; j++)
-            sum += residual[i][j] * residual[i][j];
+        {
+            operation = multiplyDouble(residual[i][j], residual[i][j]);
+            sum += operation;
+        }
     return sqrt(sum);
 }
 
 void calcResidual(SistLinear_t *SL, real_t *solution, real_t *residual)
 {
     uint size = SL->n;
+    real_t operation;
+
     for (size_t i = 0; i < size; i++)
     {
         residual[i] = SL->b[i];
         for (size_t j = 0; j < size; j++)
-            residual[i] -= solution[j] * SL->A[i][j];
+        {
+            operation = multiplyDouble(solution[j], SL->A[i][j]);
+            residual[i] -= operation;
+        }
     }
 }
 
@@ -82,7 +101,7 @@ void refinement(real_t **A,
 {
     *tTotal = timestamp();
     real_t **residuals = allocMatrix(size);
-    real_t *curSol = calloc(size, sizeof(real_t));
+    real_t *curSol = allocDoubleArray(size);
     real_t norm = 0.0;
     int counter = 1;
 
@@ -155,14 +174,14 @@ int gaussElimination(real_t **A,
 
         for (uint auxLine = line + 1; auxLine < size; auxLine++)
         {
-            real_t m = A[auxLine][line] / A[line][line];
+            real_t m = divideDouble(A[auxLine][line], A[line][line]);
             A[auxLine][line] = 0.0;
 
             if (L != NULL)
                 L[auxLine][line] = m;
 
             for (uint column = line + 1; column < size; column++)
-                A[auxLine][column] -= A[line][column] * m;
+                A[auxLine][column] -= multiplyDouble(A[line][column], m);
         }
     }
 
@@ -202,7 +221,7 @@ int reverseMatrix(real_t **A,
     applyLineSwaps(lineSwaps, identity, size);
 
     SistLinear_t *auxSL = alocaSisLin(size, pontPont);
-    real_t *sol = calloc(size, sizeof(real_t));
+    real_t *sol = allocDoubleArray(size);
 
     for (uint i = 0; i < size; i++)
     {
