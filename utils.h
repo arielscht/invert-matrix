@@ -44,7 +44,8 @@ typedef enum
     allocErr,
     nonInvertibleErr,
     fileInputErr,
-    fileOutputErr,
+    fileOutputErr, 
+    fileInputEmpty,
 } FunctionStatus;
 
 void initIdentityMatrix(real_t **matrix, unsigned int size);

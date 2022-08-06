@@ -30,7 +30,12 @@ int main(int argc, char *argv[])
     }
     if (!size)
     {
-        fscanf(inputFile, "%d", &size);
+        if(fscanf(inputFile, "%d", &size) == -1)
+        {
+            fprintf(stderr, "Empty file!\n"); 
+            return fileInputEmpty;
+
+        }
         skipInputFile = 1;
     }
 
