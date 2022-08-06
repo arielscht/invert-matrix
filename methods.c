@@ -116,15 +116,25 @@ FunctionStatus refinement(real_t **A,
 {
     *tTotal = timestamp();
     FunctionStatus status = success;
+    real_t **identity = allocMatrix(size);
     real_t **residuals = allocMatrix(size);
     real_t *curSol = allocDoubleArray(size);
+    SistLinear_t *auxSL = alocaSisLin(size, pontPont);
     real_t norm = 0.0;
     int counter = 1;
 
-    SistLinear_t *auxSL = alocaSisLin(size, pontPont);
-    copyMatrix(A, auxSL->A, size);
+    if (!identity || !residuals || !curSol || !auxSL)
+    {
+        freeMatrix(identity, size);
+        freeMatrix(residuals, size);
+        freeArray(curSol);
+        liberaSisLin(auxSL);
 
-    real_t **identity = allocMatrix(size);
+        status = allocErr;
+        return status;
+    }
+
+    copyMatrix(A, auxSL->A, size);
     initIdentityMatrix(identity, size);
 
     while (counter <= iterations)
@@ -254,6 +264,16 @@ FunctionStatus reverseMatrix(real_t **A,
     real_t *sol = allocDoubleArray(size);
     real_t **identity = allocMatrix(size);
     real_t det;
+
+    if (!auxSL || !sol || !identity)
+    {
+        liberaSisLin(auxSL);
+        freeArray(sol);
+        freeMatrix(identity, size);
+
+        status = allocErr;
+        return status;
+    }
 
     initArrayWithIndexes(lineSwaps, size);
     initIdentityMatrix(identity, size);

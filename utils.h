@@ -50,6 +50,7 @@ void applyLineSwaps(uint *lineSwaps, real_t **matrix, uint size);
 void applyLineSwapsOnArray(uint *lineSwaps, real_t *array, uint size);
 void copyMatrix(real_t **origin, real_t **destination, uint size);
 void freeMatrix(real_t **matrix, uint size);
+void freeArray(void *array);
 real_t **allocMatrix(uint size);
 int *allocIntArray(uint size);
 void printMatrix(real_t **matrix, uint size);
