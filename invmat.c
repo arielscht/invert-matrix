@@ -25,16 +25,16 @@ int main(int argc, char *argv[])
 
     if (status = handleInput(&inputFile, inputFilename) != success)
     {
-        fprintf(stderr, "Fail to handle the input file");
+        handleErrorsException(status);
         return status;
     }
     if (!size)
     {
         if(fscanf(inputFile, "%d", &size) == -1)
         {
-            fprintf(stderr, "Empty file!\n"); 
-            return fileInputEmpty;
-
+            status = missingData; 
+            handleErrorsException(status);
+            return status;
         }
         skipInputFile = 1;
     }
@@ -48,36 +48,50 @@ int main(int argc, char *argv[])
 
     if (!A || !L || !U || !invertedMatrix || !lineSwaps || !iterationsNorm)
     {
+        status = allocErr;
         freeMainMemory(A, L, U, invertedMatrix, lineSwaps, iterationsNorm, size);
         fclose(inputFile);
-        fprintf(stderr, "Memory allocation error!\n");
+        handleErrorsException(status);
 
-        return 1;
+        return status;
     }
 
     real_t totalTimeFactorization;
     real_t averageTimeRefinement;
-    // real_t totalTimeResidual;
+    real_t averageTimeResidual;
 
     if (skipInputFile)
-        readMatrixFromFile(A, size, inputFile);
+    {
+        if(status = readMatrixFromFile(A, size, inputFile) != success)
+        {
+            handleErrorsException(status);
+            return status;
+        }
+    }
     else
         initRandomMatrix(A, generico, COEF_MAX, size);
 
-    reverseMatrix(A, L, U, lineSwaps, invertedMatrix, size, &totalTimeFactorization);
-    refinement(A, L, U, invertedMatrix, lineSwaps, size, iterations, iterationsNorm, &averageTimeRefinement);
-
+    if(status = reverseMatrix(A, L, U, lineSwaps, invertedMatrix, size, &totalTimeFactorization) != success)
+    {
+        handleErrorsException(status);
+        return status;
+    }
+    if(status = refinement(A, L, U, invertedMatrix, lineSwaps, size, iterations, iterationsNorm, &averageTimeRefinement, &averageTimeResidual) != success)
+    {
+        handleErrorsException(status);
+        return status;
+    }
     if (status = handleOutput(&outputFile, outputFilename) != success)
     {
-        fprintf(stderr, "Fail to handle the output file");
+        handleErrorsException(status);
         return status;
     }
 
     printFinalOutput(outputFile, iterationsNorm, totalTimeFactorization, averageTimeRefinement, 0.0, size, invertedMatrix, iterations);
-
+    
     freeMainMemory(A, L, U, invertedMatrix, lineSwaps, iterationsNorm, size);
-
     fclose(inputFile);
     fclose(outputFile);
-    return 0;
+
+    return status;
 }

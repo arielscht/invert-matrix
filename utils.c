@@ -113,11 +113,16 @@ void readMatrix(real_t **matrix, uint size)
   }
 }
 
-void readMatrixFromFile(real_t **matrix, uint size, FILE *inputFile)
+FunctionStatus readMatrixFromFile(real_t **matrix, uint size, FILE *inputFile)
 {
+  FunctionStatus status = success;
+
   for (uint i = 0; i < size; i++)
     for (uint j = 0; j < size; j++)
-      fscanf(inputFile, "%lg", &matrix[i][j]);
+      if(fscanf(inputFile, "%lg", &matrix[i][j]) == -1)
+        status = missingData;
+
+  return status;
 }
 
 void printMatrixInFile(real_t **matrix, uint size, FILE *outputFile)

@@ -46,6 +46,7 @@ typedef enum
     fileInputErr,
     fileOutputErr, 
     fileInputEmpty,
+    missingData,
 } FunctionStatus;
 
 void initIdentityMatrix(real_t **matrix, unsigned int size);
@@ -59,7 +60,7 @@ void copyColumnToArray(real_t **matrix, real_t *array, uint column, uint size);
 void setMainDiagonal(real_t **matrix, real_t value, uint size);
 void cleanMatrix(real_t **matrix, uint size);
 void readMatrix(real_t **matrix, uint size);
-void readMatrixFromFile(real_t **matrix, uint size, FILE *outputFile);
+FunctionStatus readMatrixFromFile(real_t **matrix, uint size, FILE *inputFile);
 void printMatrixInFile(real_t **matrix, uint size, FILE *outputFile);
 FunctionStatus detTriangularMatrix(real_t *result, real_t **matrix, uint size);
 FunctionStatus multiplyDouble(real_t *result, real_t number1, real_t number2);

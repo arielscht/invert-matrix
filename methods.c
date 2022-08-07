@@ -14,9 +14,10 @@ FunctionStatus refinement(real_t **A,
                           uint size,
                           int iterations,
                           real_t *iterationsNorm,
-                          real_t *tTotal)
+                          real_t *tTotalRefinement, 
+                          real_t *tTotalResidual)
 {
-    *tTotal = timestamp();
+    *tTotalRefinement = timestamp();
     FunctionStatus status = success;
     real_t **identity = allocMatrix(size);
     real_t **residuals = allocMatrix(size);
@@ -78,8 +79,8 @@ FunctionStatus refinement(real_t **A,
         counter++;
     };
 
-    *tTotal = timestamp() - *tTotal;
-    *tTotal /= counter;
+    *tTotalRefinement = timestamp() - *tTotalRefinement;
+    *tTotalRefinement /= counter;
 
     freeMatrix(identity, size);
     freeMatrix(residuals, size);
