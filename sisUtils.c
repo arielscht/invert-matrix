@@ -54,11 +54,11 @@ FunctionStatus retroSubstitution(SistLinear_t *SL, real_t *solution)
         solution[actualLine] = SL->b[actualLine];
         for (uint column = size - 1; column > actualLine; column--)
         {
-            if (status = multiplyDouble(&mult, SL->A[actualLine][column], solution[column]) != success)
+            if ((status = multiplyDouble(&mult, SL->A[actualLine][column], solution[column])) != success)
                 return status;
             solution[actualLine] -= mult;
         }
-        if (status = divideDouble(&solution[actualLine], solution[actualLine], SL->A[actualLine][actualLine]) != success)
+        if ((status = divideDouble(&solution[actualLine], solution[actualLine], SL->A[actualLine][actualLine])) != success)
             return status;
     }
     return status;
@@ -81,11 +81,11 @@ FunctionStatus reverseRetroSubstitution(SistLinear_t *SL, real_t *solution)
         solution[line] = SL->b[line];
         for (int column = 0; column < line; column++)
         {
-            if (status = multiplyDouble(&mult, SL->A[line][column], solution[column]) != success)
+            if ((status = multiplyDouble(&mult, SL->A[line][column], solution[column])) != success)
                 return status;
             solution[line] -= mult;
         }
-        if (status = divideDouble(&solution[line], solution[line], SL->A[line][line]) != success)
+        if ((status = divideDouble(&solution[line], solution[line], SL->A[line][line])) != success)
             return status;
     }
 
@@ -108,7 +108,7 @@ FunctionStatus calcL2Norm(real_t **residual, uint size, real_t *result)
     for (uint i = 0; i < size; i++)
         for (uint j = 0; j < size; j++)
         {
-            if (status = multiplyDouble(&mult, residual[i][j], residual[i][j]) != success)
+            if ((status = multiplyDouble(&mult, residual[i][j], residual[i][j])) != success)
                 return status;
             sum += mult;
         }
@@ -134,7 +134,7 @@ FunctionStatus calcResidual(SistLinear_t *SL, real_t *solution, real_t *residual
         residual[i] = SL->b[i];
         for (size_t j = 0; j < size; j++)
         {
-            if (status = multiplyDouble(&mult, solution[j], SL->A[i][j]) != success)
+            if ((status = multiplyDouble(&mult, solution[j], SL->A[i][j])) != success)
                 return status;
             residual[i] -= mult;
         }

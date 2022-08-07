@@ -174,7 +174,7 @@ void copyColumnToArray(real_t **matrix, real_t *array, uint column, uint size)
   \param size Tamanho da matriz
   \param inputFile Ponteiro arquivo a ser lido
 */
-void readMatrixFromFile(real_t **matrix, uint size, FILE *inputFile)
+FunctionStatus readMatrixFromFile(real_t **matrix, uint size, FILE *inputFile)
 {
   FunctionStatus status = success;
 

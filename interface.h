@@ -27,6 +27,16 @@ void printFinalOutput(FILE *outputFile,
                       real_t **invertedMatrix,
                       uint iterations);
 
+FunctionStatus initializeMainMatrix(int skipInputFile,
+                                    real_t **A,
+                                    uint size,
+                                    FILE *inputFile);
+
+FunctionStatus handleMainInput(uint *size,
+                               FILE **inputFile,
+                               char *inputFilename,
+                               int *skipInputFile);
+
 void handleErrorsException(FunctionStatus status);
 
 #endif

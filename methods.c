@@ -14,7 +14,7 @@ FunctionStatus refinement(real_t **A,
                           uint size,
                           int iterations,
                           real_t *iterationsNorm,
-                          real_t *tTotalRefinement, 
+                          real_t *tTotalRefinement,
                           real_t *tTotalResidual)
 {
     FunctionStatus status = success;
@@ -50,7 +50,7 @@ FunctionStatus refinement(real_t **A,
             copyColumnToArray(identity, auxSL->b, i, size);
             copyColumnToArray(solution, curSol, i, size);
 
-            if (status = calcResidual(auxSL, curSol, residuals[i]) != success)
+            if ((status = calcResidual(auxSL, curSol, residuals[i])) != success)
                 return status;
         }
 
@@ -61,13 +61,13 @@ FunctionStatus refinement(real_t **A,
             copyArray(residuals[i], auxSL->b, size);
             copyMatrix(L, auxSL->A, size);
 
-            if (status = reverseRetroSubstitution(auxSL, curSol) != success)
+            if ((status = reverseRetroSubstitution(auxSL, curSol)) != success)
                 return status;
 
             copyMatrix(U, auxSL->A, size);
             copyArray(curSol, auxSL->b, size);
 
-            if (status = retroSubstitution(auxSL, curSol) != success)
+            if ((status = retroSubstitution(auxSL, curSol)) != success)
                 return status;
             // soma a solução do resíduo com a solução anterior para obter a nova apromixação
             for (int j = 0; j < size; j++)
@@ -75,10 +75,10 @@ FunctionStatus refinement(real_t **A,
         }
 
         auxTime = timestamp();
-        if (status = calcL2Norm(residuals, size, &norm) != success)
+        if ((status = calcL2Norm(residuals, size, &norm)) != success)
             return status;
         *tTotalResidual += timestamp() - auxTime;
-    
+
         iterationsNorm[counter - 1] = norm;
         counter++;
     };
@@ -120,7 +120,7 @@ FunctionStatus gaussElimination(real_t **A,
         for (uint auxLine = line + 1; auxLine < size; auxLine++)
         {
             real_t m;
-            if (status = divideDouble(&m, A[auxLine][line], A[line][line]) != success)
+            if ((status = divideDouble(&m, A[auxLine][line], A[line][line])) != success)
                 return status;
             A[auxLine][line] = 0.0;
 
@@ -129,7 +129,7 @@ FunctionStatus gaussElimination(real_t **A,
 
             for (uint column = line + 1; column < size; column++)
             {
-                if (status = multiplyDouble(&mult, A[line][column], m) != success)
+                if ((status = multiplyDouble(&mult, A[line][column], m)) != success)
                     return status;
                 A[auxLine][column] -= mult;
             }
@@ -151,7 +151,7 @@ FunctionStatus factorizationLU(real_t **A,
 
     copyMatrix(A, U, size);
     cleanMatrix(L, size);
-    if (status = gaussElimination(U, L, lineSwaps, size, tTotal) != success)
+    if ((status = gaussElimination(U, L, lineSwaps, size, tTotal)) != success)
         return status;
     setMainDiagonal(L, 1.0, size);
 
@@ -185,9 +185,9 @@ FunctionStatus reverseMatrix(real_t **A,
     initArrayWithIndexes(lineSwaps, size);
     initIdentityMatrix(identity, size);
 
-    if (status = factorizationLU(A, L, U, lineSwaps, size, tTotal) != success)
+    if ((status = factorizationLU(A, L, U, lineSwaps, size, tTotal)) != success)
         return status;
-    if (status = detTriangularMatrix(&det, U, size) != success)
+    if ((status = detTriangularMatrix(&det, U, size)) != success)
         return status;
     if (fabs(det) < DBL_EPSILON)
     {
@@ -202,13 +202,13 @@ FunctionStatus reverseMatrix(real_t **A,
         copyColumnToArray(identity, auxSL->b, i, size);
         copyMatrix(L, auxSL->A, size);
 
-        if (status = reverseRetroSubstitution(auxSL, sol) != success)
+        if ((status = reverseRetroSubstitution(auxSL, sol)) != success)
             return status;
 
         copyMatrix(U, auxSL->A, size);
         copyArray(sol, auxSL->b, size);
 
-        if (status = retroSubstitution(auxSL, sol) != success)
+        if ((status = retroSubstitution(auxSL, sol)) != success)
             return status;
 
         for (uint j = 0; j < size; j++)

@@ -2,7 +2,7 @@
 #include <getopt.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include "sislin.h"
 #include "utils.h"
 
 void handleArgs(int argc,
@@ -133,10 +133,10 @@ void printFinalOutput(FILE *outputFile,
     fprintf(outputFile, "# Tempo norma: %.15g\n", averageTimeNorm);
     fprintf(outputFile, "%d\n", size);
     printMatrixInFile(invertedMatrix, size, outputFile);
-} 
+}
 
 void handleErrorsException(FunctionStatus status)
-{   
+{
     switch (status)
     {
     case infErr:
@@ -166,6 +166,38 @@ void handleErrorsException(FunctionStatus status)
     default:
         fprintf(stderr, "The given error is not maped");
         break;
-    } 
+    }
     printf("\n");
+}
+
+FunctionStatus initializeMainMatrix(int skipInputFile,
+                                    real_t **A,
+                                    uint size,
+                                    FILE *inputFile)
+{
+    FunctionStatus status = success;
+
+    if (skipInputFile)
+        status = readMatrixFromFile(A, size, inputFile);
+    else
+        initRandomMatrix(A, generico, COEF_MAX, size);
+
+    return status;
+}
+
+FunctionStatus handleMainInput(uint *size,
+                               FILE **inputFile,
+                               char *inputFilename,
+                               int *skipInputFile)
+{
+    FunctionStatus status = success;
+
+    if (!(*size) && (status = handleInput(inputFile, inputFilename)) == success)
+    {
+        if (fscanf(*inputFile, "%d", size) == -1)
+            status = fileInputEmpty;
+        *skipInputFile = 1;
+    }
+
+    return status;
 }
