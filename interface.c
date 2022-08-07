@@ -113,7 +113,7 @@ FunctionStatus handleFile(FILE **inputFile, char *filename, char *fileMode)
     {
         *inputFile = fopen(filename, fileMode);
         if (!inputFile)
-            status = fileInputErr;
+            status = fileErr;
     }
 
     return status;
@@ -160,31 +160,28 @@ void handleErrorsException(FunctionStatus status)
     switch (status)
     {
     case infErr:
-        fprintf(stderr, "Some operation went to the infinity");
+        fprintf(stderr, "Some operation went to the infinity.");
         break;
     case nanErr:
-        fprintf(stderr, "Some arithmetic operation returned a NaN");
+        fprintf(stderr, "Some arithmetic operation returned a NaN.");
         break;
     case allocErr:
-        fprintf(stderr, "Some allocation memory went wrong");
+        fprintf(stderr, "Some allocation memory went wrong.");
         break;
     case nonInvertibleErr:
-        fprintf(stderr, "The given matrix is invertible");
+        fprintf(stderr, "The given matrix is invertible.");
         break;
-    case fileInputErr:
-        fprintf(stderr, "Failed to handle the input file");
-        break;
-    case fileOutputErr:
-        fprintf(stderr, "Failed to handle the output file");
+    case fileErr:
+        fprintf(stderr, "Failed to open file.");
         break;
     case fileInputEmpty:
-        fprintf(stderr, "The given input is empty");
+        fprintf(stderr, "The given input is empty.");
         break;
     case missingData:
-        fprintf(stderr, "Missing data in the input file");
+        fprintf(stderr, "Missing data in the input file.");
         break;
     default:
-        fprintf(stderr, "The given error is not maped");
+        fprintf(stderr, "The given error is not maped.");
         break;
     }
     printf("\n");

@@ -25,8 +25,7 @@ typedef enum
     nanErr,
     allocErr,
     nonInvertibleErr,
-    fileInputErr,
-    fileOutputErr,
+    fileErr,
     fileInputEmpty,
     missingData,
 } FunctionStatus;
