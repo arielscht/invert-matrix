@@ -16,4 +16,19 @@ FunctionStatus calcL2Norm(real_t **residual, uint size, real_t *result);
 
 FunctionStatus calcResidual(SistLinear_t *SL, real_t *solution, real_t *residual);
 
+FunctionStatus calcRefinementResidual(real_t **identity,
+                                      SistLinear_t *auxSL,
+                                      real_t **solution,
+                                      real_t *curSol,
+                                      real_t **residuals,
+                                      uint size);
+
+FunctionStatus calcRefinementNewApproximation(uint *lineSwaps,
+                                              real_t **residuals,
+                                              real_t **L,
+                                              SistLinear_t *auxSL,
+                                              real_t *curSol,
+                                              real_t **solution,
+                                              real_t **U,
+                                              uint size);
 #endif

@@ -152,3 +152,55 @@ FunctionStatus calcResidual(SistLinear_t *SL, real_t *solution, real_t *residual
 
     return status;
 }
+
+FunctionStatus calcRefinementResidual(real_t **identity,
+                                      SistLinear_t *auxSL,
+                                      real_t **solution,
+                                      real_t *curSol,
+                                      real_t **residuals,
+                                      uint size)
+{
+    FunctionStatus status = success;
+
+    for (int i = 0; i < size && status == success; i++)
+    {
+        copyColumnToArray(identity, auxSL->b, i, size);
+        copyColumnToArray(solution, curSol, i, size);
+
+        status = calcResidual(auxSL, curSol, residuals[i]);
+    }
+    return status;
+}
+
+FunctionStatus calcRefinementNewApproximation(uint *lineSwaps,
+                                              real_t **residuals,
+                                              real_t **L,
+                                              SistLinear_t *auxSL,
+                                              real_t *curSol,
+                                              real_t **solution,
+                                              real_t **U,
+                                              uint size)
+{
+    FunctionStatus status = success;
+
+    for (int i = 0; i < size && status == success; i++)
+    {
+        applyLineSwapsOnArray(lineSwaps, residuals[i], size);
+        copyArray(residuals[i], auxSL->b, size);
+        copyMatrix(L, auxSL->A, size);
+
+        if ((status = reverseRetroSubstitution(auxSL, curSol)) != success)
+            continue;
+
+        copyMatrix(U, auxSL->A, size);
+        copyArray(curSol, auxSL->b, size);
+
+        if ((status = retroSubstitution(auxSL, curSol)) != success)
+            continue;
+        // soma a solução do resíduo com a solução anterior para obter a nova apromixação
+        for (int j = 0; j < size; j++)
+            solution[j][i] += curSol[j];
+    }
+
+    return status;
+}

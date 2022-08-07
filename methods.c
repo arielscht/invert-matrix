@@ -26,70 +26,39 @@ FunctionStatus refinement(real_t **A,
     real_t auxTime = 0;
     int counter = 1;
 
-    if (!identity || !residuals || !curSol || !auxSL)
+    if ((status = verifyRefinementAllocs(identity, residuals, curSol, auxSL)) == success)
     {
-        freeMatrix(identity, size);
-        freeMatrix(residuals, size);
-        freeArray(curSol);
-        liberaSisLin(auxSL);
+        copyMatrix(A, auxSL->A, size);
+        initIdentityMatrix(identity, size);
 
-        status = allocErr;
-        return status;
+        *tTotalRefinement = timestamp();
+        while (counter <= iterations && status == success)
+        {
+            // Calcula resíduo
+            copyMatrix(A, auxSL->A, size);
+            if ((status = calcRefinementResidual(identity, auxSL, solution, curSol, residuals, size)) != success)
+                continue;
+            // Calcula nova aproximação
+            if ((status = calcRefinementNewApproximation(lineSwaps, residuals, L, auxSL, curSol, solution, U, size)) != success)
+                continue;
+
+            auxTime = timestamp();
+            if ((status = calcL2Norm(residuals, size, &norm)) != success)
+                continue;
+            *tTotalResidual += timestamp() - auxTime;
+
+            iterationsNorm[counter - 1] = norm;
+            counter++;
+        };
+        if (status == success)
+        {
+            *tTotalRefinement = timestamp() - *tTotalRefinement;
+            *tTotalRefinement /= counter;
+            *tTotalResidual /= counter;
+        }
     }
 
-    copyMatrix(A, auxSL->A, size);
-    initIdentityMatrix(identity, size);
-
-    *tTotalRefinement = timestamp();
-    while (counter <= iterations)
-    {
-        // Calcula resíduo e norma
-        copyMatrix(A, auxSL->A, size);
-        for (int i = 0; i < size; i++)
-        {
-            copyColumnToArray(identity, auxSL->b, i, size);
-            copyColumnToArray(solution, curSol, i, size);
-
-            if ((status = calcResidual(auxSL, curSol, residuals[i])) != success)
-                return status;
-        }
-
-        // Calcula nova aproximação
-        for (int i = 0; i < size; i++)
-        {
-            applyLineSwapsOnArray(lineSwaps, residuals[i], size);
-            copyArray(residuals[i], auxSL->b, size);
-            copyMatrix(L, auxSL->A, size);
-
-            if ((status = reverseRetroSubstitution(auxSL, curSol)) != success)
-                return status;
-
-            copyMatrix(U, auxSL->A, size);
-            copyArray(curSol, auxSL->b, size);
-
-            if ((status = retroSubstitution(auxSL, curSol)) != success)
-                return status;
-            // soma a solução do resíduo com a solução anterior para obter a nova apromixação
-            for (int j = 0; j < size; j++)
-                solution[j][i] += curSol[j];
-        }
-
-        auxTime = timestamp();
-        if ((status = calcL2Norm(residuals, size, &norm)) != success)
-            return status;
-        *tTotalResidual += timestamp() - auxTime;
-
-        iterationsNorm[counter - 1] = norm;
-        counter++;
-    };
-    *tTotalRefinement = timestamp() - *tTotalRefinement;
-    *tTotalRefinement /= counter;
-    *tTotalResidual /= counter;
-
-    freeMatrix(identity, size);
-    freeMatrix(residuals, size);
-    free(curSol);
-    liberaSisLin(auxSL);
+    freeRefinementMemory(identity, residuals, curSol, auxSL, size);
     return status;
 }
 
@@ -172,51 +141,39 @@ FunctionStatus reverseMatrix(real_t **A,
     real_t **identity = allocMatrix(size);
     real_t det;
 
-    if (!auxSL || !sol || !identity)
+    if ((status = verifyReverseMatrixAllocs(auxSL, sol, identity)) == success)
     {
-        liberaSisLin(auxSL);
-        freeArray(sol);
-        freeMatrix(identity, size);
+        initArrayWithIndexes(lineSwaps, size);
+        initIdentityMatrix(identity, size);
 
-        status = allocErr;
-        return status;
+        if ((status = factorizationLU(A, L, U, lineSwaps, size, tTotal)) == success &&
+            (status = detTriangularMatrix(&det, U, size)) == success &&
+            fabs(det) >= DBL_EPSILON)
+        {
+            applyLineSwaps(lineSwaps, identity, size);
+
+            for (uint i = 0; i < size && status == success; i++)
+            {
+                copyColumnToArray(identity, auxSL->b, i, size);
+                copyMatrix(L, auxSL->A, size);
+
+                if ((status = reverseRetroSubstitution(auxSL, sol)) != success)
+                    continue;
+
+                copyMatrix(U, auxSL->A, size);
+                copyArray(sol, auxSL->b, size);
+
+                if ((status = retroSubstitution(auxSL, sol)) != success)
+                    continue;
+
+                for (uint j = 0; j < size; j++)
+                    invertedMatrix[j][i] = sol[j];
+            }
+        }
+        else
+            status = status == success ? nonInvertibleErr : status;
     }
 
-    initArrayWithIndexes(lineSwaps, size);
-    initIdentityMatrix(identity, size);
-
-    if ((status = factorizationLU(A, L, U, lineSwaps, size, tTotal)) != success)
-        return status;
-    if ((status = detTriangularMatrix(&det, U, size)) != success)
-        return status;
-    if (fabs(det) < DBL_EPSILON)
-    {
-        status = nonInvertibleErr;
-        return status;
-    }
-
-    applyLineSwaps(lineSwaps, identity, size);
-
-    for (uint i = 0; i < size; i++)
-    {
-        copyColumnToArray(identity, auxSL->b, i, size);
-        copyMatrix(L, auxSL->A, size);
-
-        if ((status = reverseRetroSubstitution(auxSL, sol)) != success)
-            return status;
-
-        copyMatrix(U, auxSL->A, size);
-        copyArray(sol, auxSL->b, size);
-
-        if ((status = retroSubstitution(auxSL, sol)) != success)
-            return status;
-
-        for (uint j = 0; j < size; j++)
-            invertedMatrix[j][i] = sol[j];
-    }
-
-    liberaSisLin(auxSL);
-    free(sol);
-    freeMatrix(identity, size);
+    freeReverseMatrixMemory(auxSL, sol, identity, size);
     return status;
 }

@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include "utils.h"
+#include "sislin.h"
 
 void freeMatrix(real_t **matrix, uint size);
 
@@ -16,6 +17,13 @@ uint *allocUintArray(uint size);
 
 real_t *allocDoubleArray(uint size);
 
+FunctionStatus verifyMainAllocs(real_t **A,
+                                real_t **L,
+                                real_t **U,
+                                real_t **invertedMatrix,
+                                uint *lineSwaps,
+                                real_t *iterationsNorm);
+
 void freeMainMemory(
     real_t **A,
     real_t **L,
@@ -27,11 +35,24 @@ void freeMainMemory(
     FILE *inputFile,
     FILE *outputFile);
 
-FunctionStatus verifyMainAllocs(real_t **A,
-                                real_t **L,
-                                real_t **U,
-                                real_t **invertedMatrix,
-                                uint *lineSwaps,
-                                real_t *iterationsNorm);
+FunctionStatus verifyRefinementAllocs(real_t **identity,
+                                      real_t **residuals,
+                                      real_t *curSol,
+                                      SistLinear_t *auxSL);
+
+void freeRefinementMemory(real_t **identity,
+                          real_t **residuals,
+                          real_t *curSol,
+                          SistLinear_t *auxSL,
+                          uint size);
+
+FunctionStatus verifyReverseMatrixAllocs(SistLinear_t *auxSL,
+                                         real_t *sol,
+                                         real_t **identity);
+
+void freeReverseMatrixMemory(SistLinear_t *auxSL,
+                             real_t *sol,
+                             real_t **identity,
+                             uint size);
 
 #endif

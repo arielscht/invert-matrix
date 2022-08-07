@@ -1,4 +1,5 @@
 #include "memoryAlloc.h"
+#include "sislin.h"
 
 /*!
   \brief Libera uma matriz na memória
@@ -157,4 +158,51 @@ FunctionStatus verifyMainAllocs(real_t **A,
         status = allocErr;
 
     return status;
+}
+
+FunctionStatus verifyRefinementAllocs(real_t **identity,
+                                      real_t **residuals,
+                                      real_t *curSol,
+                                      SistLinear_t *auxSL)
+{
+    FunctionStatus status = success;
+
+    if (!identity || !residuals || !curSol || !auxSL)
+        status = allocErr;
+
+    return status;
+}
+
+void freeRefinementMemory(real_t **identity,
+                          real_t **residuals,
+                          real_t *curSol,
+                          SistLinear_t *auxSL,
+                          uint size)
+{
+    freeMatrix(identity, size);
+    freeMatrix(residuals, size);
+    freeArray(curSol);
+    liberaSisLin(auxSL);
+}
+
+FunctionStatus verifyReverseMatrixAllocs(SistLinear_t *auxSL,
+                                         real_t *sol,
+                                         real_t **identity)
+{
+    FunctionStatus status = success;
+
+    if (!auxSL || !sol || !identity)
+        status = allocErr;
+
+    return status;
+}
+
+void freeReverseMatrixMemory(SistLinear_t *auxSL,
+                             real_t *sol,
+                             real_t **identity,
+                             uint size)
+{
+    liberaSisLin(auxSL);
+    freeArray(sol);
+    freeMatrix(identity, size);
 }

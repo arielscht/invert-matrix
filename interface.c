@@ -169,7 +169,7 @@ void handleErrorsException(FunctionStatus status)
         fprintf(stderr, "Some allocation memory went wrong.");
         break;
     case nonInvertibleErr:
-        fprintf(stderr, "The given matrix is invertible.");
+        fprintf(stderr, "The given matrix is not invertible.");
         break;
     case fileErr:
         fprintf(stderr, "Failed to open file.");
@@ -181,7 +181,7 @@ void handleErrorsException(FunctionStatus status)
         fprintf(stderr, "Missing data in the input file.");
         break;
     default:
-        fprintf(stderr, "The given error is not maped.");
+        fprintf(stderr, "Unknown error.");
         break;
     }
     printf("\n");
