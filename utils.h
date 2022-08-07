@@ -44,7 +44,7 @@ typedef enum
     allocErr,
     nonInvertibleErr,
     fileInputErr,
-    fileOutputErr, 
+    fileOutputErr,
     fileInputEmpty,
     missingData,
 } FunctionStatus;
@@ -59,8 +59,7 @@ void copyArray(real_t *origin, real_t *destination, uint size);
 void copyColumnToArray(real_t **matrix, real_t *array, uint column, uint size);
 void setMainDiagonal(real_t **matrix, real_t value, uint size);
 void cleanMatrix(real_t **matrix, uint size);
-void readMatrix(real_t **matrix, uint size);
-FunctionStatus readMatrixFromFile(real_t **matrix, uint size, FILE *inputFile);
+void readMatrixFromFile(real_t **matrix, uint size, FILE *outputFile);
 void printMatrixInFile(real_t **matrix, uint size, FILE *outputFile);
 FunctionStatus detTriangularMatrix(real_t *result, real_t **matrix, uint size);
 FunctionStatus multiplyDouble(real_t *result, real_t number1, real_t number2);
