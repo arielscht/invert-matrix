@@ -271,7 +271,7 @@ FunctionStatus divideDouble(real_t *result,
 }
 
 /*!
-  \brief Calcula o valor da determinante de uma matriz triangular
+  \brief Calcula o valor da determinante de uma matriz
   *
   \param result Ponteiro para a variável de resultado
   \param matrix Ponteiro para a matriz
@@ -279,20 +279,27 @@ FunctionStatus divideDouble(real_t *result,
   *
   \returns O status de execução da função do tipo FunctionStatus
 */
-FunctionStatus detTriangularMatrix(real_t *result,
-                                   real_t **matrix,
-                                   uint size)
+FunctionStatus calcDet(real_t *result, real_t **matrix, int size)
 {
-  real_t det = 1;
-  int status = success;
+  FunctionStatus status = success;
 
-  for (uint i = 0; i < size; i++)
+  real_t sum = 0;
+  real_t sub = 0;
+  for (int i = 0; i < size && status == success; i++)
   {
-    status = multiplyDouble(&det, det, matrix[i][i]);
-    if (status != success)
-      return status;
+    real_t multSum = 1;
+    real_t multSub = 1;
+    for (int j = 0; j < size && status == success; j++)
+    {
+      if ((status = multiplyDouble(&multSum, multSum, matrix[(i + j) % size][j])) != success ||
+          (status = multiplyDouble(&multSub, multSub, matrix[(i + j) % size][size - j - 1])) != success)
+        continue;
+    }
+    sum += multSum;
+    sub -= multSub;
   }
 
-  *result = det;
+  if (status == success)
+    *result = sum + sub;
   return status;
 }
