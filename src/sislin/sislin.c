@@ -2,8 +2,8 @@
 #include <math.h>
 #include <stdlib.h>
 
-#include "utils.h"
-#include "sislin.h"
+#include "../utils/utils.h"
+#include "../sislin/sislin.h"
 
 // Alocaçao de matriz em memória.
 SistLinear_t *alocaSisLin(unsigned int n, tipoAloc_t tipo)

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <float.h>
 #include <math.h>
-#include "sisUtils.h"
+#include "../sisUtils/sisUtils.h"
 
 /*!
   \brief Encontra o pivô de uma coluna para a eliminação de gauss

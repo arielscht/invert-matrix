@@ -20,14 +20,14 @@ typedef unsigned int uint;
 */
 typedef enum
 {
-    success = 0,
-    infErr,
-    nanErr,
-    allocErr,
-    nonInvertibleErr,
-    fileErr,
-    fileInputEmpty,
-    missingData,
+  success = 0,
+  infErr,
+  nanErr,
+  allocErr,
+  nonInvertibleErr,
+  fileErr,
+  fileInputEmpty,
+  missingData,
 } FunctionStatus;
 
 double timestamp(void);

@@ -1,7 +1,7 @@
 #ifndef __INTERFACE__
 #define __INTERFACE__
 
-#include "utils.h"
+#include "../utils/utils.h"
 
 void handleArgs(int argc,
                 char *argv[],

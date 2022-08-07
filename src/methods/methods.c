@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <math.h>
 #include <float.h>
-#include "methods.h"
-#include "utils.h"
-#include "memoryAlloc.h"
-#include "sisUtils.h"
+#include "../methods/methods.h"
+#include "../utils/utils.h"
+#include "../memoryAlloc/memoryAlloc.h"
+#include "../sisUtils/sisUtils.h"
 
 /*!
   \brief Função que vai refinar a matrix inversa

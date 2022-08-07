@@ -1,5 +1,5 @@
-#include "memoryAlloc.h"
-#include "sislin.h"
+#include "../memoryAlloc/memoryAlloc.h"
+#include "../sislin/sislin.h"
 
 /*!
   \brief Libera uma matriz na memória

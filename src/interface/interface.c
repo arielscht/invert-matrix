@@ -2,8 +2,8 @@
 #include <getopt.h>
 #include <stdlib.h>
 #include <string.h>
-#include "sislin.h"
-#include "utils.h"
+#include "../sislin/sislin.h"
+#include "../utils/utils.h"
 
 /*!
   \brief Lida com os argumentos do programa

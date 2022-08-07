@@ -1,8 +1,8 @@
 #ifndef __SIS_UTILS_H__
 #define __SIS_UTILS_H__
 
-#include "utils.h"
-#include "sislin.h"
+#include "../utils/utils.h"
+#include "../sislin/sislin.h"
 
 uint findPivot(real_t **A, uint curColumn, uint size);
 

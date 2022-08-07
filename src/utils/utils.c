@@ -1,6 +1,7 @@
 #include <string.h>
 #include <math.h>
-#include "utils.h"
+
+#include "./utils.h"
 
 /*!
   \brief Obtém a data atual em milissegundos
