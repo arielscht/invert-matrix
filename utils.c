@@ -148,7 +148,7 @@ void printMatrix(real_t **matrix, uint size)
   for (uint i = 0; i < size; i++)
   {
     for (uint j = 0; j < size; j++)
-      printf("%10g ", matrix[i][j]);
+      printf("%.15g ", matrix[i][j]);
     printf("\n");
   }
 }
@@ -176,9 +176,14 @@ void copyColumnToArray(real_t **matrix, real_t *array, uint column, uint size)
 */
 void readMatrixFromFile(real_t **matrix, uint size, FILE *inputFile)
 {
+  FunctionStatus status = success;
+
   for (uint i = 0; i < size; i++)
     for (uint j = 0; j < size; j++)
-      fscanf(inputFile, "%lg", &matrix[i][j]);
+      if (fscanf(inputFile, "%lg", &matrix[i][j]) == -1)
+        status = missingData;
+
+  return status;
 }
 
 /*!
@@ -193,7 +198,7 @@ void printMatrixInFile(real_t **matrix, uint size, FILE *outputFile)
   for (uint i = 0; i < size; i++)
   {
     for (uint j = 0; j < size; j++)
-      fprintf(outputFile, "%10g ", matrix[i][j]);
+      fprintf(outputFile, "%.15g ", matrix[i][j]);
     fprintf(outputFile, "\n");
   }
 }

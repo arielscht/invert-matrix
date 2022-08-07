@@ -21,6 +21,7 @@ FunctionStatus refinement(real_t **A,
                           uint size,
                           int iterations,
                           real_t *iterationsNorm,
-                          real_t *tTotal);
+                          real_t *tTotalRefinement, 
+                          real_t *tTotalResidual);
 
 #endif

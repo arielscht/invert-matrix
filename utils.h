@@ -46,6 +46,7 @@ typedef enum
     fileInputErr,
     fileOutputErr,
     fileInputEmpty,
+    missingData,
 } FunctionStatus;
 
 void initIdentityMatrix(real_t **matrix, unsigned int size);

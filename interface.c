@@ -88,30 +88,32 @@ void handleArgs(int argc,
 
 FunctionStatus handleInput(FILE **inputFile, char *filename)
 {
+    FunctionStatus status = success;
+
     *inputFile = stdin;
     if (filename[0] != '\0')
     {
         *inputFile = fopen(filename, "r");
         if (!inputFile)
-        {
-            fprintf(stderr, "Error reading the input file.\n");
-            return fileInputErr;
-        }
+            status = fileInputErr;
     }
+
+    return status;
 }
 
 FunctionStatus handleOutput(FILE **outputFile, char *filename)
 {
+    FunctionStatus status = success;
+
     *outputFile = stdout;
     if (filename[0] != '\0')
     {
         *outputFile = fopen(filename, "w");
         if (!outputFile)
-        {
-            fprintf(stderr, "Error reading the output file.\n");
-            return fileOutputErr;
-        }
+            status = fileOutputErr;
     }
+
+    return status;
 }
 
 void printFinalOutput(FILE *outputFile,
@@ -126,9 +128,44 @@ void printFinalOutput(FILE *outputFile,
     for (uint i = 0; i < iterations; i++)
         fprintf(outputFile, "# iter %d: <||%.15g||>\n", i + 1, iterationsNorm[i]);
 
-    fprintf(outputFile, "# Tempo LU: %10g\n", totalTimeFactorization);
-    fprintf(outputFile, "# Tempo iter: %10g\n", averageTimeRefinement);
-    fprintf(outputFile, "# Tempo norma: %10g\n", 0.0);
-    fprintf(outputFile, "N: %d\n", size);
+    fprintf(outputFile, "# Tempo LU: %.15g\n", totalTimeFactorization);
+    fprintf(outputFile, "# Tempo iter: %.15g\n", averageTimeRefinement);
+    fprintf(outputFile, "# Tempo norma: %.15g\n", averageTimeNorm);
+    fprintf(outputFile, "%d\n", size);
     printMatrixInFile(invertedMatrix, size, outputFile);
+} 
+
+void handleErrorsException(FunctionStatus status)
+{   
+    switch (status)
+    {
+    case infErr:
+        fprintf(stderr, "Some operation went to the infinity");
+        break;
+    case nanErr:
+        fprintf(stderr, "Some arithmetic operation returned a NaN");
+        break;
+    case allocErr:
+        fprintf(stderr, "Some allocation memory went wrong");
+        break;
+    case nonInvertibleErr:
+        fprintf(stderr, "The given matrix is invertible");
+        break;
+    case fileInputErr:
+        fprintf(stderr, "Failed to handle the input file");
+        break;
+    case fileOutputErr:
+        fprintf(stderr, "Failed to handle the output file");
+        break;
+    case fileInputEmpty:
+        fprintf(stderr, "The given input is empty");
+        break;
+    case missingData:
+        fprintf(stderr, "Missing data in the input file");
+        break;
+    default:
+        fprintf(stderr, "The given error is not maped");
+        break;
+    } 
+    printf("\n");
 }

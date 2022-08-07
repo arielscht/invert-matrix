@@ -14,15 +14,16 @@ FunctionStatus refinement(real_t **A,
                           uint size,
                           int iterations,
                           real_t *iterationsNorm,
-                          real_t *tTotal)
+                          real_t *tTotalRefinement, 
+                          real_t *tTotalResidual)
 {
-    *tTotal = timestamp();
     FunctionStatus status = success;
     real_t **identity = allocMatrix(size);
     real_t **residuals = allocMatrix(size);
     real_t *curSol = allocDoubleArray(size);
     SistLinear_t *auxSL = alocaSisLin(size, pontPont);
     real_t norm = 0.0;
+    real_t auxTime = 0;
     int counter = 1;
 
     if (!identity || !residuals || !curSol || !auxSL)
@@ -39,6 +40,7 @@ FunctionStatus refinement(real_t **A,
     copyMatrix(A, auxSL->A, size);
     initIdentityMatrix(identity, size);
 
+    *tTotalRefinement = timestamp();
     while (counter <= iterations)
     {
         // Calcula resíduo e norma
@@ -72,14 +74,17 @@ FunctionStatus refinement(real_t **A,
                 solution[j][i] += curSol[j];
         }
 
+        auxTime = timestamp();
         if (status = calcL2Norm(residuals, size, &norm) != success)
             return status;
+        *tTotalResidual += timestamp() - auxTime;
+    
         iterationsNorm[counter - 1] = norm;
         counter++;
     };
-
-    *tTotal = timestamp() - *tTotal;
-    *tTotal /= counter;
+    *tTotalRefinement = timestamp() - *tTotalRefinement;
+    *tTotalRefinement /= counter;
+    *tTotalResidual /= counter;
 
     freeMatrix(identity, size);
     freeMatrix(residuals, size);

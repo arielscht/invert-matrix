@@ -27,4 +27,6 @@ void printFinalOutput(FILE *outputFile,
                       real_t **invertedMatrix,
                       uint iterations);
 
+void handleErrorsException(FunctionStatus status);
+
 #endif
