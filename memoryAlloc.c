@@ -99,8 +99,19 @@ real_t *allocDoubleArray(uint size)
   \param lineSwaps Ponteiro para o array de trocas de linha
   \param iterationsNorm Ponteiro para o array das normas das iterações do refinamento
   \param size Tamanho da matriz a ser invertida
+  \param inputFile Ponteiro para o arquivo de entrada
+  \param outputFile Ponteiro para o arquivo de saida
 */
-void freeMainMemory(real_t **A, real_t **L, real_t **U, real_t **invertedMatrix, uint *lineSwaps, real_t *iterationsNorm, uint size)
+void freeMainMemory(
+    real_t **A,
+    real_t **L,
+    real_t **U,
+    real_t **invertedMatrix,
+    uint *lineSwaps,
+    real_t *iterationsNorm,
+    uint size,
+    FILE *inputFile,
+    FILE *outputFile)
 {
     freeMatrix(A, size);
     freeMatrix(L, size);
@@ -108,4 +119,24 @@ void freeMainMemory(real_t **A, real_t **L, real_t **U, real_t **invertedMatrix,
     freeMatrix(invertedMatrix, size);
     freeArray(lineSwaps);
     freeArray(iterationsNorm);
+
+    if (inputFile)
+        fclose(inputFile);
+    if (outputFile)
+        fclose(outputFile);
+}
+
+FunctionStatus verifyMainAllocs(real_t **A,
+                                real_t **L,
+                                real_t **U,
+                                real_t **invertedMatrix,
+                                uint *lineSwaps,
+                                real_t *iterationsNorm)
+{
+    FunctionStatus status = success;
+
+    if (!A || !L || !U || !invertedMatrix || !lineSwaps || !iterationsNorm)
+        status = allocErr;
+
+    return status;
 }

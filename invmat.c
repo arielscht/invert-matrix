@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "sislin.h"
 #include "methods.h"
 #include "utils.h"
@@ -18,80 +17,42 @@ int main(int argc, char *argv[])
     uint size = 0;
     int skipInputFile = 0;
     FunctionStatus status = success;
+    real_t **A = NULL;
+    real_t **L = NULL;
+    real_t **U = NULL;
+    real_t **invertedMatrix = NULL;
+    uint *lineSwaps = NULL;
+    real_t *iterationsNorm = NULL;
+    real_t totalTimeFactorization = 0;
+    real_t averageTimeRefinement = 0;
+    real_t averageTimeResidual = 0;
+
     inputFilename[0] = '\0';
     outputFilename[0] = '\0';
 
     handleArgs(argc, argv, inputFilename, outputFilename, &iterations, &size);
 
-    if (status = handleInput(&inputFile, inputFilename) != success)
+    if ((status = handleMainInput(&size, &inputFile, inputFilename, &skipInputFile)) == success)
     {
-        handleErrorsException(status);
-        return status;
-    }
-    if (!size)
-    {
-        if(fscanf(inputFile, "%d", &size) == -1)
-        {
-            status = missingData; 
-            handleErrorsException(status);
-            return status;
-        }
-        skipInputFile = 1;
+        A = allocMatrix(size);
+        L = allocMatrix(size);
+        U = allocMatrix(size);
+        invertedMatrix = allocMatrix(size);
+        lineSwaps = allocUintArray(size);
+        iterationsNorm = allocDoubleArray(iterations);
+
+        if ((status = verifyMainAllocs(A, L, U, invertedMatrix, lineSwaps, iterationsNorm)) == success &&
+            (status = initializeMainMatrix(skipInputFile, A, size, inputFile)) == success &&
+            (status = reverseMatrix(A, L, U, lineSwaps, invertedMatrix, size, &totalTimeFactorization)) == success &&
+            (status = refinement(A, L, U, invertedMatrix, lineSwaps, size, iterations, iterationsNorm, &averageTimeRefinement, &averageTimeResidual)) == success &&
+            (status = handleOutput(&outputFile, outputFilename)) == success)
+            printFinalOutput(outputFile, iterationsNorm, totalTimeFactorization, averageTimeRefinement, averageTimeResidual, size, invertedMatrix, iterations);
     }
 
-    real_t **A = allocMatrix(size);
-    real_t **L = allocMatrix(size);
-    real_t **U = allocMatrix(size);
-    real_t **invertedMatrix = allocMatrix(size);
-    uint *lineSwaps = allocUintArray(size);
-    real_t *iterationsNorm = allocDoubleArray(iterations);
-
-    if (!A || !L || !U || !invertedMatrix || !lineSwaps || !iterationsNorm)
-    {
-        status = allocErr;
-        freeMainMemory(A, L, U, invertedMatrix, lineSwaps, iterationsNorm, size);
-        fclose(inputFile);
+    if (status != success)
         handleErrorsException(status);
 
-        return status;
-    }
-
-    real_t totalTimeFactorization = 0;
-    real_t averageTimeRefinement = 0;
-    real_t averageTimeResidual = 0;
-
-    if (skipInputFile)
-    {
-        if(status = readMatrixFromFile(A, size, inputFile) != success)
-        {
-            handleErrorsException(status);
-            return status;
-        }
-    }
-    else
-        initRandomMatrix(A, generico, COEF_MAX, size);
-
-    if(status = reverseMatrix(A, L, U, lineSwaps, invertedMatrix, size, &totalTimeFactorization) != success)
-    {
-        handleErrorsException(status);
-        return status;
-    }
-    if(status = refinement(A, L, U, invertedMatrix, lineSwaps, size, iterations, iterationsNorm, &averageTimeRefinement, &averageTimeResidual) != success)
-    {
-        handleErrorsException(status);
-        return status;
-    }
-    if (status = handleOutput(&outputFile, outputFilename) != success)
-    {
-        handleErrorsException(status);
-        return status;
-    }
-
-    printFinalOutput(outputFile, iterationsNorm, totalTimeFactorization, averageTimeRefinement, averageTimeResidual, size, invertedMatrix, iterations);
-    
-    freeMainMemory(A, L, U, invertedMatrix, lineSwaps, iterationsNorm, size);
-    fclose(inputFile);
-    fclose(outputFile);
+    freeMainMemory(A, L, U, invertedMatrix, lineSwaps, iterationsNorm, size, inputFile, outputFile);
 
     return status;
 }
