@@ -3,6 +3,13 @@
 #include <math.h>
 #include "sisUtils.h"
 
+/*!
+  \brief Encontra o pivot de uma coluna para a eliminação de gauss
+  *
+  \param A Ponteiro para a matriz de coeficientes
+  \param curColumn O índice da coluna atual na eliminação
+  \param size Tamanho da matriz de coeficientes
+*/
 uint findPivot(real_t **A, uint curColumn, uint size)
 {
     uint pivot = curColumn;
@@ -14,6 +21,13 @@ uint findPivot(real_t **A, uint curColumn, uint size)
     return pivot;
 }
 
+/*!
+  \brief Troca duas linhas de uma matriz do tipo ponteiro para ponteiro
+  *
+  \param matrix Ponteiro para a matriz
+  \param line1 Índice da linha 1 a ser trocada
+  \param line2 Índice da linha 2 a ser trocada
+*/
 void swapLines(real_t **matrix, uint line1, uint line2)
 {
     real_t *auxLine = matrix[line1];
@@ -21,6 +35,12 @@ void swapLines(real_t **matrix, uint line1, uint line2)
     matrix[line2] = auxLine;
 }
 
+/*!
+  \brief Aplica a retrosubstituição em um sistema linear triangular superior
+  *
+  \param SL Ponteiro para o sistema linear
+  \param solution Ponteiro para o array onde a solução será armazenada
+*/
 FunctionStatus retroSubstitution(SistLinear_t *SL, real_t *solution)
 {
     uint size = SL->n;
@@ -44,6 +64,12 @@ FunctionStatus retroSubstitution(SistLinear_t *SL, real_t *solution)
     return status;
 }
 
+/*!
+  \brief Aplica a retrosubstituição em um sistema linear triangular inferior
+  *
+  \param SL Ponteiro para o sistema linear
+  \param solution Ponteiro para o array onde a solução será armazenada
+*/
 FunctionStatus reverseRetroSubstitution(SistLinear_t *SL, real_t *solution)
 {
     uint size = SL->n;
@@ -66,6 +92,13 @@ FunctionStatus reverseRetroSubstitution(SistLinear_t *SL, real_t *solution)
     return status;
 }
 
+/*!
+  \brief Calcula a norma L2 dos resíduos
+  *
+  \param residual Ponteiro para a matriz de residuos
+  \param size Tamanho da matriz de residuos
+  \param result Ponteiro para a varíavel de resultado
+*/
 FunctionStatus calcL2Norm(real_t **residual, uint size, real_t *result)
 {
     real_t sum = 0.0;
@@ -83,6 +116,13 @@ FunctionStatus calcL2Norm(real_t **residual, uint size, real_t *result)
     return status;
 }
 
+/*!
+  \brief Calcula o resíduo de um sistema linear
+  *
+  \param SL Ponteiro para o sistema linear
+  \param solution Ponteiro para o array de soluções do sistema
+  \param residual Ponteiro para o array onde os resíduos serão armazenados
+*/
 FunctionStatus calcResidual(SistLinear_t *SL, real_t *solution, real_t *residual)
 {
     uint size = SL->n;
