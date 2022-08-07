@@ -2,8 +2,8 @@
 #include <math.h>
 #include <stdlib.h>
 
-#include "utils.h"
-#include "sislin.h"
+#include "../utils/utils.h"
+#include "../sislin/sislin.h"
 
 // Alocaçao de matriz em memória.
 SistLinear_t *alocaSisLin(unsigned int n, tipoAloc_t tipo)
@@ -80,10 +80,11 @@ void liberaSisLin(SistLinear_t *SL)
 /*!
   \brief Cria coeficientes e termos independentes do SL
   *
-  \param SL Ponteiro para o sistema linear
-  \param tipo Tipo de sistema linear a ser criado. Pode ser:
+  \param A Ponteiro para a matriz
+  \param tipo Tipo da matriz de coeficientes a ser gerada. Pode ser:
      comSolucao, eqNula, eqProporcional, eqCombLinear, hilbert
   \param coef_max Maior valor para coeficientes e termos independentes
+  \param size Tamanho da matriz a ser inicializada
 */
 void initRandomMatrix(real_t **A, tipoSistLinear_t tipo, real_t coef_max, uint size)
 {
@@ -185,7 +186,7 @@ void prnSisLin(SistLinear_t *SL)
   {
     printf("\n  ");
     for (int j = 0; j < n; ++j)
-      printf("%10g", SL->A[i][j]);
+      printf("%.15g", SL->A[i][j]);
     printf("   |   %g", SL->b[i]);
   }
   printf("\n\n");
@@ -197,6 +198,6 @@ void prnVetor(real_t *v, unsigned int n)
 
   printf("\n");
   for (i = 0; i < n; ++i)
-    printf("%10g ", v[i]);
+    printf("%.15g ", v[i]);
   printf("\n\n");
 }

@@ -1,7 +1,7 @@
 #ifndef __SISLIN_H__
 #define __SISLIN_H__
 
-#include "utils.h"
+#include "../utils/utils.h"
 
 #define COEF_MAX 32.0 // Valor máximo usado para gerar valores aleatórios de
                       // coeficientes nos sistemas lineares.

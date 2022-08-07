@@ -1,10 +1,9 @@
 #ifndef __METHODS_H__
 #define __METHODS_H__
-#define ERRO_COMPARISON 1.0e-6 // Error tolerance for comparing two real type values
 #define ERRO_NORM 1.0e-6
 #define MAXIT 1000
 
-#include "sislin.h"
+#include "../sislin/sislin.h"
 
 FunctionStatus reverseMatrix(real_t **A,
                              real_t **L,
@@ -21,7 +20,8 @@ FunctionStatus refinement(real_t **A,
                           uint *lineSwaps,
                           uint size,
                           int iterations,
-                          FILE *outputFile,
-                          real_t *tTotal);
+                          real_t *iterationsNorm,
+                          real_t *tTotalRefinement,
+                          real_t *tTotalResidual);
 
 #endif

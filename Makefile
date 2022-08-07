@@ -3,15 +3,17 @@
     LFLAGS = -lm
 
       PROG = invmat
-      OBJS = utils.o \
-             sislin.o \
-             interface.o \
-             methods.o \
-             $(PROG).o
+      OBJS = ./src/utils/utils.o \
+             ./src/sislin/sislin.o \
+             ./src/interface/interface.o \
+             ./src/methods/methods.o \
+             ./src/memoryAlloc/memoryAlloc.o \
+             ./src/sisUtils/sisUtils.o \
+             ./src/$(PROG).o
 
 .PHONY: limpa faxina clean distclean purge all
 
-%.o: %.c %.h utils.h sislin.h
+%.o: ./src/%/%.c ./src/%/%.h
 	$(CC) -c $(CFLAGS) $<
 
 $(PROG):  $(OBJS)
@@ -22,5 +24,7 @@ clean:
 
 purge:   clean
 	@rm -f *.o core a.out
+	@rm -f *.txt
 	@rm -f $(PROG)
+	@rm -f $(OBJS)
 
