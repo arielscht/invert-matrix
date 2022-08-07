@@ -2,14 +2,10 @@
 #include <math.h>
 #include "utils.h"
 
-/*  Retorna tempo em milisegundos
-
-    Forma de uso:
-
-    double tempo;
-    tempo = timestamp();
-    <trecho de programa do qual se deseja medir tempo>
-    tempo = timestamp() - tempo;
+/*!
+  \brief Obtém a data atual em milissegundos
+  *
+  \returns A data atual em milissegundos
 */
 double timestamp(void)
 {
@@ -173,6 +169,8 @@ void copyColumnToArray(real_t **matrix, real_t *array, uint column, uint size)
   \param matrix Ponteiro para a matriz a ser armazenada
   \param size Tamanho da matriz
   \param inputFile Ponteiro arquivo a ser lido
+  *
+  \returns O status de execução da função do tipo FunctionStatus
 */
 FunctionStatus readMatrixFromFile(real_t **matrix, uint size, FILE *inputFile)
 {
@@ -209,6 +207,8 @@ void printMatrixInFile(real_t **matrix, uint size, FILE *outputFile)
   \param result Ponteiro para a variável de resultado
   \param number1 Valor 1 a ser multiplicado
   \param number2 Valor 2 a ser multiplicado
+  *
+  \returns O status de execução da função do tipo FunctionStatus
 */
 FunctionStatus multiplyDouble(real_t *result, real_t number1, real_t number2)
 {
@@ -229,6 +229,8 @@ FunctionStatus multiplyDouble(real_t *result, real_t number1, real_t number2)
   \param result Ponteiro para a variável de resultado
   \param number1 Valor do numerador
   \param number2 Valor do denominador
+  *
+  \returns O status de execução da função do tipo FunctionStatus
 */
 FunctionStatus divideDouble(real_t *result, real_t number1, real_t number2)
 {
@@ -249,6 +251,8 @@ FunctionStatus divideDouble(real_t *result, real_t number1, real_t number2)
   \param result Ponteiro para a variável de resultado
   \param matrix Ponteiro para a matriz
   \param size Tamanho da matriz
+  *
+  \returns O status de execução da função do tipo FunctionStatus
 */
 FunctionStatus detTriangularMatrix(real_t *result, real_t **matrix, uint size)
 {

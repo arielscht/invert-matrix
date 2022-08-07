@@ -11,8 +11,8 @@ int main(int argc, char *argv[])
     srand(20221);
     char inputFilename[200];
     char outputFilename[200];
-    FILE *inputFile = NULL;
-    FILE *outputFile = NULL;
+    FILE *inputFile = stdin;
+    FILE *outputFile = stdout;
     int iterations = 0;
     uint size = 0;
     int skipInputFile = 0;
@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
             (status = initializeMainMatrix(skipInputFile, A, size, inputFile)) == success &&
             (status = reverseMatrix(A, L, U, lineSwaps, invertedMatrix, size, &totalTimeFactorization)) == success &&
             (status = refinement(A, L, U, invertedMatrix, lineSwaps, size, iterations, iterationsNorm, &averageTimeRefinement, &averageTimeResidual)) == success &&
-            (status = handleOutput(&outputFile, outputFilename)) == success)
+            (status = handleFile(&outputFile, outputFilename, "w")) == success)
             printFinalOutput(outputFile, iterationsNorm, totalTimeFactorization, averageTimeRefinement, averageTimeResidual, size, invertedMatrix, iterations);
     }
 

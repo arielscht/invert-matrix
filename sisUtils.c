@@ -4,11 +4,13 @@
 #include "sisUtils.h"
 
 /*!
-  \brief Encontra o pivot de uma coluna para a eliminação de gauss
+  \brief Encontra o pivô de uma coluna para a eliminação de gauss
   *
   \param A Ponteiro para a matriz de coeficientes
   \param curColumn O índice da coluna atual na eliminação
   \param size Tamanho da matriz de coeficientes
+  *
+  \returns O índice da linha do pivô encontrado
 */
 uint findPivot(real_t **A, uint curColumn, uint size)
 {
@@ -40,6 +42,8 @@ void swapLines(real_t **matrix, uint line1, uint line2)
   *
   \param SL Ponteiro para o sistema linear
   \param solution Ponteiro para o array onde a solução será armazenada
+  *
+  \returns O status de execução da função do tipo FunctionStatus
 */
 FunctionStatus retroSubstitution(SistLinear_t *SL, real_t *solution)
 {
@@ -69,6 +73,8 @@ FunctionStatus retroSubstitution(SistLinear_t *SL, real_t *solution)
   *
   \param SL Ponteiro para o sistema linear
   \param solution Ponteiro para o array onde a solução será armazenada
+  *
+  \returns O status de execução da função do tipo FunctionStatus
 */
 FunctionStatus reverseRetroSubstitution(SistLinear_t *SL, real_t *solution)
 {
@@ -98,6 +104,8 @@ FunctionStatus reverseRetroSubstitution(SistLinear_t *SL, real_t *solution)
   \param residual Ponteiro para a matriz de residuos
   \param size Tamanho da matriz de residuos
   \param result Ponteiro para a varíavel de resultado
+  *
+  \returns O status de execução da função do tipo FunctionStatus
 */
 FunctionStatus calcL2Norm(real_t **residual, uint size, real_t *result)
 {
@@ -122,6 +130,8 @@ FunctionStatus calcL2Norm(real_t **residual, uint size, real_t *result)
   \param SL Ponteiro para o sistema linear
   \param solution Ponteiro para o array de soluções do sistema
   \param residual Ponteiro para o array onde os resíduos serão armazenados
+  *
+  \returns O status de execução da função do tipo FunctionStatus
 */
 FunctionStatus calcResidual(SistLinear_t *SL, real_t *solution, real_t *residual)
 {

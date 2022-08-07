@@ -5,6 +5,16 @@
 #include "sislin.h"
 #include "utils.h"
 
+/*!
+  \brief Lida com os argumentos do programa
+  *
+  \param argc Parâmetro argc da main, número de argumentos passados
+  \param argv Array de argumentos da execução do programa
+  \param inputFilename Ponteiro para o nome do arquivo de entrada
+  \param outputFilename Ponteiro para o nome do arquivo de saída
+  \param iterations Ponteiro para a variável que armazena o número de iterações a serem executadas
+  \param size Ponteiro para a variável que armazena o tamanho da matriz
+*/
 void handleArgs(int argc,
                 char *argv[],
                 char *inputFilename,
@@ -86,36 +96,41 @@ void handleArgs(int argc,
     }
 }
 
-FunctionStatus handleInput(FILE **inputFile, char *filename)
+/*!
+  \brief Abre um arquivo e retorna o ponteiro por parâmetro
+  *
+  \param inputFile Ponteiro para o ponteiro do arquivo
+  \param filename Caminho do arquivo a ser aberto
+  \param fileMode Modo de abertura do arquivo ex: "r" para leitura, "w" para escrita
+  *
+  \returns O status de execução da função do tipo FunctionStatus
+*/
+FunctionStatus handleFile(FILE **inputFile, char *filename, char *fileMode)
 {
     FunctionStatus status = success;
 
-    *inputFile = stdin;
     if (filename[0] != '\0')
     {
-        *inputFile = fopen(filename, "r");
+        *inputFile = fopen(filename, fileMode);
         if (!inputFile)
-            status = fileInputErr;
+            status = fileErr;
     }
 
     return status;
 }
 
-FunctionStatus handleOutput(FILE **outputFile, char *filename)
-{
-    FunctionStatus status = success;
-
-    *outputFile = stdout;
-    if (filename[0] != '\0')
-    {
-        *outputFile = fopen(filename, "w");
-        if (!outputFile)
-            status = fileOutputErr;
-    }
-
-    return status;
-}
-
+/*!
+  \brief Imprime os resultadoes finais no arquivo de saída
+  *
+  \param outputFile Ponteiro para o arquivo de saída
+  \param iterationsNorm Ponteiro para o vetor das normas do refinamento
+  \param totalTimeFactorization Tempo total da fatoração LU
+  \param averageTimeRefinement Tempo médio das iterações do refinamento
+  \param averageTimeNorm Tempo médio do cálculo da norma
+  \param size Tamanho das matrizes
+  \param invertedMatrix Ponteiro para a matriz inversa obtida
+  \param iterations O número de iterações do refinamento executadas
+*/
 void printFinalOutput(FILE *outputFile,
                       real_t *iterationsNorm,
                       real_t totalTimeFactorization,
@@ -135,41 +150,51 @@ void printFinalOutput(FILE *outputFile,
     printMatrixInFile(invertedMatrix, size, outputFile);
 }
 
+/*!
+  \brief Imprime em stderr a mensagem correspondente para cada código de erro
+  *
+  \param status Código de erro do tipo FunctionStatus
+*/
 void handleErrorsException(FunctionStatus status)
 {
     switch (status)
     {
     case infErr:
-        fprintf(stderr, "Some operation went to the infinity");
+        fprintf(stderr, "Some operation went to the infinity.");
         break;
     case nanErr:
-        fprintf(stderr, "Some arithmetic operation returned a NaN");
+        fprintf(stderr, "Some arithmetic operation returned a NaN.");
         break;
     case allocErr:
-        fprintf(stderr, "Some allocation memory went wrong");
+        fprintf(stderr, "Some allocation memory went wrong.");
         break;
     case nonInvertibleErr:
-        fprintf(stderr, "The given matrix is invertible");
+        fprintf(stderr, "The given matrix is invertible.");
         break;
-    case fileInputErr:
-        fprintf(stderr, "Failed to handle the input file");
-        break;
-    case fileOutputErr:
-        fprintf(stderr, "Failed to handle the output file");
+    case fileErr:
+        fprintf(stderr, "Failed to open file.");
         break;
     case fileInputEmpty:
-        fprintf(stderr, "The given input is empty");
+        fprintf(stderr, "The given input is empty.");
         break;
     case missingData:
-        fprintf(stderr, "Missing data in the input file");
+        fprintf(stderr, "Missing data in the input file.");
         break;
     default:
-        fprintf(stderr, "The given error is not maped");
+        fprintf(stderr, "The given error is not maped.");
         break;
     }
     printf("\n");
 }
 
+/*!
+  \brief Inicializa a matriz a ser invertida, seja lendo um arquivo ou gerando aleatoriamente
+  *
+  \param readInputFile Flag que indica se a entrada será por arquivo
+  \param size tamanho da matriz
+  *
+  \returns O status de execução da função do tipo FunctionStatus
+*/
 FunctionStatus initializeMainMatrix(int skipInputFile,
                                     real_t **A,
                                     uint size,
@@ -185,6 +210,14 @@ FunctionStatus initializeMainMatrix(int skipInputFile,
     return status;
 }
 
+/*!
+  \brief Lê o tamanho da matriz no arquivo para inicializar a memória antes de prosseguir
+  *
+  \param size Variável onde o tamanho da matriz de entrada será armazenada
+  \param input tamanho da matriz
+  *
+  \returns O status de execução da função do tipo FunctionStatus
+*/
 FunctionStatus handleMainInput(uint *size,
                                FILE **inputFile,
                                char *inputFilename,
@@ -192,7 +225,7 @@ FunctionStatus handleMainInput(uint *size,
 {
     FunctionStatus status = success;
 
-    if (!(*size) && (status = handleInput(inputFile, inputFilename)) == success)
+    if (!(*size) && (status = handleFile(inputFile, inputFilename, "r")) == success)
     {
         if (fscanf(*inputFile, "%d", size) == -1)
             status = fileInputEmpty;
