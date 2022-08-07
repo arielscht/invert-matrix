@@ -136,19 +136,23 @@ FunctionStatus reverseMatrix(real_t **A,
                              real_t *tTotal)
 {
     FunctionStatus status = success;
+    real_t det;
+    if ((status = calcDet(&det, A, size)) != success || fabs(det) < DBL_EPSILON)
+    {
+        status = status != success ? status : nonInvertibleErr;
+        return status;
+    }
+
     SistLinear_t *auxSL = alocaSisLin(size, pontPont);
     real_t *sol = allocDoubleArray(size);
     real_t **identity = allocMatrix(size);
-    real_t det;
 
     if ((status = verifyReverseMatrixAllocs(auxSL, sol, identity)) == success)
     {
         initArrayWithIndexes(lineSwaps, size);
         initIdentityMatrix(identity, size);
 
-        if ((status = factorizationLU(A, L, U, lineSwaps, size, tTotal)) == success &&
-            (status = detTriangularMatrix(&det, U, size)) == success &&
-            fabs(det) >= DBL_EPSILON)
+        if ((status = factorizationLU(A, L, U, lineSwaps, size, tTotal)) == success)
         {
             applyLineSwaps(lineSwaps, identity, size);
 
@@ -170,8 +174,6 @@ FunctionStatus reverseMatrix(real_t **A,
                     invertedMatrix[j][i] = sol[j];
             }
         }
-        else
-            status = status == success ? nonInvertibleErr : status;
     }
 
     freeReverseMatrixMemory(auxSL, sol, identity, size);
