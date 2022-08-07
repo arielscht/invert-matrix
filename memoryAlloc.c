@@ -1,5 +1,11 @@
 #include "memoryAlloc.h"
 
+/*!
+  \brief Libera uma matriz na memória
+  *
+  \param matrix Ponteiro para a matriz
+  \param size Tamanho da matriz
+*/
 void freeMatrix(real_t **matrix, uint size)
 {
     if (!matrix)
@@ -13,6 +19,11 @@ void freeMatrix(real_t **matrix, uint size)
     free(matrix);
 }
 
+/*!
+  \brief Libera um array na memória
+  *
+  \param array Ponteiro para o array
+*/
 void freeArray(void *array)
 {
     if (!array)
@@ -21,6 +32,11 @@ void freeArray(void *array)
     free(array);
 }
 
+/*!
+  \brief Aloca uma matriz do tipo ponteiro de ponteiro na memória
+  *
+  \param size Tamanho da matriz
+*/
 real_t **allocMatrix(uint size)
 {
     real_t **matrix = calloc(size, sizeof(real_t *));
@@ -45,6 +61,11 @@ real_t **allocMatrix(uint size)
     return matrix;
 }
 
+/*!
+  \brief Aloca um array de unsigned int
+  *
+  \param size Tamanho do array
+*/
 uint *allocUintArray(uint size)
 {
     uint *array = calloc(size, sizeof(uint));
@@ -54,6 +75,11 @@ uint *allocUintArray(uint size)
     return array;
 }
 
+/*!
+  \brief Aloca um array de double
+  *
+  \param size Tamanho do array
+*/
 real_t *allocDoubleArray(uint size)
 {
     real_t *array = calloc(size, sizeof(real_t));
@@ -63,6 +89,17 @@ real_t *allocDoubleArray(uint size)
     return array;
 }
 
+/*!
+  \brief Libera na memória as principais estruturas utilizadas no programa
+  *
+  \param A Ponteiro para a matriz a ser invertida
+  \param L Ponteiro para a matriz de multiplicadores L
+  \param U Ponteiro para a matriz triangularizada
+  \param invertedMatrix Ponteiro para a matriz inversa encontrada
+  \param lineSwaps Ponteiro para o array de trocas de linha
+  \param iterationsNorm Ponteiro para o array das normas das iterações do refinamento
+  \param size Tamanho da matriz a ser invertida
+*/
 void freeMainMemory(real_t **A, real_t **L, real_t **U, real_t **invertedMatrix, uint *lineSwaps, real_t *iterationsNorm, uint size)
 {
     freeMatrix(A, size);
