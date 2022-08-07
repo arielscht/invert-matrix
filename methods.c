@@ -6,6 +6,22 @@
 #include "memoryAlloc.h"
 #include "sisUtils.h"
 
+/*!
+  \brief Função que vai refinar a matrix inversa
+  *
+  \param A Ponteiro para a matriz A
+  \param L Ponteiro para a matriz L
+  \param U Ponteiro para a matriz U
+  \param solution Ponteiro para a matriz inversa
+  \param lineSwaps Ponteiro para o vetor de troca de linhas
+  \param size Tamanho da matriz
+  \param iterations Quantidade de iterações a serem executadas no refinamento
+  \param iterationsNorm Ponteiro para o vetor das normas de cada iteração
+  \param tTotalRefinement Ponteiro para o Tempo total do refinamento
+  \param tTotalResidual Ponteiro para o tempo total do cálculo da norma
+  *
+  \returns O status de execução da função do tipo FunctionStatus
+*/
 FunctionStatus refinement(real_t **A,
                           real_t **L,
                           real_t **U,
@@ -62,6 +78,17 @@ FunctionStatus refinement(real_t **A,
     return status;
 }
 
+/*!
+  \brief Função que aplica a eliminação de gauss na matriz A
+  *
+  \param A Ponteiro para a matriz A
+  \param L Ponteiro para a matriz L
+  \param lineSwaps Ponteiro para o vetor de troca de linhas
+  \param size Tamanho da matriz
+  \param tTotal Ponteiro para o Tempo total da eliminação de gauss
+  *
+  \returns O status de execução da função do tipo FunctionStatus
+*/
 FunctionStatus gaussElimination(real_t **A,
                                 real_t **L,
                                 uint *lineSwaps,
@@ -109,6 +136,18 @@ FunctionStatus gaussElimination(real_t **A,
     return status;
 }
 
+/*!
+  \brief Função que aplica a Fatoração LU em A
+  *
+  \param A Ponteiro para a matriz A
+  \param L Ponteiro para a matriz L
+  \param L Ponteiro para a matriz U
+  \param lineSwaps Ponteiro para o vetor de troca de linhas
+  \param size Tamanho da matriz
+  \param tTotal Ponteiro para o Tempo total da eliminação de gauss
+  *
+  \returns O status de execução da função do tipo FunctionStatus
+*/
 FunctionStatus factorizationLU(real_t **A,
                                real_t **L,
                                real_t **U,
@@ -127,6 +166,19 @@ FunctionStatus factorizationLU(real_t **A,
     return status;
 }
 
+/*!
+  \brief Função que vai obter a inversa da matriz A
+  *
+  \param A Ponteiro para a matriz A
+  \param L Ponteiro para a matriz L
+  \param L Ponteiro para a matriz U
+  \param lineSwaps Ponteiro para o vetor de troca de linhas
+  \param invertedMatrix Ponteiro para a matriz invertedMatrix
+  \param size Tamanho da matriz
+  \param tTotal Ponteiro para o Tempo total da eliminação de gauss
+  *
+  \returns O status de execução da função do tipo FunctionStatus
+*/
 FunctionStatus reverseMatrix(real_t **A,
                              real_t **L,
                              real_t **U,

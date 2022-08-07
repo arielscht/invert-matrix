@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 
     handleArgs(argc, argv, inputFilename, outputFilename, &iterations, &size);
 
-    if ((status = handleMainInput(&size, &inputFile, inputFilename, &skipInputFile)) == success)
+    if ((status = readMainInput(&size, &inputFile, inputFilename, &skipInputFile)) == success)
     {
         A = allocMatrix(size);
         L = allocMatrix(size);
