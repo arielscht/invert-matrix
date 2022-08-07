@@ -128,10 +128,10 @@ void printFinalOutput(FILE *outputFile,
     for (uint i = 0; i < iterations; i++)
         fprintf(outputFile, "# iter %d: <||%.15g||>\n", i + 1, iterationsNorm[i]);
 
-    fprintf(outputFile, "# Tempo LU: %10g\n", totalTimeFactorization);
-    fprintf(outputFile, "# Tempo iter: %10g\n", averageTimeRefinement);
-    fprintf(outputFile, "# Tempo norma: %10g\n", 0.0);
-    fprintf(outputFile, "N: %d\n", size);
+    fprintf(outputFile, "# Tempo LU: %.15g\n", totalTimeFactorization);
+    fprintf(outputFile, "# Tempo iter: %.15g\n", averageTimeRefinement);
+    fprintf(outputFile, "# Tempo norma: %.15g\n", averageTimeNorm);
+    fprintf(outputFile, "%d\n", size);
     printMatrixInFile(invertedMatrix, size, outputFile);
 } 
 

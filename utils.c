@@ -91,7 +91,7 @@ void printMatrix(real_t **matrix, uint size)
   for (uint i = 0; i < size; i++)
   {
     for (uint j = 0; j < size; j++)
-      printf("%10g ", matrix[i][j]);
+      printf("%.15g ", matrix[i][j]);
     printf("\n");
   }
 }
@@ -130,7 +130,7 @@ void printMatrixInFile(real_t **matrix, uint size, FILE *outputFile)
   for (uint i = 0; i < size; i++)
   {
     for (uint j = 0; j < size; j++)
-      fprintf(outputFile, "%10g ", matrix[i][j]);
+      fprintf(outputFile, "%.15g ", matrix[i][j]);
     fprintf(outputFile, "\n");
   }
 }

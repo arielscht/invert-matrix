@@ -56,9 +56,9 @@ int main(int argc, char *argv[])
         return status;
     }
 
-    real_t totalTimeFactorization;
-    real_t averageTimeRefinement;
-    real_t averageTimeResidual;
+    real_t totalTimeFactorization = 0;
+    real_t averageTimeRefinement = 0;
+    real_t averageTimeResidual = 0;
 
     if (skipInputFile)
     {
@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
         return status;
     }
 
-    printFinalOutput(outputFile, iterationsNorm, totalTimeFactorization, averageTimeRefinement, 0.0, size, invertedMatrix, iterations);
+    printFinalOutput(outputFile, iterationsNorm, totalTimeFactorization, averageTimeRefinement, averageTimeResidual, size, invertedMatrix, iterations);
     
     freeMainMemory(A, L, U, invertedMatrix, lineSwaps, iterationsNorm, size);
     fclose(inputFile);
