@@ -10,13 +10,9 @@ void handleArgs(int argc,
                 int *iterations,
                 uint *size);
 
-FunctionStatus handleInput(
-    FILE **inputFile,
-    char *filename);
-
-FunctionStatus handleOutput(
-    FILE **outputFile,
-    char *filename);
+FunctionStatus handleFile(FILE **inputFile,
+                          char *filename,
+                          char *fileMode);
 
 void printFinalOutput(FILE *outputFile,
                       real_t *iterationsNorm,

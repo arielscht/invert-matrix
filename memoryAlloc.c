@@ -36,6 +36,8 @@ void freeArray(void *array)
   \brief Aloca uma matriz do tipo ponteiro de ponteiro na memória
   *
   \param size Tamanho da matriz
+  *
+  \returns O ponteiro para a matriz de double alocada
 */
 real_t **allocMatrix(uint size)
 {
@@ -65,6 +67,8 @@ real_t **allocMatrix(uint size)
   \brief Aloca um array de unsigned int
   *
   \param size Tamanho do array
+  *
+  \returns O ponteiro para o array de unsigned int alocado
 */
 uint *allocUintArray(uint size)
 {
@@ -79,6 +83,8 @@ uint *allocUintArray(uint size)
   \brief Aloca um array de double
   *
   \param size Tamanho do array
+  *
+  \returns O ponteiro para o array de double alocado
 */
 real_t *allocDoubleArray(uint size)
 {
@@ -126,6 +132,18 @@ void freeMainMemory(
         fclose(outputFile);
 }
 
+/*!
+  \brief Verifica se algum dos ponteiros está nulo e retorna um status de erro ou sucesso
+  *
+  \param A Ponteiro para a matriz a ser invertida
+  \param L Ponteiro para a matriz de multiplicadores L
+  \param U Ponteiro para a matriz triangularizada
+  \param invertedMatrix Ponteiro para a matriz inversa encontrada
+  \param lineSwaps Ponteiro para o array de trocas de linha
+  \param iterationsNorm Ponteiro para o array das normas das iterações do refinamento
+  *
+  \returns O status de execução da função do tipo FunctionStatus
+*/
 FunctionStatus verifyMainAllocs(real_t **A,
                                 real_t **L,
                                 real_t **U,
