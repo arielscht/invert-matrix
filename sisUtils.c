@@ -12,7 +12,9 @@
   *
   \returns O índice da linha do pivô encontrado
 */
-uint findPivot(real_t **A, uint curColumn, uint size)
+uint findPivot(real_t **A,
+               uint curColumn,
+               uint size)
 {
     uint pivot = curColumn;
 
@@ -30,7 +32,9 @@ uint findPivot(real_t **A, uint curColumn, uint size)
   \param line1 Índice da linha 1 a ser trocada
   \param line2 Índice da linha 2 a ser trocada
 */
-void swapLines(real_t **matrix, uint line1, uint line2)
+void swapLines(real_t **matrix,
+               uint line1,
+               uint line2)
 {
     real_t *auxLine = matrix[line1];
     matrix[line1] = matrix[line2];
@@ -45,7 +49,8 @@ void swapLines(real_t **matrix, uint line1, uint line2)
   *
   \returns O status de execução da função do tipo FunctionStatus
 */
-FunctionStatus retroSubstitution(SistLinear_t *SL, real_t *solution)
+FunctionStatus retroSubstitution(SistLinear_t *SL,
+                                 real_t *solution)
 {
     uint size = SL->n;
     FunctionStatus status = success;
@@ -76,7 +81,8 @@ FunctionStatus retroSubstitution(SistLinear_t *SL, real_t *solution)
   *
   \returns O status de execução da função do tipo FunctionStatus
 */
-FunctionStatus reverseRetroSubstitution(SistLinear_t *SL, real_t *solution)
+FunctionStatus reverseRetroSubstitution(SistLinear_t *SL,
+                                        real_t *solution)
 {
     uint size = SL->n;
     FunctionStatus status = success;
@@ -107,7 +113,9 @@ FunctionStatus reverseRetroSubstitution(SistLinear_t *SL, real_t *solution)
   *
   \returns O status de execução da função do tipo FunctionStatus
 */
-FunctionStatus calcL2Norm(real_t **residual, uint size, real_t *result)
+FunctionStatus calcL2Norm(real_t **residual,
+                          uint size,
+                          real_t *result)
 {
     real_t sum = 0.0;
     FunctionStatus status = success;
@@ -133,7 +141,9 @@ FunctionStatus calcL2Norm(real_t **residual, uint size, real_t *result)
   *
   \returns O status de execução da função do tipo FunctionStatus
 */
-FunctionStatus calcResidual(SistLinear_t *SL, real_t *solution, real_t *residual)
+FunctionStatus calcResidual(SistLinear_t *SL,
+                            real_t *solution,
+                            real_t *residual)
 {
     uint size = SL->n;
     FunctionStatus status = success;
@@ -153,6 +163,18 @@ FunctionStatus calcResidual(SistLinear_t *SL, real_t *solution, real_t *residual
     return status;
 }
 
+/*!
+  \brief Função que vai calcular o resíduo da iteração atual do refinamento
+  *
+  \param identity Ponteiro para a matriz identidade
+  \param auxSL Ponteiro para o sistema auxiliar durante as contas
+  \param solution Ponteiro para a matriz inversa
+  \param curSol Ponteiro para o vetor de solução atual do refinamento
+  \param residuals Ponteiro para a matriz de residuos
+  \param size Tamanho da matriz
+  *
+  \returns O status de execução da função do tipo FunctionStatus
+*/
 FunctionStatus calcRefinementResidual(real_t **identity,
                                       SistLinear_t *auxSL,
                                       real_t **solution,
@@ -172,6 +194,20 @@ FunctionStatus calcRefinementResidual(real_t **identity,
     return status;
 }
 
+/*!
+  \brief Função que vai calcular a nova aproximação do refinamento para a próxima iteração
+  *
+  \param lineSwaps Ponteiro para o vetor de troca de linhas
+  \param residuals Ponteiro para a matriz de residuos
+  \param L Ponteiro para a matriz L
+  \param auxSL Ponteiro para o sistema auxiliar durante as contas
+  \param curSol Ponteiro para o vetor de solução atual do refinamento
+  \param solution Ponteiro para o vetor de solução da interação anterior
+  \param U Ponteiro para a matriz U
+  \param size Tamanho da matriz
+  *
+  \returns O status de execução da função do tipo FunctionStatus
+*/
 FunctionStatus calcRefinementNewApproximation(uint *lineSwaps,
                                               real_t **residuals,
                                               real_t **L,

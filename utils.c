@@ -20,7 +20,8 @@ double timestamp(void)
   \param matrix Ponteiro para a matriz
   \param size tamanho da matriz
 */
-void initIdentityMatrix(real_t **matrix, uint size)
+void initIdentityMatrix(real_t **matrix,
+                        uint size)
 {
   for (uint i = 0; i < size; i++)
     for (uint j = 0; j < size; j++)
@@ -38,7 +39,8 @@ void initIdentityMatrix(real_t **matrix, uint size)
   \param matrix Ponteiro para a matriz
   \param size Tamanho da matriz
 */
-void cleanMatrix(real_t **matrix, uint size)
+void cleanMatrix(real_t **matrix,
+                 uint size)
 {
   for (uint i = 0; i < size; i++)
     for (uint j = 0; j < size; j++)
@@ -52,7 +54,9 @@ void cleanMatrix(real_t **matrix, uint size)
   \param value Valor para a diagonal principal
   \param size Tamanho da matriz
 */
-void setMainDiagonal(real_t **matrix, real_t value, uint size)
+void setMainDiagonal(real_t **matrix,
+                     real_t value,
+                     uint size)
 {
   for (uint i = 0; i < size; i++)
     for (uint j = 0; j < size; j++)
@@ -66,7 +70,8 @@ void setMainDiagonal(real_t **matrix, real_t value, uint size)
   \param array Ponteiro para o array
   \param size Tamanho do array
 */
-void initArrayWithIndexes(int *array, uint size)
+void initArrayWithIndexes(int *array,
+                          uint size)
 {
   for (int i = 0; i < size; i++)
     array[i] = i;
@@ -79,7 +84,9 @@ void initArrayWithIndexes(int *array, uint size)
   \param matrix Ponteiro para a matriz
   \param size Tamanho da matriz
 */
-void applyLineSwaps(uint *lineSwaps, real_t **matrix, uint size)
+void applyLineSwaps(uint *lineSwaps,
+                    real_t **matrix,
+                    uint size)
 {
   real_t *curLines[size];
   for (int i = 0; i < size; i++)
@@ -96,7 +103,9 @@ void applyLineSwaps(uint *lineSwaps, real_t **matrix, uint size)
   \param array Ponteiro para o array
   \param size Tamanho do array
 */
-void applyLineSwapsOnArray(uint *lineSwaps, real_t *array, uint size)
+void applyLineSwapsOnArray(uint *lineSwaps,
+                           real_t *array,
+                           uint size)
 {
   real_t curValues[size];
   for (int i = 0; i < size; i++)
@@ -113,7 +122,9 @@ void applyLineSwapsOnArray(uint *lineSwaps, real_t *array, uint size)
   \param destination Ponteiro para o array de destino
   \param size Tamanho dos arrays
 */
-void copyArray(real_t *origin, real_t *destination, uint size)
+void copyArray(real_t *origin,
+               real_t *destination,
+               uint size)
 {
   for (uint i = 0; i < size; i++)
     destination[i] = origin[i];
@@ -126,7 +137,9 @@ void copyArray(real_t *origin, real_t *destination, uint size)
   \param destination Ponteiro para a matriz de destino
   \param size Tamanho das matrizes
 */
-void copyMatrix(real_t **origin, real_t **destination, uint size)
+void copyMatrix(real_t **origin,
+                real_t **destination,
+                uint size)
 {
   for (uint i = 0; i < size; i++)
     for (uint j = 0; j < size; j++)
@@ -139,7 +152,8 @@ void copyMatrix(real_t **origin, real_t **destination, uint size)
   \param matrix Ponteiro para a matriz
   \param size Tamanho da matriz
 */
-void printMatrix(real_t **matrix, uint size)
+void printMatrix(real_t **matrix,
+                 uint size)
 {
   for (uint i = 0; i < size; i++)
   {
@@ -157,7 +171,10 @@ void printMatrix(real_t **matrix, uint size)
   \param column Índice da coluna a ser copiada
   \param size Tamanho da matriz
 */
-void copyColumnToArray(real_t **matrix, real_t *array, uint column, uint size)
+void copyColumnToArray(real_t **matrix,
+                       real_t *array,
+                       uint column,
+                       uint size)
 {
   for (uint i = 0; i < size; i++)
     array[i] = matrix[i][column];
@@ -172,7 +189,9 @@ void copyColumnToArray(real_t **matrix, real_t *array, uint column, uint size)
   *
   \returns O status de execução da função do tipo FunctionStatus
 */
-FunctionStatus readMatrixFromFile(real_t **matrix, uint size, FILE *inputFile)
+FunctionStatus readMatrixFromFile(real_t **matrix,
+                                  uint size,
+                                  FILE *inputFile)
 {
   FunctionStatus status = success;
 
@@ -191,7 +210,9 @@ FunctionStatus readMatrixFromFile(real_t **matrix, uint size, FILE *inputFile)
   \param size Tamanho da matriz
   \param outputFile Ponteiro para arquivo a ser escrito
 */
-void printMatrixInFile(real_t **matrix, uint size, FILE *outputFile)
+void printMatrixInFile(real_t **matrix,
+                       uint size,
+                       FILE *outputFile)
 {
   for (uint i = 0; i < size; i++)
   {
@@ -210,7 +231,9 @@ void printMatrixInFile(real_t **matrix, uint size, FILE *outputFile)
   *
   \returns O status de execução da função do tipo FunctionStatus
 */
-FunctionStatus multiplyDouble(real_t *result, real_t number1, real_t number2)
+FunctionStatus multiplyDouble(real_t *result,
+                              real_t number1,
+                              real_t number2)
 {
   real_t operation = number1 * number2;
 
@@ -232,7 +255,9 @@ FunctionStatus multiplyDouble(real_t *result, real_t number1, real_t number2)
   *
   \returns O status de execução da função do tipo FunctionStatus
 */
-FunctionStatus divideDouble(real_t *result, real_t number1, real_t number2)
+FunctionStatus divideDouble(real_t *result,
+                            real_t number1,
+                            real_t number2)
 {
   real_t operation = number1 / number2;
 

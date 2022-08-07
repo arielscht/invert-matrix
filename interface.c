@@ -190,8 +190,10 @@ void handleErrorsException(FunctionStatus status)
 /*!
   \brief Inicializa a matriz a ser invertida, seja lendo um arquivo ou gerando aleatoriamente
   *
-  \param readInputFile Flag que indica se a entrada será por arquivo
-  \param size tamanho da matriz
+  \param skipInputFile Flag para verificar se pula a leitura do arquivo de entrada ou não
+  \param A Ponteiro para a matriz A
+  \param size Tamanho da matriz
+  \param inputFile Ponteiro para o arquivo de entrada
   *
   \returns O status de execução da função do tipo FunctionStatus
 */
@@ -211,17 +213,19 @@ FunctionStatus initializeMainMatrix(int skipInputFile,
 }
 
 /*!
-  \brief Lê o tamanho da matriz no arquivo para inicializar a memória antes de prosseguir
+  \brief Função que vai decidir se vai ler o arquivo de entrada ou se vai gerar a matrix aleatória
   *
-  \param size Variável onde o tamanho da matriz de entrada será armazenada
-  \param input tamanho da matriz
+  \param size Tamanho da matriz
+  \param inputFile Ponteiro para o arquivo de entrada
+  \param inputFilename Ponteiro para o nome do arquivo
+  \param skipInputFile Flag para verificar se pula a leitura do arquivo de entrada ou não
   *
   \returns O status de execução da função do tipo FunctionStatus
 */
-FunctionStatus handleMainInput(uint *size,
-                               FILE **inputFile,
-                               char *inputFilename,
-                               int *skipInputFile)
+FunctionStatus readMainInput(uint *size,
+                             FILE **inputFile,
+                             char *inputFilename,
+                             int *skipInputFile)
 {
     FunctionStatus status = success;
 
