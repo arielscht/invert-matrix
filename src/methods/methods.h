@@ -3,7 +3,7 @@
 #define ERRO_NORM 1.0e-6
 #define MAXIT 1000
 
-#include "sislin.h"
+#include "../sislin/sislin.h"
 
 FunctionStatus reverseMatrix(real_t **A,
                              real_t **L,
@@ -21,7 +21,7 @@ FunctionStatus refinement(real_t **A,
                           uint size,
                           int iterations,
                           real_t *iterationsNorm,
-                          real_t *tTotalRefinement, 
+                          real_t *tTotalRefinement,
                           real_t *tTotalResidual);
 
 #endif

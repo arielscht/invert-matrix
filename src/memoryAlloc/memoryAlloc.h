@@ -2,8 +2,8 @@
 #define __MEMORY_ALLOC_H__
 
 #include <stdio.h>
-#include "utils.h"
-#include "sislin.h"
+#include "../utils/utils.h"
+#include "../sislin/sislin.h"
 
 void freeMatrix(real_t **matrix, uint size);
 

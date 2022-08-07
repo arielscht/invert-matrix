@@ -1,5 +1,5 @@
-#include "memoryAlloc.h"
-#include "sislin.h"
+#include "../memoryAlloc/memoryAlloc.h"
+#include "../sislin/sislin.h"
 
 /*!
   \brief Libera uma matriz na memória
@@ -160,6 +160,16 @@ FunctionStatus verifyMainAllocs(real_t **A,
     return status;
 }
 
+/*!
+  \brief Verifica se algum dos ponteiros está nulo e retorna um status de erro ou sucesso
+  *
+  \param identity Ponteiro para a matriz identidade
+  \param residuals Ponteiro para a matriz de residuos
+  \param curSol Ponteiro para a solução atual
+  \param auxSL Ponteiro para o sistema linear auxiliar
+  *
+  \returns O status de execução da função do tipo FunctionStatus
+*/
 FunctionStatus verifyRefinementAllocs(real_t **identity,
                                       real_t **residuals,
                                       real_t *curSol,
@@ -173,6 +183,17 @@ FunctionStatus verifyRefinementAllocs(real_t **identity,
     return status;
 }
 
+/*!
+  \brief Faz todas as liberações de memória necessárias
+  *
+  \param identity Ponteiro para a matriz identidade
+  \param residuals Ponteiro para a matriz de residuos
+  \param curSol Ponteiro para a solução atual
+  \param auxSL Ponteiro para o sistema linear auxiliar
+  \param size Tamanho de matriz
+  *
+  \returns O status de execução da função do tipo FunctionStatus
+*/
 void freeRefinementMemory(real_t **identity,
                           real_t **residuals,
                           real_t *curSol,
@@ -185,6 +206,15 @@ void freeRefinementMemory(real_t **identity,
     liberaSisLin(auxSL);
 }
 
+/*!
+  \brief Verifica se algum dos ponteiros está nulo e retorna um status de erro ou sucesso
+  *
+  \param auxSL Ponteiro para o sistema linear auxiliar
+  \param sol Ponteiro para a solução
+  \param identity Ponteiro para a matriz identidade
+  *
+  \returns O status de execução da função do tipo FunctionStatus
+*/
 FunctionStatus verifyReverseMatrixAllocs(SistLinear_t *auxSL,
                                          real_t *sol,
                                          real_t **identity)
@@ -197,6 +227,16 @@ FunctionStatus verifyReverseMatrixAllocs(SistLinear_t *auxSL,
     return status;
 }
 
+/*!
+  \brief Faz todas as liberações de memória necessárias
+  *
+  \param auxSL Ponteiro para o sistema linear auxiliar
+  \param sol Ponteiro para a solução
+  \param identity Ponteiro para a matriz identidade
+  \param size Tamanho de matriz
+  *
+  \returns O status de execução da função do tipo FunctionStatus
+*/
 void freeReverseMatrixMemory(SistLinear_t *auxSL,
                              real_t *sol,
                              real_t **identity,

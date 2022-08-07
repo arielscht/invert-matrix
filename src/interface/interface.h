@@ -1,7 +1,7 @@
 #ifndef __INTERFACE__
 #define __INTERFACE__
 
-#include "utils.h"
+#include "../utils/utils.h"
 
 void handleArgs(int argc,
                 char *argv[],
@@ -28,10 +28,10 @@ FunctionStatus initializeMainMatrix(int skipInputFile,
                                     uint size,
                                     FILE *inputFile);
 
-FunctionStatus handleMainInput(uint *size,
-                               FILE **inputFile,
-                               char *inputFilename,
-                               int *skipInputFile);
+FunctionStatus readMainInput(uint *size,
+                             FILE **inputFile,
+                             char *inputFilename,
+                             int *skipInputFile);
 
 void handleErrorsException(FunctionStatus status);
 

@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "sislin.h"
-#include "methods.h"
-#include "utils.h"
-#include "interface.h"
-#include "memoryAlloc.h"
+#include "./sislin/sislin.h"
+#include "./methods/methods.h"
+#include "./utils/utils.h"
+#include "./interface/interface.h"
+#include "./memoryAlloc/memoryAlloc.h"
 
 int main(int argc, char *argv[])
 {
@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 
     handleArgs(argc, argv, inputFilename, outputFilename, &iterations, &size);
 
-    if ((status = handleMainInput(&size, &inputFile, inputFilename, &skipInputFile)) == success)
+    if ((status = readMainInput(&size, &inputFile, inputFilename, &skipInputFile)) == success)
     {
         A = allocMatrix(size);
         L = allocMatrix(size);
