@@ -112,7 +112,7 @@ FunctionStatus handleFile(FILE **inputFile, char *filename, char *fileMode)
     if (filename[0] != '\0')
     {
         *inputFile = fopen(filename, fileMode);
-        if (!inputFile)
+        if (!*inputFile)
             status = fileErr;
     }
 
