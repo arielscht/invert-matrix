@@ -19,10 +19,10 @@
 $(PROG):  $(OBJS)
 	$(CC) -o $@ $^ $(LFLAGS)
 
-clean:
+clean: purge
 	@rm -f *~ *.bak
 
-purge:   clean
+purge: 
 	@rm -f *.o core a.out
 	@rm -f *.txt
 	@rm -f $(PROG)
