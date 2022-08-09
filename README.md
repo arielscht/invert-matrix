@@ -65,7 +65,9 @@ Abaixo você encontra um exemplo de uma saída gerada pelo programa.
 >As primeiras i linhas do arquivo contêm o valor da norma L2 em cada iteração do refinamento, lembrando que o número de iterações é indicado na execução do programa por meio do parâmetro -i.
 >>**Tempos na saída do programa:** 
 >>`Tempo LU:` O tempo gasto pelo programa para realizar a fatoração LU da matriz de entrada.
+>>
 >>`Tempo iter:` O tempo médio gasto em cada iteração do reifinamento.
+>>
 >>`Tempo norma:` O tempo médio para o cálculo da norma  durante as iterações do refinamento.
 > 
 > A linha seguinte mostra o tamanho da matriz de saída que é o mesmo tamanho da entrada.
