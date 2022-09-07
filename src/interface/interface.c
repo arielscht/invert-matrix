@@ -134,8 +134,10 @@ FunctionStatus handleFile(FILE **inputFile, char *filename, char *fileMode)
 void printFinalOutput(FILE *outputFile,
                       real_t *iterationsNorm,
                       real_t totalTimeFactorization,
+                      real_t totalTimeFirstSolution,
                       real_t averageTimeRefinement,
                       real_t averageTimeNorm,
+                      real_t averageTimeResidual,
                       uint size,
                       real_t **invertedMatrix,
                       uint iterations)
@@ -147,6 +149,8 @@ void printFinalOutput(FILE *outputFile,
     fprintf(outputFile, "# Tempo LU: %.15g\n", totalTimeFactorization);
     fprintf(outputFile, "# Tempo iter: %.15g\n", averageTimeRefinement);
     fprintf(outputFile, "# Tempo norma: %.15g\n", averageTimeNorm);
+    fprintf(outputFile, "# Tempo residuo: %.15g\n", averageTimeResidual);
+    fprintf(outputFile, "# Tempo primeira solucao: %.15g\n", totalTimeFirstSolution);
     fprintf(outputFile, "#\n");
     fprintf(outputFile, "%d\n", size);
     printMatrixInFile(invertedMatrix, size, outputFile);

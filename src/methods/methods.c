@@ -33,7 +33,8 @@ FunctionStatus refinement(real_t **A,
                           int iterations,
                           real_t *iterationsNorm,
                           real_t *tTotalRefinement,
-                          real_t *tTotalResidual)
+                          real_t *avgTimeNorm,
+                          real_t *avgTimeResidual)
 {
     FunctionStatus status = success;
     real_t **identity = allocMatrix(size);
@@ -41,7 +42,8 @@ FunctionStatus refinement(real_t **A,
     real_t *curSol = allocDoubleArray(size);
     SistLinear_t *auxSL = alocaSisLin(size, pontPont);
     real_t norm = 0.0;
-    real_t auxTime = 0;
+    real_t auxNormTime = 0;
+    real_t auxResidualTime = 0;
     int counter = 1;
 
     if ((status = verifyRefinementAllocs(identity, residuals, curSol, auxSL)) == success)
@@ -55,17 +57,19 @@ FunctionStatus refinement(real_t **A,
             // Calcula resíduo
             copyMatrix(A, auxSL->A, size);
             LIKWID_MARKER_START("OP2");
+            auxResidualTime = timestamp();
             if ((status = calcRefinementResidual(identity, auxSL, solution, curSol, residuals, size)) != success)
                 continue;
+            *avgTimeResidual += timestamp() - auxResidualTime;
             LIKWID_MARKER_STOP("OP2");
             // Calcula nova aproximação
             if ((status = calcRefinementNewApproximation(lineSwaps, residuals, L, auxSL, curSol, solution, U, size)) != success)
                 continue;
 
-            auxTime = timestamp();
+            auxNormTime = timestamp();
             if ((status = calcL2Norm(residuals, size, &norm)) != success)
                 continue;
-            *tTotalResidual += timestamp() - auxTime;
+            *avgTimeNorm += timestamp() - auxNormTime;
 
             iterationsNorm[counter - 1] = norm;
             counter++;
@@ -74,7 +78,8 @@ FunctionStatus refinement(real_t **A,
         {
             *tTotalRefinement = timestamp() - *tTotalRefinement;
             *tTotalRefinement /= counter;
-            *tTotalResidual /= counter;
+            *avgTimeNorm /= counter;
+            *avgTimeResidual /= counter;
         }
     }
 
@@ -189,7 +194,8 @@ FunctionStatus reverseMatrix(real_t **A,
                              uint *lineSwaps,
                              real_t **invertedMatrix,
                              uint size,
-                             real_t *tTotal)
+                             real_t *tFactorization,
+                             real_t *tFirstSolution)
 {
     FunctionStatus status = success;
     // real_t det;
@@ -209,7 +215,8 @@ FunctionStatus reverseMatrix(real_t **A,
         initIdentityMatrix(identity, size);
 
         LIKWID_MARKER_START("OP1");
-        if ((status = factorizationLU(A, L, U, lineSwaps, size, tTotal)) == success)
+        *tFirstSolution = timestamp();
+        if ((status = factorizationLU(A, L, U, lineSwaps, size, tFactorization)) == success)
         {
             applyLineSwaps(lineSwaps, identity, size);
 
@@ -231,6 +238,7 @@ FunctionStatus reverseMatrix(real_t **A,
                     invertedMatrix[j][i] = sol[j];
             }
         }
+        *tFirstSolution = timestamp() - *tFirstSolution;
         LIKWID_MARKER_STOP("OP1");
     }
 
