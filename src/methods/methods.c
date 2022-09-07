@@ -2,7 +2,6 @@
 #include <math.h>
 #include <float.h>
 #include <likwid.h>
-#include <likwid-marker.h>
 #include "../methods/methods.h"
 #include "../utils/utils.h"
 #include "../memoryAlloc/memoryAlloc.h"
