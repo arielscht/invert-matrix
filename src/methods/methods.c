@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <math.h>
 #include <float.h>
+#include <likwid.h>
+#include <likwid-marker.h>
 #include "../methods/methods.h"
 #include "../utils/utils.h"
 #include "../memoryAlloc/memoryAlloc.h"
@@ -52,8 +54,10 @@ FunctionStatus refinement(real_t **A,
         {
             // Calcula resíduo
             copyMatrix(A, auxSL->A, size);
+            LIKWID_MARKER_START("OP2");
             if ((status = calcRefinementResidual(identity, auxSL, solution, curSol, residuals, size)) != success)
                 continue;
+            LIKWID_MARKER_STOP("OP2");
             // Calcula nova aproximação
             if ((status = calcRefinementNewApproximation(lineSwaps, residuals, L, auxSL, curSol, solution, U, size)) != success)
                 continue;
@@ -188,12 +192,12 @@ FunctionStatus reverseMatrix(real_t **A,
                              real_t *tTotal)
 {
     FunctionStatus status = success;
-    real_t det;
-    if ((status = calcDet(&det, A, size)) != success || fabs(det) < DBL_EPSILON)
-    {
-        status = status != success ? status : nonInvertibleErr;
-        return status;
-    }
+    // real_t det;
+    // if ((status = calcDet(&det, A, size)) != success || fabs(det) < DBL_EPSILON)
+    // {
+    //     status = status != success ? status : nonInvertibleErr;
+    //     return status;
+    // }
 
     SistLinear_t *auxSL = alocaSisLin(size, pontPont);
     real_t *sol = allocDoubleArray(size);
@@ -204,6 +208,7 @@ FunctionStatus reverseMatrix(real_t **A,
         initArrayWithIndexes(lineSwaps, size);
         initIdentityMatrix(identity, size);
 
+        LIKWID_MARKER_START("OP1");
         if ((status = factorizationLU(A, L, U, lineSwaps, size, tTotal)) == success)
         {
             applyLineSwaps(lineSwaps, identity, size);
@@ -226,6 +231,7 @@ FunctionStatus reverseMatrix(real_t **A,
                     invertedMatrix[j][i] = sol[j];
             }
         }
+        LIKWID_MARKER_STOP("OP1");
     }
 
     freeReverseMatrixMemory(auxSL, sol, identity, size);

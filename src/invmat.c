@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <likwid.h>
 #include "./sislin/sislin.h"
 #include "./methods/methods.h"
 #include "./utils/utils.h"
@@ -41,12 +42,14 @@ int main(int argc, char *argv[])
         lineSwaps = allocUintArray(size);
         iterationsNorm = allocDoubleArray(iterations);
 
+        LIKWID_MARKER_INIT;
         if ((status = verifyMainAllocs(A, L, U, invertedMatrix, lineSwaps, iterationsNorm)) == success &&
             (status = initializeMainMatrix(skipInputFile, A, size, inputFile)) == success &&
             (status = reverseMatrix(A, L, U, lineSwaps, invertedMatrix, size, &totalTimeFactorization)) == success &&
             (status = refinement(A, L, U, invertedMatrix, lineSwaps, size, iterations, iterationsNorm, &averageTimeRefinement, &averageTimeResidual)) == success &&
             (status = handleFile(&outputFile, outputFilename, "w")) == success)
             printFinalOutput(outputFile, iterationsNorm, totalTimeFactorization, averageTimeRefinement, averageTimeResidual, size, invertedMatrix, iterations);
+        LIKWID_MARKER_CLOSE;
     }
 
     if (status != success)
