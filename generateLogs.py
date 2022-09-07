@@ -25,7 +25,7 @@ def buildLogPath(size, version, group):
 def buildProgramPath(size, itr = 10):
   return f'./invmat -r {str(size)} -i {str(itr)} -s /dev/null'
 
-def buildLkdCommand(group, core = 2):
+def buildLkdCommand(group, core = 3):
   return f'{ROOT_LKD_COMMAND} -C {str(core)} -g {str(group)} -m'
 
 handleExistenceNecessaryDirs()
