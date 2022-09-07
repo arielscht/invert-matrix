@@ -23,7 +23,7 @@ def buildLogPath(size, version, group):
   return f'./{ROOT_LOG_DIR}/{str(version)}/{str(group)}{"-"}{str(size)}.log'
 
 def buildProgramPath(size, itr = 10):
-  return f'./invmat -r {str(size)} -i {str(itr)}'
+  return f'./invmat -r {str(size)} -i {str(itr)} -s /dev/null'
 
 def buildLkdCommand(group, core = 2):
   return f'{ROOT_LKD_COMMAND} -C {str(core)} -g {str(group)} -m'
