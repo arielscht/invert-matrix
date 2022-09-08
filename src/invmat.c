@@ -48,9 +48,9 @@ int main(int argc, char *argv[])
         if ((status = verifyMainAllocs(A, L, U, invertedMatrix, lineSwaps, iterationsNorm)) == success &&
             (status = initializeMainMatrix(skipInputFile, A, size, inputFile)) == success &&
             (status = reverseMatrix(A, L, U, lineSwaps, invertedMatrix, size, &totalTimeFactorization, &totalTimeFirstSolution)) == success &&
-            (status = refinement(A, L, U, invertedMatrix, lineSwaps, size, iterations, iterationsNorm, &averageTimeRefinement, &averageTimeNorm, &averageTimeResidual)) == success)
-        {
-        }
+            (status = refinement(A, L, U, invertedMatrix, lineSwaps, size, iterations, iterationsNorm, &averageTimeRefinement, &averageTimeNorm, &averageTimeResidual)) == success &&
+            (status = handleFile(&outputFile, outputFilename, "w")) == success)
+            printFinalOutput(outputFile, iterationsNorm, totalTimeFactorization, totalTimeFirstSolution, averageTimeRefinement, averageTimeNorm, averageTimeResidual, size, invertedMatrix, iterations);
         // printFinalOutput(outputFile, iterationsNorm, totalTimeFactorization, totalTimeFirstSolution, averageTimeRefinement, averageTimeNorm, averageTimeResidual, size, invertedMatrix, iterations);
         LIKWID_MARKER_CLOSE;
     }

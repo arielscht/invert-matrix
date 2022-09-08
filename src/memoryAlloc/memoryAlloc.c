@@ -164,11 +164,11 @@ FunctionStatus verifyMainAllocs(real_t **A,
 FunctionStatus verifyRefinementAllocs(real_t **identity,
                                       real_t **residuals,
                                       real_t *curSol,
-                                      SistLinear_t *auxSL)
+                                      real_t *indTerms)
 {
     FunctionStatus status = success;
 
-    if (!identity || !residuals || !curSol || !auxSL)
+    if (!identity || !residuals || !curSol || !indTerms)
         status = allocErr;
 
     return status;
@@ -188,13 +188,13 @@ FunctionStatus verifyRefinementAllocs(real_t **identity,
 void freeRefinementMemory(real_t **identity,
                           real_t **residuals,
                           real_t *curSol,
-                          SistLinear_t *auxSL,
+                          real_t *indTerms,
                           uint size)
 {
     freeMatrix(identity, size);
     freeMatrix(residuals, size);
     freeArray(curSol);
-    liberaSisLin(auxSL);
+    freeArray(indTerms);
 }
 
 /*!

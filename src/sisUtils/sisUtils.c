@@ -53,10 +53,11 @@ void swapLines(real_t **matrix,
   *
   \returns O status de execução da função do tipo FunctionStatus
 */
-FunctionStatus retroSubstitution(SistLinear_t *SL,
-                                 real_t *solution)
+FunctionStatus retroSubstitution(real_t **matrix,
+                                 real_t *indTerms,
+                                 real_t *solution,
+                                 uint size)
 {
-    uint size = SL->n;
     FunctionStatus status = success;
     real_t mult;
 
@@ -64,14 +65,14 @@ FunctionStatus retroSubstitution(SistLinear_t *SL,
     {
         // variable used due to uint never being less than 0
         uint actualLine = line - 1;
-        solution[actualLine] = SL->b[actualLine];
+        solution[actualLine] = indTerms[actualLine];
         for (uint column = size - 1; column > actualLine; column--)
         {
-            if ((status = multiplyDouble(&mult, SL->A[actualLine][column], solution[column])) != success)
+            if ((status = multiplyDouble(&mult, matrix[actualLine][column], solution[column])) != success)
                 return status;
             solution[actualLine] -= mult;
         }
-        if ((status = divideDouble(&solution[actualLine], solution[actualLine], SL->A[actualLine][actualLine])) != success)
+        if ((status = divideDouble(&solution[actualLine], solution[actualLine], matrix[actualLine][actualLine])) != success)
             return status;
     }
     return status;
@@ -85,23 +86,24 @@ FunctionStatus retroSubstitution(SistLinear_t *SL,
   *
   \returns O status de execução da função do tipo FunctionStatus
 */
-FunctionStatus reverseRetroSubstitution(SistLinear_t *SL,
-                                        real_t *solution)
+FunctionStatus reverseRetroSubstitution(real_t **matrix,
+                                        real_t *indTerms,
+                                        real_t *solution,
+                                        uint size)
 {
-    uint size = SL->n;
     FunctionStatus status = success;
     real_t mult;
 
     for (int line = 0; line < size; line++)
     {
-        solution[line] = SL->b[line];
+        solution[line] = indTerms[line];
         for (int column = 0; column < line; column++)
         {
-            if ((status = multiplyDouble(&mult, SL->A[line][column], solution[column])) != success)
+            if ((status = multiplyDouble(&mult, matrix[line][column], solution[column])) != success)
                 return status;
             solution[line] -= mult;
         }
-        if ((status = divideDouble(&solution[line], solution[line], SL->A[line][line])) != success)
+        if ((status = divideDouble(&solution[line], solution[line], matrix[line][line])) != success)
             return status;
     }
 
@@ -145,20 +147,21 @@ FunctionStatus calcL2Norm(real_t **residual,
   *
   \returns O status de execução da função do tipo FunctionStatus
 */
-FunctionStatus calcResidual(SistLinear_t *SL,
+FunctionStatus calcResidual(real_t **matrix,
+                            real_t *indTerms,
                             real_t *solution,
-                            real_t *residual)
+                            real_t *residual,
+                            uint size)
 {
-    uint size = SL->n;
     FunctionStatus status = success;
     real_t mult;
 
     for (size_t i = 0; i < size; i++)
     {
-        residual[i] = SL->b[i];
+        residual[i] = indTerms[i];
         for (size_t j = 0; j < size; j++)
         {
-            if ((status = multiplyDouble(&mult, solution[j], SL->A[i][j])) != success)
+            if ((status = multiplyDouble(&mult, solution[j], matrix[i][j])) != success)
                 return status;
             residual[i] -= mult;
         }
@@ -180,7 +183,8 @@ FunctionStatus calcResidual(SistLinear_t *SL,
   \returns O status de execução da função do tipo FunctionStatus
 */
 FunctionStatus calcRefinementResidual(real_t **identity,
-                                      SistLinear_t *auxSL,
+                                      real_t **matrix,
+                                      real_t *indTerms,
                                       real_t **solution,
                                       real_t *curSol,
                                       real_t **residuals,
@@ -190,10 +194,10 @@ FunctionStatus calcRefinementResidual(real_t **identity,
 
     for (int i = 0; i < size && status == success; i++)
     {
-        copyArray(identity[i], auxSL->b, size);
+        copyArray(identity[i], indTerms, size);
         copyArray(solution[i], curSol, size);
 
-        status = calcResidual(auxSL, curSol, residuals[i]);
+        status = calcResidual(matrix, indTerms, curSol, residuals[i], size);
     }
     return status;
 }
@@ -215,7 +219,6 @@ FunctionStatus calcRefinementResidual(real_t **identity,
 FunctionStatus calcRefinementNewApproximation(uint *lineSwaps,
                                               real_t **residuals,
                                               real_t **L,
-                                              SistLinear_t *auxSL,
                                               real_t *curSol,
                                               real_t **solution,
                                               real_t **U,
@@ -226,16 +229,11 @@ FunctionStatus calcRefinementNewApproximation(uint *lineSwaps,
     for (int i = 0; i < size && status == success; i++)
     {
         applyLineSwapsOnArray(lineSwaps, residuals[i], size);
-        copyArray(residuals[i], auxSL->b, size);
-        copyMatrix(L, auxSL->A, size);
 
-        if ((status = reverseRetroSubstitution(auxSL, curSol)) != success)
+        if ((status = reverseRetroSubstitution(L, residuals[i], curSol, size)) != success)
             continue;
 
-        copyMatrix(U, auxSL->A, size);
-        copyArray(curSol, auxSL->b, size);
-
-        if ((status = retroSubstitution(auxSL, curSol)) != success)
+        if ((status = retroSubstitution(U, curSol, curSol, size)) != success)
             continue;
         // soma a solução do resíduo com a solução anterior para obter a nova apromixação
         for (int j = 0; j < size; j++)

@@ -39,30 +39,28 @@ FunctionStatus refinement(real_t **A,
     real_t **identity = allocMatrix(size);
     real_t **residuals = allocMatrix(size);
     real_t *curSol = allocDoubleArray(size);
-    SistLinear_t *auxSL = alocaSisLin(size, pontPont);
+    real_t *indTerms = allocDoubleArray(size);
     real_t norm = 0.0;
     real_t auxNormTime = 0;
     real_t auxResidualTime = 0;
     int counter = 1;
 
-    if ((status = verifyRefinementAllocs(identity, residuals, curSol, auxSL)) == success)
+    if ((status = verifyRefinementAllocs(identity, residuals, curSol, indTerms)) == success)
     {
-        copyMatrix(A, auxSL->A, size);
         initIdentityMatrix(identity, size);
 
         *tTotalRefinement = timestamp();
         while (counter <= iterations && status == success)
         {
             // Calcula resíduo
-            copyMatrix(A, auxSL->A, size);
             LIKWID_MARKER_START("OP2");
             auxResidualTime = timestamp();
-            if ((status = calcRefinementResidual(identity, auxSL, solution, curSol, residuals, size)) != success)
+            if ((status = calcRefinementResidual(identity, A, indTerms, solution, curSol, residuals, size)) != success)
                 continue;
             *avgTimeResidual += timestamp() - auxResidualTime;
             LIKWID_MARKER_STOP("OP2");
             // Calcula nova aproximação
-            if ((status = calcRefinementNewApproximation(lineSwaps, residuals, L, auxSL, curSol, solution, U, size)) != success)
+            if ((status = calcRefinementNewApproximation(lineSwaps, residuals, L, curSol, solution, U, size)) != success)
                 continue;
 
             auxNormTime = timestamp();
@@ -82,7 +80,7 @@ FunctionStatus refinement(real_t **A,
         }
     }
 
-    freeRefinementMemory(identity, residuals, curSol, auxSL, size);
+    freeRefinementMemory(identity, residuals, curSol, indTerms, size);
     return status;
 }
 
@@ -218,16 +216,11 @@ FunctionStatus reverseMatrix(real_t **A,
 
             for (uint i = 0; i < size && status == success; i++)
             {
-                copyArray(identity[i], auxSL->b, size);
-                copyMatrix(L, auxSL->A, size);
 
-                if ((status = reverseRetroSubstitution(auxSL, sol)) != success)
+                if ((status = reverseRetroSubstitution(L, identity[i], sol, size)) != success)
                     continue;
 
-                copyMatrix(U, auxSL->A, size);
-                copyArray(sol, auxSL->b, size);
-
-                if ((status = retroSubstitution(auxSL, sol)) != success)
+                if ((status = retroSubstitution(U, sol, sol, size)) != success)
                     continue;
 
                 copyArray(sol, invertedMatrix[i], size);

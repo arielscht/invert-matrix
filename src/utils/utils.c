@@ -39,7 +39,7 @@ void initIdentityMatrix(real_t **matrix,
 void cleanMatrix(real_t **matrix,
                  uint size)
 {
-  memset(matrix[0], 0, size * size * sizeof(double));
+  memset(matrix[0], 0, size * size * sizeof(real_t));
 }
 
 /*!
