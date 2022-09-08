@@ -190,8 +190,8 @@ FunctionStatus calcRefinementResidual(real_t **identity,
 
     for (int i = 0; i < size && status == success; i++)
     {
-        copyColumnToArray(identity, auxSL->b, i, size);
-        copyColumnToArray(solution, curSol, i, size);
+        copyArray(identity[i], auxSL->b, size);
+        copyArray(solution[i], curSol, size);
 
         status = calcResidual(auxSL, curSol, residuals[i]);
     }
@@ -239,7 +239,7 @@ FunctionStatus calcRefinementNewApproximation(uint *lineSwaps,
             continue;
         // soma a solução do resíduo com a solução anterior para obter a nova apromixação
         for (int j = 0; j < size; j++)
-            solution[j][i] += curSol[j];
+            solution[i][j] += curSol[j];
     }
 
     return status;

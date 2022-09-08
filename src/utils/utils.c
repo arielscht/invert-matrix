@@ -162,23 +162,6 @@ void printMatrix(real_t **matrix,
 }
 
 /*!
-  \brief Copia a coluna de uma matriz para um array
-  *
-  \param matrix Ponteiro para a matriz
-  \param array Ponteiro para o array
-  \param column Índice da coluna a ser copiada
-  \param size Tamanho da matriz
-*/
-void copyColumnToArray(real_t **matrix,
-                       real_t *array,
-                       uint column,
-                       uint size)
-{
-  for (uint i = 0; i < size; i++)
-    array[i] = matrix[i][column];
-}
-
-/*!
   \brief Lê uma matriz de um arquivo
   *
   \param matrix Ponteiro para a matriz a ser armazenada
@@ -215,7 +198,7 @@ void printMatrixInFile(real_t **matrix,
   for (uint i = 0; i < size; i++)
   {
     for (uint j = 0; j < size; j++)
-      fprintf(outputFile, "%.15g ", matrix[i][j]);
+      fprintf(outputFile, "%.15g ", matrix[j][i]);
     fprintf(outputFile, "\n");
   }
 }

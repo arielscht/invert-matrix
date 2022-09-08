@@ -9,7 +9,7 @@ def handleExistenceNecessaryDirs():
     os.mkdir(csvPath)
 
   for version in constants.VERSIONS:
-    versionPath = os.path.join(csvPath, version)
+    versionPath = os.path.join(csvPath, version["version"])
     if(not os.path.exists(versionPath)):
       os.mkdir(versionPath)
 
@@ -18,7 +18,7 @@ def checkExistenceNecessaryDirs():
   if(not os.path.exists(logPath)):
     return False
   for version in constants.VERSIONS:
-    versionPath = os.path.join(logPath, version)
+    versionPath = os.path.join(logPath, version["version"])
     if(not os.path.exists(versionPath)):
       return False
   return True
@@ -46,7 +46,7 @@ for version in constants.VERSIONS:
     dataOperationOne = []
     dataOperationTwo = []
     for size in constants.MATRIX_SIZES:
-      logPath = buildLogPath(size, version, group if group != "TIME" else "FLOPS_DP")
+      logPath = buildLogPath(size, version["version"], group if group != "TIME" else "FLOPS_DP")
       if not os.path.exists(logPath): continue
       file = open(logPath, 'r')
       fileContent = file.read()
@@ -56,7 +56,7 @@ for version in constants.VERSIONS:
       dataOperationOne.append([size, result[0][1]])
       dataOperationTwo.append([size, result[1][1]])
 
-    operationOnePath = buildCsvPath(version, group, 1)
-    operationTwoPath = buildCsvPath(version, group, 2)
+    operationOnePath = buildCsvPath(version["version"], group, 1)
+    operationTwoPath = buildCsvPath(version["version"], group, 2)
     writeCsv(operationOnePath, ["Size", "Data"], dataOperationOne)
     writeCsv(operationTwoPath, ["Size", "Data"], dataOperationTwo)

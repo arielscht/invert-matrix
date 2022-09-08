@@ -19,7 +19,7 @@ def checkExistenceNecessaryDirs():
   if(not os.path.exists(logPath)):
     return False
   for version in constants.VERSIONS:
-    versionPath = os.path.join(logPath, version)
+    versionPath = os.path.join(logPath, version["version"])
     if(not os.path.exists(versionPath)):
       return False
   return True
@@ -33,7 +33,7 @@ handleExistenceNecessaryDirs()
 for group in constants.INTERESTED_DATA:
   for version in constants.VERSIONS:
     for operation in [1, 2]:
-      csvPath = buildCsvPath(version, group, operation)
+      csvPath = buildCsvPath(version['version'], group, operation)
       if not os.path.exists(csvPath): continue
 
       with open(csvPath, newline='') as file:
@@ -49,7 +49,7 @@ for group in constants.INTERESTED_DATA:
           xData.append(int(size))
           yData.append(float(data))
 
-      plt.plot(xData, yData, label = f"OP{operation} - {version}", marker='o', markerfacecolor='red')
+      plt.plot(xData, yData, label = f"OP{operation} - {version['version']}", marker='o')
   plt.yscale('log')
   plt.xlabel('Matrix size')
   plt.ylabel(constants.LABELS[group])

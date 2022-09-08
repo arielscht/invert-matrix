@@ -117,8 +117,7 @@ FunctionStatus gaussElimination(real_t **A,
             real_t aux = lineSwaps[line];
             lineSwaps[line] = lineSwaps[pivotLine];
             lineSwaps[pivotLine] = aux;
-            if (L != NULL)
-                swapLines(L, line, pivotLine, size);
+            swapLines(L, line, pivotLine, size);
         }
 
         for (uint auxLine = line + 1; auxLine < size; auxLine++)
@@ -127,9 +126,7 @@ FunctionStatus gaussElimination(real_t **A,
             if ((status = divideDouble(&m, A[auxLine][line], A[line][line])) != success)
                 return status;
             A[auxLine][line] = 0.0;
-
-            if (L != NULL)
-                L[auxLine][line] = m;
+            L[auxLine][line] = m;
 
             for (uint column = line + 1; column < size; column++)
             {
@@ -221,7 +218,7 @@ FunctionStatus reverseMatrix(real_t **A,
 
             for (uint i = 0; i < size && status == success; i++)
             {
-                copyColumnToArray(identity, auxSL->b, i, size);
+                copyArray(identity[i], auxSL->b, size);
                 copyMatrix(L, auxSL->A, size);
 
                 if ((status = reverseRetroSubstitution(auxSL, sol)) != success)
@@ -233,8 +230,7 @@ FunctionStatus reverseMatrix(real_t **A,
                 if ((status = retroSubstitution(auxSL, sol)) != success)
                     continue;
 
-                for (uint j = 0; j < size; j++)
-                    invertedMatrix[j][i] = sol[j];
+                copyArray(sol, invertedMatrix[i], size);
             }
         }
         *tFirstSolution = timestamp() - *tFirstSolution;
