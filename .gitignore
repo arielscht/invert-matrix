@@ -4,3 +4,6 @@ invmat
 *.txt
 *.pdf
 /logs
+/csv
+/__pycache__
+/pdfs

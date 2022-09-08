@@ -25,14 +25,9 @@ double timestamp(void)
 void initIdentityMatrix(real_t **matrix,
                         uint size)
 {
+  memset(matrix[0], 0, size * size * sizeof(real_t));
   for (uint i = 0; i < size; i++)
-    for (uint j = 0; j < size; j++)
-    {
-      if (i == j)
-        matrix[i][j] = 1.0;
-      else
-        matrix[i][j] = 0.0;
-    }
+    matrix[i][i] = 1.0;
 }
 
 /*!
@@ -44,9 +39,7 @@ void initIdentityMatrix(real_t **matrix,
 void cleanMatrix(real_t **matrix,
                  uint size)
 {
-  for (uint i = 0; i < size; i++)
-    for (uint j = 0; j < size; j++)
-      matrix[i][j] = 0.0;
+  memset(matrix[0], 0, size * size * sizeof(double));
 }
 
 /*!
@@ -61,9 +54,7 @@ void setMainDiagonal(real_t **matrix,
                      uint size)
 {
   for (uint i = 0; i < size; i++)
-    for (uint j = 0; j < size; j++)
-      if (i == j)
-        matrix[i][j] = value;
+    matrix[i][i] = value;
 }
 
 /*!
@@ -135,8 +126,7 @@ void copyArray(real_t *origin,
                real_t *destination,
                uint size)
 {
-  for (uint i = 0; i < size; i++)
-    destination[i] = origin[i];
+  memcpy(destination, origin, size * sizeof(real_t));
 }
 
 /*!
@@ -151,8 +141,7 @@ void copyMatrix(real_t **origin,
                 uint size)
 {
   for (uint i = 0; i < size; i++)
-    for (uint j = 0; j < size; j++)
-      destination[i][j] = origin[i][j];
+    memcpy(destination[i], origin[i], size * sizeof(double));
 }
 
 /*!
