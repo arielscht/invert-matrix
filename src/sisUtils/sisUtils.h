@@ -28,9 +28,7 @@ FunctionStatus calcResidual(real_t **matrix,
 
 FunctionStatus calcRefinementResidual(real_t **identity,
                                       real_t **matrix,
-                                      real_t *indTerms,
                                       real_t **solution,
-                                      real_t *curSol,
                                       real_t **residuals,
                                       uint size);
 

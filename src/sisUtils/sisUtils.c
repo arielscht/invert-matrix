@@ -184,9 +184,7 @@ FunctionStatus calcResidual(real_t **matrix,
 */
 FunctionStatus calcRefinementResidual(real_t **identity,
                                       real_t **matrix,
-                                      real_t *indTerms,
                                       real_t **solution,
-                                      real_t *curSol,
                                       real_t **residuals,
                                       uint size)
 {
@@ -194,10 +192,7 @@ FunctionStatus calcRefinementResidual(real_t **identity,
 
     for (int i = 0; i < size && status == success; i++)
     {
-        copyArray(identity[i], indTerms, size);
-        copyArray(solution[i], curSol, size);
-
-        status = calcResidual(matrix, indTerms, curSol, residuals[i], size);
+        status = calcResidual(matrix, identity[i], solution[i], residuals[i], size);
     }
     return status;
 }

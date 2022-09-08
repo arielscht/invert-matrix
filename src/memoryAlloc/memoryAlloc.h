@@ -37,21 +37,17 @@ void freeMainMemory(
 
 FunctionStatus verifyRefinementAllocs(real_t **identity,
                                       real_t **residuals,
-                                      real_t *curSol,
-                                      real_t *indTerms);
+                                      real_t *curSol);
 
 void freeRefinementMemory(real_t **identity,
                           real_t **residuals,
                           real_t *curSol,
-                          real_t *indTerms,
                           uint size);
 
 FunctionStatus verifyReverseMatrixAllocs(SistLinear_t *auxSL,
-                                         real_t *sol,
                                          real_t **identity);
 
 void freeReverseMatrixMemory(SistLinear_t *auxSL,
-                             real_t *sol,
                              real_t **identity,
                              uint size);
 

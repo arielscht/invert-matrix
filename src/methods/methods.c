@@ -39,13 +39,12 @@ FunctionStatus refinement(real_t **A,
     real_t **identity = allocMatrix(size);
     real_t **residuals = allocMatrix(size);
     real_t *curSol = allocDoubleArray(size);
-    real_t *indTerms = allocDoubleArray(size);
     real_t norm = 0.0;
     real_t auxNormTime = 0;
     real_t auxResidualTime = 0;
     int counter = 1;
 
-    if ((status = verifyRefinementAllocs(identity, residuals, curSol, indTerms)) == success)
+    if ((status = verifyRefinementAllocs(identity, residuals, curSol)) == success)
     {
         initIdentityMatrix(identity, size);
 
@@ -55,7 +54,7 @@ FunctionStatus refinement(real_t **A,
             // Calcula resíduo
             LIKWID_MARKER_START("OP2");
             auxResidualTime = timestamp();
-            if ((status = calcRefinementResidual(identity, A, indTerms, solution, curSol, residuals, size)) != success)
+            if ((status = calcRefinementResidual(identity, A, solution, residuals, size)) != success)
                 continue;
             *avgTimeResidual += timestamp() - auxResidualTime;
             LIKWID_MARKER_STOP("OP2");
@@ -80,7 +79,7 @@ FunctionStatus refinement(real_t **A,
         }
     }
 
-    freeRefinementMemory(identity, residuals, curSol, indTerms, size);
+    freeRefinementMemory(identity, residuals, curSol, size);
     return status;
 }
 
@@ -200,10 +199,9 @@ FunctionStatus reverseMatrix(real_t **A,
     // }
 
     SistLinear_t *auxSL = alocaSisLin(size, pontPont);
-    real_t *sol = allocDoubleArray(size);
     real_t **identity = allocMatrix(size);
 
-    if ((status = verifyReverseMatrixAllocs(auxSL, sol, identity)) == success)
+    if ((status = verifyReverseMatrixAllocs(auxSL, identity)) == success)
     {
         initArrayWithIndexes(lineSwaps, size);
         initIdentityMatrix(identity, size);
@@ -217,19 +215,17 @@ FunctionStatus reverseMatrix(real_t **A,
             for (uint i = 0; i < size && status == success; i++)
             {
 
-                if ((status = reverseRetroSubstitution(L, identity[i], sol, size)) != success)
+                if ((status = reverseRetroSubstitution(L, identity[i], invertedMatrix[i], size)) != success)
                     continue;
 
-                if ((status = retroSubstitution(U, sol, sol, size)) != success)
+                if ((status = retroSubstitution(U, invertedMatrix[i], invertedMatrix[i], size)) != success)
                     continue;
-
-                copyArray(sol, invertedMatrix[i], size);
             }
         }
         *tFirstSolution = timestamp() - *tFirstSolution;
         LIKWID_MARKER_STOP("OP1");
     }
 
-    freeReverseMatrixMemory(auxSL, sol, identity, size);
+    freeReverseMatrixMemory(auxSL, identity, size);
     return status;
 }

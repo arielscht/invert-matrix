@@ -163,12 +163,11 @@ FunctionStatus verifyMainAllocs(real_t **A,
 */
 FunctionStatus verifyRefinementAllocs(real_t **identity,
                                       real_t **residuals,
-                                      real_t *curSol,
-                                      real_t *indTerms)
+                                      real_t *curSol)
 {
     FunctionStatus status = success;
 
-    if (!identity || !residuals || !curSol || !indTerms)
+    if (!identity || !residuals || !curSol)
         status = allocErr;
 
     return status;
@@ -188,13 +187,11 @@ FunctionStatus verifyRefinementAllocs(real_t **identity,
 void freeRefinementMemory(real_t **identity,
                           real_t **residuals,
                           real_t *curSol,
-                          real_t *indTerms,
                           uint size)
 {
     freeMatrix(identity, size);
     freeMatrix(residuals, size);
     freeArray(curSol);
-    freeArray(indTerms);
 }
 
 /*!
@@ -207,12 +204,11 @@ void freeRefinementMemory(real_t **identity,
   \returns O status de execução da função do tipo FunctionStatus
 */
 FunctionStatus verifyReverseMatrixAllocs(SistLinear_t *auxSL,
-                                         real_t *sol,
                                          real_t **identity)
 {
     FunctionStatus status = success;
 
-    if (!auxSL || !sol || !identity)
+    if (!auxSL || !identity)
         status = allocErr;
 
     return status;
@@ -229,11 +225,9 @@ FunctionStatus verifyReverseMatrixAllocs(SistLinear_t *auxSL,
   \returns O status de execução da função do tipo FunctionStatus
 */
 void freeReverseMatrixMemory(SistLinear_t *auxSL,
-                             real_t *sol,
                              real_t **identity,
                              uint size)
 {
     liberaSisLin(auxSL);
-    freeArray(sol);
     freeMatrix(identity, size);
 }
