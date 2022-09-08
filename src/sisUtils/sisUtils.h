@@ -6,7 +6,7 @@
 
 uint findPivot(real_t **A, uint curColumn, uint size);
 
-void swapLines(real_t **matrix, uint line1, uint line2);
+void swapLines(real_t **matrix, uint line1, uint line2, uint size);
 
 FunctionStatus retroSubstitution(SistLinear_t *SL, real_t *solution);
 

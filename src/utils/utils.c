@@ -2,6 +2,7 @@
 #include <math.h>
 
 #include "./utils.h"
+#include "../sisUtils/sisUtils.h"
 
 /*!
   \brief Obtém a data atual em milissegundos
@@ -89,12 +90,19 @@ void applyLineSwaps(uint *lineSwaps,
                     real_t **matrix,
                     uint size)
 {
-  real_t *curLines[size];
-  for (int i = 0; i < size; i++)
-    curLines[i] = matrix[i];
+  int curLines[size];
+  memset(curLines, 0, size * sizeof(int));
 
   for (int i = 0; i < size; i++)
-    matrix[i] = curLines[lineSwaps[i]];
+  {
+    int lineToSwap = lineSwaps[i];
+    if (lineToSwap != i && curLines[i] != 1 && curLines[lineToSwap] != 1)
+    {
+      swapLines(matrix, i, lineToSwap, size);
+      curLines[i] = 1;
+      curLines[lineToSwap] = 1;
+    }
+  }
 }
 
 /*!

@@ -34,11 +34,15 @@ uint findPivot(real_t **A,
 */
 void swapLines(real_t **matrix,
                uint line1,
-               uint line2)
+               uint line2,
+               uint size)
 {
-    real_t *auxLine = matrix[line1];
-    matrix[line1] = matrix[line2];
-    matrix[line2] = auxLine;
+    for (uint i = 0; i < size; i++)
+    {
+        real_t aux = matrix[line1][i];
+        matrix[line1][i] = matrix[line2][i];
+        matrix[line2][i] = aux;
+    }
 }
 
 /*!

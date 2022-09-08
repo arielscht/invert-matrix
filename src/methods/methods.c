@@ -112,13 +112,13 @@ FunctionStatus gaussElimination(real_t **A,
         uint pivotLine = findPivot(A, line, size);
         if (pivotLine != line)
         {
-            swapLines(A, line, pivotLine);
+            swapLines(A, line, pivotLine, size);
 
             real_t aux = lineSwaps[line];
             lineSwaps[line] = lineSwaps[pivotLine];
             lineSwaps[pivotLine] = aux;
             if (L != NULL)
-                swapLines(L, line, pivotLine);
+                swapLines(L, line, pivotLine, size);
         }
 
         for (uint auxLine = line + 1; auxLine < size; auxLine++)
