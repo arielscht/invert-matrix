@@ -68,12 +68,10 @@ FunctionStatus retroSubstitution(real_t **matrix,
         solution[actualLine] = indTerms[actualLine];
         for (uint column = size - 1; column > actualLine; column--)
         {
-            if ((status = multiplyDouble(&mult, matrix[actualLine][column], solution[column])) != success)
-                return status;
+            mult = matrix[actualLine][column] * solution[column];
             solution[actualLine] -= mult;
         }
-        if ((status = divideDouble(&solution[actualLine], solution[actualLine], matrix[actualLine][actualLine])) != success)
-            return status;
+        solution[actualLine] = solution[actualLine] / matrix[actualLine][actualLine];
     }
     return status;
 }
@@ -99,12 +97,10 @@ FunctionStatus reverseRetroSubstitution(real_t **matrix,
         solution[line] = indTerms[line];
         for (int column = 0; column < line; column++)
         {
-            if ((status = multiplyDouble(&mult, matrix[line][column], solution[column])) != success)
-                return status;
+            mult = matrix[line][column] * solution[column];
             solution[line] -= mult;
         }
-        if ((status = divideDouble(&solution[line], solution[line], matrix[line][line])) != success)
-            return status;
+        solution[line] = solution[line] / matrix[line][line];
     }
 
     return status;
@@ -130,8 +126,7 @@ FunctionStatus calcL2Norm(real_t **residual,
     for (uint i = 0; i < size; i++)
         for (uint j = 0; j < size; j++)
         {
-            if ((status = multiplyDouble(&mult, residual[i][j], residual[i][j])) != success)
-                return status;
+            mult = residual[i][j] * residual[i][j];
             sum += mult;
         }
     *result = sqrt(sum);
@@ -161,8 +156,7 @@ FunctionStatus calcResidual(real_t **matrix,
         residual[i] = indTerms[i];
         for (size_t j = 0; j < size; j++)
         {
-            if ((status = multiplyDouble(&mult, solution[j], matrix[i][j])) != success)
-                return status;
+            mult = solution[j] * matrix[i][j];
             residual[i] -= mult;
         }
     }

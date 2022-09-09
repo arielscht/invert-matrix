@@ -292,9 +292,8 @@ FunctionStatus calcDet(real_t *result, real_t **matrix, int size)
     real_t multSub = 1;
     for (int j = 0; j < size && status == success; j++)
     {
-      if ((status = multiplyDouble(&multSum, multSum, matrix[(i + j) % size][j])) != success ||
-          (status = multiplyDouble(&multSub, multSub, matrix[(i + j) % size][size - j - 1])) != success)
-        continue;
+      multSum = multSum * matrix[(i + j) % size][j];
+      multSub = multSub * matrix[(i + j) % size][size - j - 1];
     }
     sum += multSum;
     sub -= multSub;

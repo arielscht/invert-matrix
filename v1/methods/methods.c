@@ -120,9 +120,7 @@ FunctionStatus gaussElimination(real_t **A,
 
         for (uint auxLine = line + 1; auxLine < size; auxLine++)
         {
-            real_t m;
-            if ((status = divideDouble(&m, A[auxLine][line], A[line][line])) != success)
-                return status;
+            real_t m = A[auxLine][line] / A[line][line];
             A[auxLine][line] = 0.0;
 
             if (L != NULL)
@@ -130,8 +128,7 @@ FunctionStatus gaussElimination(real_t **A,
 
             for (uint column = line + 1; column < size; column++)
             {
-                if ((status = multiplyDouble(&mult, A[line][column], m)) != success)
-                    return status;
+                mult = A[line][column] * m;
                 A[auxLine][column] -= mult;
             }
         }
