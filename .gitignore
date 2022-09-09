@@ -1,10 +1,9 @@
 *.o
 invmat
-/bin
 *.txt
 *.pdf
 /logs
 /csv
 /__pycache__
 /pdfs
-/v1
+**/bin

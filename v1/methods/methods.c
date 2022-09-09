@@ -32,8 +32,7 @@ FunctionStatus refinement(real_t **A,
                           int iterations,
                           real_t *iterationsNorm,
                           real_t *tTotalRefinement,
-                          real_t *avgTimeNorm,
-                          real_t *avgTimeResidual)
+                          real_t *avgTimeNorm)
 {
     FunctionStatus status = success;
     real_t **identity = allocMatrix(size);
@@ -59,7 +58,6 @@ FunctionStatus refinement(real_t **A,
             auxResidualTime = timestamp();
             if ((status = calcRefinementResidual(identity, auxSL, solution, curSol, residuals, size)) != success)
                 continue;
-            *avgTimeResidual += timestamp() - auxResidualTime;
             LIKWID_MARKER_STOP("OP2");
             // Calcula nova aproximação
             if ((status = calcRefinementNewApproximation(lineSwaps, residuals, L, auxSL, curSol, solution, U, size)) != success)
@@ -78,7 +76,6 @@ FunctionStatus refinement(real_t **A,
             *tTotalRefinement = timestamp() - *tTotalRefinement;
             *tTotalRefinement /= counter;
             *avgTimeNorm /= counter;
-            *avgTimeResidual /= counter;
         }
     }
 
@@ -193,8 +190,7 @@ FunctionStatus reverseMatrix(real_t **A,
                              uint *lineSwaps,
                              real_t **invertedMatrix,
                              uint size,
-                             real_t *tFactorization,
-                             real_t *tFirstSolution)
+                             real_t *tFactorization)
 {
     FunctionStatus status = success;
     // real_t det;
@@ -214,7 +210,6 @@ FunctionStatus reverseMatrix(real_t **A,
         initIdentityMatrix(identity, size);
 
         LIKWID_MARKER_START("OP1");
-        *tFirstSolution = timestamp();
         if ((status = factorizationLU(A, L, U, lineSwaps, size, tFactorization)) == success)
         {
             applyLineSwaps(lineSwaps, identity, size);
@@ -237,7 +232,6 @@ FunctionStatus reverseMatrix(real_t **A,
                     invertedMatrix[j][i] = sol[j];
             }
         }
-        *tFirstSolution = timestamp() - *tFirstSolution;
         LIKWID_MARKER_STOP("OP1");
     }
 

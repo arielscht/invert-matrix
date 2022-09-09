@@ -25,10 +25,8 @@ int main(int argc, char *argv[])
     uint *lineSwaps = NULL;
     real_t *iterationsNorm = NULL;
     real_t totalTimeFactorization = 0;
-    real_t totalTimeFirstSolution = 0;
     real_t averageTimeRefinement = 0;
     real_t averageTimeNorm = 0;
-    real_t averageTimeResidual = 0;
 
     inputFilename[0] = '\0';
     outputFilename[0] = '\0';
@@ -47,9 +45,11 @@ int main(int argc, char *argv[])
         LIKWID_MARKER_INIT;
         if ((status = verifyMainAllocs(A, L, U, invertedMatrix, lineSwaps, iterationsNorm)) == success &&
             (status = initializeMainMatrix(skipInputFile, A, size, inputFile)) == success &&
-            (status = reverseMatrix(A, L, U, lineSwaps, invertedMatrix, size, &totalTimeFactorization, &totalTimeFirstSolution)) == success &&
-            (status = refinement(A, L, U, invertedMatrix, lineSwaps, size, iterations, iterationsNorm, &averageTimeRefinement, &averageTimeNorm, &averageTimeResidual)) == success)
+            (status = reverseMatrix(A, L, U, lineSwaps, invertedMatrix, size, &totalTimeFactorization)) == success &&
+            (status = refinement(A, L, U, invertedMatrix, lineSwaps, size, iterations, iterationsNorm, &averageTimeRefinement, &averageTimeNorm)) == success &&
+            (status = handleFile(&outputFile, outputFilename, "w")) == success)
         {
+            printFinalOutput(outputFile, iterationsNorm, totalTimeFactorization, averageTimeRefinement, averageTimeNorm, size, invertedMatrix, iterations);
         }
         LIKWID_MARKER_CLOSE;
     }

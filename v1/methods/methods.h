@@ -11,8 +11,7 @@ FunctionStatus reverseMatrix(real_t **A,
                              uint *lineSwaps,
                              real_t **invertedMatrix,
                              uint size,
-                             real_t *tFactorization,
-                             real_t *tFirstSolution);
+                             real_t *tFactorization);
 
 FunctionStatus refinement(real_t **A,
                           real_t **L,
@@ -23,7 +22,6 @@ FunctionStatus refinement(real_t **A,
                           int iterations,
                           real_t *iterationsNorm,
                           real_t *tTotalRefinement,
-                          real_t *avgTimeNorm,
-                          real_t *avgTimeResidual);
+                          real_t *avgTimeNorm);
 
 #endif
