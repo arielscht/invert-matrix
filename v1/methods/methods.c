@@ -50,22 +50,19 @@ FunctionStatus refinement(real_t **A,
         initIdentityMatrix(identity, size);
 
         *tTotalRefinement = timestamp();
-        while (counter <= iterations && status == success)
+        while (counter <= iterations)
         {
             // Calcula resíduo
             copyMatrix(A, auxSL->A, size);
             LIKWID_MARKER_START("OP2");
             auxResidualTime = timestamp();
-            if ((status = calcRefinementResidual(identity, auxSL, solution, curSol, residuals, size)) != success)
-                continue;
+            calcRefinementResidual(identity, auxSL, solution, curSol, residuals, size);
             LIKWID_MARKER_STOP("OP2");
             // Calcula nova aproximação
-            if ((status = calcRefinementNewApproximation(lineSwaps, residuals, L, auxSL, curSol, solution, U, size)) != success)
-                continue;
+            calcRefinementNewApproximation(lineSwaps, residuals, L, auxSL, curSol, solution, U, size);
 
             auxNormTime = timestamp();
-            if ((status = calcL2Norm(residuals, size, &norm)) != success)
-                continue;
+            calcL2Norm(residuals, size, &norm);
             *avgTimeNorm += timestamp() - auxNormTime;
 
             iterationsNorm[counter - 1] = norm;
@@ -211,19 +208,17 @@ FunctionStatus reverseMatrix(real_t **A,
         {
             applyLineSwaps(lineSwaps, identity, size);
 
-            for (uint i = 0; i < size && status == success; i++)
+            for (uint i = 0; i < size; i++)
             {
                 copyColumnToArray(identity, auxSL->b, i, size);
                 copyMatrix(L, auxSL->A, size);
 
-                if ((status = reverseRetroSubstitution(auxSL, sol)) != success)
-                    continue;
+                reverseRetroSubstitution(auxSL, sol);
 
                 copyMatrix(U, auxSL->A, size);
                 copyArray(sol, auxSL->b, size);
 
-                if ((status = retroSubstitution(auxSL, sol)) != success)
-                    continue;
+                retroSubstitution(auxSL, sol);
 
                 for (uint j = 0; j < size; j++)
                     invertedMatrix[j][i] = sol[j];

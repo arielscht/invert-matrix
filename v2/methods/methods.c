@@ -48,21 +48,18 @@ FunctionStatus refinement(real_t **A,
         initIdentityMatrix(identity, size);
 
         *tTotalRefinement = timestamp();
-        while (counter <= iterations && status == success)
+        while (counter <= iterations)
         {
             // Calcula resíduo
             LIKWID_MARKER_START("OP2");
             auxResidualTime = timestamp();
-            if ((status = calcRefinementResidual(identity, A, solution, residuals, size)) != success)
-                continue;
+            calcRefinementResidual(identity, A, solution, residuals, size);
             LIKWID_MARKER_STOP("OP2");
             // Calcula nova aproximação
-            if ((status = calcRefinementNewApproximation(lineSwaps, residuals, L, curSol, solution, U, size)) != success)
-                continue;
+            calcRefinementNewApproximation(lineSwaps, residuals, L, curSol, solution, U, size);
 
             auxNormTime = timestamp();
-            if ((status = calcL2Norm(residuals, size, &norm)) != success)
-                continue;
+            calcL2Norm(residuals, size, &norm);
             *avgTimeNorm += timestamp() - auxNormTime;
 
             iterationsNorm[counter - 1] = norm;
@@ -204,14 +201,10 @@ FunctionStatus reverseMatrix(real_t **A,
         {
             applyLineSwaps(lineSwaps, identity, size);
 
-            for (uint i = 0; i < size && status == success; i++)
+            for (uint i = 0; i < size; i++)
             {
-
-                if ((status = reverseRetroSubstitution(L, identity[i], invertedMatrix[i], size)) != success)
-                    continue;
-
-                if ((status = retroSubstitution(U, invertedMatrix[i], invertedMatrix[i], size)) != success)
-                    continue;
+                reverseRetroSubstitution(L, identity[i], invertedMatrix[i], size);
+                retroSubstitution(U, invertedMatrix[i], invertedMatrix[i], size);
             }
         }
         LIKWID_MARKER_STOP("OP1");

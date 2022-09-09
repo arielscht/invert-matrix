@@ -266,11 +266,11 @@ FunctionStatus calcDet(real_t *result, real_t **matrix, int size)
 
   real_t sum = 0;
   real_t sub = 0;
-  for (int i = 0; i < size && status == success; i++)
+  for (int i = 0; i < size; i++)
   {
     real_t multSum = 1;
     real_t multSub = 1;
-    for (int j = 0; j < size && status == success; j++)
+    for (int j = 0; j < size; j++)
     {
       multSum = multSum * matrix[(i + j) % size][j];
       multSub = multSub * matrix[(i + j) % size][size - j - 1];
