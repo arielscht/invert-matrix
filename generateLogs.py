@@ -1,9 +1,9 @@
 import os
 import commonConstants as constants
 
-os.system('cd ./v1 && make')
-os.system('cd ..')
-os.system('cd ./v2 && make')
+for version in constants.VERSIONS:
+  os.system(f'cd {version["exec"]} && make')
+  os.system('cd ..')
 
 def handleExistenceNecessaryDirs():
   logPath = f'./{constants.ROOT_LOG_DIR}'
