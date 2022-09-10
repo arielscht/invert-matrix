@@ -5,6 +5,8 @@
 
 #include "../sisUtils/sisUtils.h"
 
+#define SIMD_DBL_QTD 4
+
 /*!
   \brief Encontra o pivô de uma coluna para a eliminação de gauss
   *
@@ -123,14 +125,23 @@ FunctionStatus calcL2Norm(real_t **residual,
 {
     real_t sum = 0.0;
     FunctionStatus status = success;
-    real_t mult = 0.0;
+    int vectorSize = size / SIMD_DBL_QTD;
+    int vectorLimit = size - (size % SIMD_DBL_QTD);
+    __m256d aux;
 
     for (uint i = 0; i < size; i++)
-        for (uint j = 0; j < size; j++)
+    {
+        __m256d *avxResidual = (__m256d *)(residual[i]);
+        for (uint j = 0; j < vectorSize; j++)
         {
-            mult = residual[i][j] * residual[i][j];
-            sum += mult;
+            aux = _mm256_mul_pd(avxResidual[j], avxResidual[j]);
+            for (int ii = 0; ii < SIMD_DBL_QTD; ii++)
+                sum += aux[ii];
         }
+
+        for (uint j = vectorLimit; j < size; j++)
+            sum += residual[i][j] * residual[i][j];
+    }
     *result = sqrt(sum);
     return status;
 }
@@ -185,8 +196,8 @@ FunctionStatus calcRefinementResidual(real_t **identity,
                                       uint size)
 {
     FunctionStatus status = success;
-    int vectorSize = size / 4;
-    int unrollLimit = size - (size % 4);
+    int vectorSize = size / SIMD_DBL_QTD;
+    int unrollLimit = size - (size % SIMD_DBL_QTD);
     __m256d aux;
 
     for (uint i = 0; i < size; i++)
@@ -200,7 +211,7 @@ FunctionStatus calcRefinementResidual(real_t **identity,
             for (uint k = 0; k < vectorSize; k++)
             {
                 aux = _mm256_mul_pd(avxSol[k], avxMatrix[k]);
-                for (int ii = 0; ii < 4; ii++)
+                for (int ii = 0; ii < SIMD_DBL_QTD; ii++)
                 {
                     residuals[i][j] -= aux[ii];
                 }
