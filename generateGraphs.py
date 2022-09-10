@@ -51,6 +51,7 @@ for group in constants.INTERESTED_DATA:
 
       plt.plot(xData, yData, label = f"OP{operation} - {version['version']}", marker='o')
   plt.yscale('log')
+  plt.grid()
   plt.xlabel('Matrix size')
   plt.ylabel(constants.LABELS[group])
   plt.title(f"Graph for {group}")

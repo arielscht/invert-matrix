@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <float.h>
 #include <math.h>
+#include <immintrin.h>
+
 #include "../sisUtils/sisUtils.h"
 
 /*!
@@ -183,10 +185,25 @@ FunctionStatus calcRefinementResidual(real_t **identity,
                                       uint size)
 {
     FunctionStatus status = success;
+    int unrollStep = 4;
+    int unrollLimit = size - (size % unrollStep);
 
-    for (int i = 0; i < size; i++)
+    for (uint i = 0; i < size; i++)
     {
-        calcResidual(matrix, identity[i], solution[i], residuals[i], size);
+        for (uint j = 0; j < size; j++)
+        {
+            residuals[i][j] = identity[i][j];
+            for (uint k = 0; k < unrollLimit; k += unrollStep)
+            {
+                residuals[i][j] -= solution[i][k] * matrix[j][k];
+                residuals[i][j] -= solution[i][k + 1] * matrix[j][k + 1];
+                residuals[i][j] -= solution[i][k + 2] * matrix[j][k + 2];
+                residuals[i][j] -= solution[i][k + 3] * matrix[j][k + 3];
+            }
+
+            for (uint k = unrollLimit; k < size; k++)
+                residuals[i][j] -= solution[i][k] * matrix[j][k];
+        }
     }
     return status;
 }

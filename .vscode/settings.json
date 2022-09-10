@@ -7,7 +7,8 @@
         "methods.h": "c",
         "utils.h": "c",
         "sisutils.h": "c",
-        "memoryalloc.h": "c"
+        "memoryalloc.h": "c",
+        "immintrin.h": "c"
     },
     // "files.exclude": "**/**.o"
 }

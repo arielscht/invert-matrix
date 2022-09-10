@@ -1,6 +1,8 @@
 #include "../memoryAlloc/memoryAlloc.h"
 #include "../sislin/sislin.h"
 
+#define ALIGNED_MEMORY 32 // Align allocs in 32 bytes to use AVX
+
 /*!
   \brief Libera uma matriz na memória
   *
@@ -40,11 +42,11 @@ void freeArray(void *array)
 */
 real_t **allocMatrix(uint size)
 {
-    real_t **matrix = calloc(size, sizeof(real_t *));
+    real_t **matrix = aligned_alloc(ALIGNED_MEMORY, size * sizeof(real_t *));
     if (!matrix)
         return NULL;
 
-    matrix[0] = calloc(size * size, sizeof(real_t));
+    matrix[0] = aligned_alloc(ALIGNED_MEMORY, size * size * sizeof(real_t));
 
     if (!matrix[0])
         return NULL;
@@ -64,7 +66,7 @@ real_t **allocMatrix(uint size)
 */
 uint *allocUintArray(uint size)
 {
-    uint *array = calloc(size, sizeof(uint));
+    uint *array = aligned_alloc(ALIGNED_MEMORY, size * sizeof(uint));
 
     if (!array)
         return NULL;
@@ -80,7 +82,7 @@ uint *allocUintArray(uint size)
 */
 real_t *allocDoubleArray(uint size)
 {
-    real_t *array = calloc(size, sizeof(real_t));
+    real_t *array = aligned_alloc(ALIGNED_MEMORY, size * sizeof(real_t));
 
     if (!array)
         return NULL;
