@@ -1,0 +1,46 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cppbuild",
+			"label": "C/C++: gcc build active file",
+			"command": "/usr/bin/gcc",
+			"args": [
+				"-g",
+				"-mavx",
+				"-march=native",
+				"-DLIKWID_PERFMON",
+				"-I${LIKWID_INCLUDE}",
+				"./invmat.c",
+				"./interface/interface.c",
+				"./interface/interface.h",
+				"./methods/methods.c",
+				"./methods/methods.h",
+				"./utils/utils.c",
+				"./utils/utils.h",
+				"./sislin/sislin.c",
+				"./sislin/sislin.h",
+				"./memoryAlloc/memoryAlloc.c",
+				"./memoryAlloc/memoryAlloc.h",
+				"./sisUtils/sisUtils.c",
+				"./sisUtils/sisUtils.h",
+				"-lm",
+				"-L${LIKWID_LIB}",
+				"-llikwid",
+				"-o",
+				"${fileDirname}/bin/${fileBasenameNoExtension}"
+			],
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": {
+				"isDefault": true,
+				"kind": "build"
+			},
+			"detail": "compiler: /usr/bin/gcc"
+		}
+	]
+}

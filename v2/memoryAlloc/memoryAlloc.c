@@ -42,17 +42,19 @@ void freeArray(void *array)
 */
 real_t **allocMatrix(uint size)
 {
+    uint actualSize = calcSizeWithPadding(size);
+
     real_t **matrix = aligned_alloc(ALIGNED_MEMORY, size * sizeof(real_t *));
     if (!matrix)
         return NULL;
 
-    matrix[0] = aligned_alloc(ALIGNED_MEMORY, size * size * sizeof(real_t));
+    matrix[0] = aligned_alloc(ALIGNED_MEMORY, actualSize * size * sizeof(real_t));
 
     if (!matrix[0])
         return NULL;
 
     for (uint i = 1; i < size; i++)
-        matrix[i] = matrix[i - 1] + size;
+        matrix[i] = matrix[i - 1] + actualSize;
 
     return matrix;
 }

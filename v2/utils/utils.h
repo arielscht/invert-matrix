@@ -46,5 +46,6 @@ FunctionStatus detTriangularMatrix(real_t *result, real_t **matrix, uint size);
 FunctionStatus multiplyDouble(real_t *result, real_t number1, real_t number2);
 FunctionStatus divideDouble(real_t *result, real_t number1, real_t number2);
 FunctionStatus calcDet(real_t *result, real_t **matrix, int size);
+int calcSizeWithPadding(int size);
 
 #endif // __UTILS_H__

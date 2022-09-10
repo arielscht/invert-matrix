@@ -48,6 +48,7 @@ int main(int argc, char *argv[])
             (status = reverseMatrix(A, L, U, lineSwaps, invertedMatrix, size, &totalTimeFactorization)) == success &&
             (status = refinement(A, L, U, invertedMatrix, lineSwaps, size, iterations, iterationsNorm, &averageTimeRefinement, &averageTimeNorm)) == success)
         {
+            // printFinalOutput(outputFile, iterationsNorm, totalTimeFactorization, averageTimeRefinement, averageTimeNorm, size, invertedMatrix, iterations);
         }
         LIKWID_MARKER_CLOSE;
     }

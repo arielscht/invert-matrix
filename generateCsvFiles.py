@@ -46,7 +46,7 @@ for version in constants.VERSIONS:
     dataOperationOne = []
     dataOperationTwo = []
     for size in constants.MATRIX_SIZES:
-      logPath = buildLogPath(size, version["version"], group if group != "TIME" else "FLOPS_DP")
+      logPath = buildLogPath(size, version["version"],  "FLOPS_DP" if (group == "TIME" or group == "FLOPS_AVX") else group)
       if not os.path.exists(logPath): continue
       file = open(logPath, 'r')
       fileContent = file.read()

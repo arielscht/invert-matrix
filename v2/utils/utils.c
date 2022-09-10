@@ -25,7 +25,8 @@ double timestamp(void)
 void initIdentityMatrix(real_t **matrix,
                         uint size)
 {
-  memset(matrix[0], 0, size * size * sizeof(real_t));
+  int actualSize = calcSizeWithPadding(size);
+  memset(matrix[0], 0, actualSize * size * sizeof(real_t));
   for (uint i = 0; i < size; i++)
     matrix[i][i] = 1.0;
 }
@@ -39,7 +40,8 @@ void initIdentityMatrix(real_t **matrix,
 void cleanMatrix(real_t **matrix,
                  uint size)
 {
-  memset(matrix[0], 0, size * size * sizeof(real_t));
+  int actualSize = calcSizeWithPadding(size);
+  memset(matrix[0], 0, actualSize * size * sizeof(real_t));
 }
 
 /*!
@@ -282,4 +284,13 @@ FunctionStatus calcDet(real_t *result, real_t **matrix, int size)
   if (status == success)
     *result = sum + sub;
   return status;
+}
+
+int calcSizeWithPadding(int size)
+{
+  int actualSize = size;
+  int mod4 = actualSize % 4;
+  if (mod4 != 0)
+    actualSize += 4 - mod4;
+  return actualSize;
 }
