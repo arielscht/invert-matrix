@@ -63,18 +63,28 @@ FunctionStatus retroSubstitution(real_t **matrix,
                                  uint size)
 {
     FunctionStatus status = success;
-    real_t mult;
+    int unrollStep = 4;
+    int lineSize = 0;
+    int unrollLimit = 0;
 
     for (uint line = size; line >= 1; line--)
     {
         // variable used due to uint never being less than 0
+        lineSize = size - line;
+        unrollLimit = size - (lineSize % unrollStep);
         uint actualLine = line - 1;
         solution[actualLine] = indTerms[actualLine];
-        for (uint column = size - 1; column > actualLine; column--)
+        for (uint column = actualLine + 1; column < unrollLimit; column += unrollStep)
         {
-            mult = matrix[actualLine][column] * solution[column];
-            solution[actualLine] -= mult;
+            solution[actualLine] -= matrix[actualLine][column] * solution[column];
+            solution[actualLine] -= matrix[actualLine][column + 1] * solution[column + 1];
+            solution[actualLine] -= matrix[actualLine][column + 2] * solution[column + 2];
+            solution[actualLine] -= matrix[actualLine][column + 3] * solution[column + 3];
         }
+
+        for (uint k = unrollLimit; k < size; k++)
+            solution[actualLine] -= matrix[actualLine][k] * solution[k];
+
         solution[actualLine] = solution[actualLine] / matrix[actualLine][actualLine];
     }
     return status;
@@ -94,16 +104,27 @@ FunctionStatus reverseRetroSubstitution(real_t **matrix,
                                         uint size)
 {
     FunctionStatus status = success;
+    int lineSize = 0;
+    int unrollLimit = 0;
+    int unrollStep = 4;
     real_t mult;
 
-    for (int line = 0; line < size; line++)
+    for (uint line = 0; line < size; line++)
     {
+        lineSize = line;
+        unrollLimit = floor(lineSize / unrollStep) * unrollStep;
         solution[line] = indTerms[line];
-        for (int column = 0; column < line; column++)
+        for (uint column = 0; column < unrollLimit; column += unrollStep)
         {
-            mult = matrix[line][column] * solution[column];
-            solution[line] -= mult;
+            solution[line] -= matrix[line][column] * solution[column];
+            solution[line] -= matrix[line][column + 1] * solution[column + 1];
+            solution[line] -= matrix[line][column + 2] * solution[column + 2];
+            solution[line] -= matrix[line][column + 3] * solution[column + 3];
         }
+
+        for (uint k = unrollLimit; k < line; k++)
+            solution[line] -= matrix[line][k] * solution[k];
+
         solution[line] = solution[line] / matrix[line][line];
     }
 
