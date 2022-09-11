@@ -7,6 +7,16 @@
 
 #define SIMD_DBL_QTD 4
 
+double hsum_double_avx(__m256d v)
+{
+    __m128d vlow = _mm256_castpd256_pd128(v);
+    __m128d vhigh = _mm256_extractf128_pd(v, 1); // high 128
+    vlow = _mm_add_pd(vlow, vhigh);              // reduce down to 128
+
+    __m128d high64 = _mm_unpackhi_pd(vlow, vlow);
+    return _mm_cvtsd_f64(_mm_add_sd(vlow, high64)); // reduce to scalar
+}
+
 /*!
   \brief Encontra o pivô de uma coluna para a eliminação de gauss
   *
@@ -104,22 +114,21 @@ FunctionStatus reverseRetroSubstitution(real_t **matrix,
                                         uint size)
 {
     FunctionStatus status = success;
-    int lineSize = 0;
-    int unrollLimit = 0;
-    int unrollStep = 4;
-    real_t mult;
+    __m256d aux;
+    __m256d *avxSol = (__m256d *)(solution);
 
     for (uint line = 0; line < size; line++)
     {
-        lineSize = line;
-        unrollLimit = floor(lineSize / unrollStep) * unrollStep;
         solution[line] = indTerms[line];
-        for (uint column = 0; column < unrollLimit; column += unrollStep)
+        int unrollLimit = floor(line / SIMD_DBL_QTD) * SIMD_DBL_QTD;
+        int vectorSize = unrollLimit / SIMD_DBL_QTD;
+
+        __m256d *avxMatrix = (__m256d *)(matrix[line]);
+
+        for (uint column = 0; column < vectorSize; column++)
         {
-            solution[line] -= matrix[line][column] * solution[column];
-            solution[line] -= matrix[line][column + 1] * solution[column + 1];
-            solution[line] -= matrix[line][column + 2] * solution[column + 2];
-            solution[line] -= matrix[line][column + 3] * solution[column + 3];
+            aux = _mm256_mul_pd(avxSol[column], avxMatrix[column]);
+            solution[line] -= hsum_double_avx(aux);
         }
 
         for (uint k = unrollLimit; k < line; k++)
@@ -129,15 +138,6 @@ FunctionStatus reverseRetroSubstitution(real_t **matrix,
     }
 
     return status;
-}
-
-double hsum_double_avx(__m256d v) {
-    __m128d vlow  = _mm256_castpd256_pd128(v);
-    __m128d vhigh = _mm256_extractf128_pd(v, 1); // high 128
-            vlow  = _mm_add_pd(vlow, vhigh);     // reduce down to 128
-
-    __m128d high64 = _mm_unpackhi_pd(vlow, vlow);
-    return  _mm_cvtsd_f64(_mm_add_sd(vlow, high64));  // reduce to scalar
 }
 
 /*!
@@ -172,37 +172,6 @@ FunctionStatus calcL2Norm(real_t **residual,
             sum += residual[i][j] * residual[i][j];
     }
     *result = sqrt(sum);
-    return status;
-}
-
-/*!
-  \brief Calcula o resíduo de um sistema linear
-  *
-  \param SL Ponteiro para o sistema linear
-  \param solution Ponteiro para o array de soluções do sistema
-  \param residual Ponteiro para o array onde os resíduos serão armazenados
-  *
-  \returns O status de execução da função do tipo FunctionStatus
-*/
-FunctionStatus calcResidual(real_t **matrix,
-                            real_t *indTerms,
-                            real_t *solution,
-                            real_t *residual,
-                            uint size)
-{
-    FunctionStatus status = success;
-    real_t mult;
-
-    for (size_t i = 0; i < size; i++)
-    {
-        residual[i] = indTerms[i];
-        for (size_t j = 0; j < size; j++)
-        {
-            mult = solution[j] * matrix[i][j];
-            residual[i] -= mult;
-        }
-    }
-
     return status;
 }
 

@@ -20,12 +20,6 @@ FunctionStatus reverseRetroSubstitution(real_t **matrix,
 
 FunctionStatus calcL2Norm(real_t **residual, uint size, real_t *result);
 
-FunctionStatus calcResidual(real_t **matrix,
-                            real_t *indTerms,
-                            real_t *solution,
-                            real_t *residual,
-                            uint size);
-
 FunctionStatus calcRefinementResidual(real_t **identity,
                                       real_t **matrix,
                                       real_t **solution,
