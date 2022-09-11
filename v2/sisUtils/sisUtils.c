@@ -73,23 +73,23 @@ FunctionStatus retroSubstitution(real_t **matrix,
                                  uint size)
 {
     FunctionStatus status = success;
-    int unrollStep = 4;
-    int lineSize = 0;
-    int unrollLimit = 0;
+    __m256d aux;
 
     for (uint line = size; line >= 1; line--)
     {
         // variable used due to uint never being less than 0
-        lineSize = size - line;
-        unrollLimit = size - (lineSize % unrollStep);
+        int lineSize = size - line;
+        int unrollLimit = size - (lineSize % SIMD_DBL_QTD);
         uint actualLine = line - 1;
+        int vectorSize = lineSize / SIMD_DBL_QTD;
         solution[actualLine] = indTerms[actualLine];
-        for (uint column = actualLine + 1; column < unrollLimit; column += unrollStep)
+        for (uint column = 0; column < vectorSize; column++)
         {
-            solution[actualLine] -= matrix[actualLine][column] * solution[column];
-            solution[actualLine] -= matrix[actualLine][column + 1] * solution[column + 1];
-            solution[actualLine] -= matrix[actualLine][column + 2] * solution[column + 2];
-            solution[actualLine] -= matrix[actualLine][column + 3] * solution[column + 3];
+            int index = line + (column * SIMD_DBL_QTD);
+            aux = _mm256_mul_pd(
+                _mm256_loadu_pd(&solution[index]),
+                _mm256_loadu_pd(&matrix[actualLine][index]));
+            solution[actualLine] -= hsum_double_avx(aux);
         }
 
         for (uint k = unrollLimit; k < size; k++)
