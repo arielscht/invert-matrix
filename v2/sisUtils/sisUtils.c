@@ -131,6 +131,15 @@ FunctionStatus reverseRetroSubstitution(real_t **matrix,
     return status;
 }
 
+double hsum_double_avx(__m256d v) {
+    __m128d vlow  = _mm256_castpd256_pd128(v);
+    __m128d vhigh = _mm256_extractf128_pd(v, 1); // high 128
+            vlow  = _mm_add_pd(vlow, vhigh);     // reduce down to 128
+
+    __m128d high64 = _mm_unpackhi_pd(vlow, vlow);
+    return  _mm_cvtsd_f64(_mm_add_sd(vlow, high64));  // reduce to scalar
+}
+
 /*!
   \brief Calcula a norma L2 dos resíduos
   *
@@ -156,8 +165,7 @@ FunctionStatus calcL2Norm(real_t **residual,
         for (uint j = 0; j < vectorSize; j++)
         {
             aux = _mm256_mul_pd(avxResidual[j], avxResidual[j]);
-            for (int ii = 0; ii < SIMD_DBL_QTD; ii++)
-                sum += aux[ii];
+            sum += hsum_double_avx(aux);
         }
 
         for (uint j = vectorLimit; j < size; j++)
@@ -232,10 +240,7 @@ FunctionStatus calcRefinementResidual(real_t **identity,
             for (uint k = 0; k < vectorSize; k++)
             {
                 aux = _mm256_mul_pd(avxSol[k], avxMatrix[k]);
-                for (int ii = 0; ii < SIMD_DBL_QTD; ii++)
-                {
-                    residuals[i][j] -= aux[ii];
-                }
+                residuals[i][j] -= hsum_double_avx(aux);
             }
 
             for (uint l = unrollLimit; l < size; l++)
