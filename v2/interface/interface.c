@@ -16,7 +16,7 @@
   \param size Ponteiro para a variável que armazena o tamanho da matriz
 */
 void handleArgs(int argc,
-                char *restrict argv[],
+                char *argv[],
                 char *restrict inputFilename,
                 char *restrict outputFilename,
                 int *iterations,
