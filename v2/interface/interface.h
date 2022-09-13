@@ -4,15 +4,13 @@
 #include "../utils/utils.h"
 
 void handleArgs(int argc,
-                char *argv[],
-                char *inputFilename,
-                char *outputFilename,
+                char *restrict argv[],
+                char *restrict inputFilename,
+                char *restrict outputFilename,
                 int *iterations,
                 uint *size);
 
-FunctionStatus handleFile(FILE **inputFile,
-                          char *filename,
-                          char *fileMode);
+FunctionStatus handleFile(FILE **inputFile, char *restrict filename, char *restrict fileMode);
 
 void printFinalOutput(FILE *outputFile,
                       real_t *iterationsNorm,

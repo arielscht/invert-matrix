@@ -5,23 +5,23 @@
 
 #include "../sislin/sislin.h"
 
-FunctionStatus reverseMatrix(real_t **A,
-                             real_t **L,
-                             real_t **U,
+FunctionStatus reverseMatrix(real_t **restrict A,
+                             real_t **restrict L,
+                             real_t **restrict U,
                              uint *lineSwaps,
-                             real_t **invertedMatrix,
+                             real_t **restrict invertedMatrix,
                              uint size,
                              real_t *tFactorization);
 
-FunctionStatus refinement(real_t **A,
-                          real_t **L,
-                          real_t **U,
-                          real_t **solution,
+FunctionStatus refinement(real_t **restrict A,
+                          real_t **restrict L,
+                          real_t **restrict U,
+                          real_t **restrict solution,
                           uint *lineSwaps,
                           uint size,
                           int iterations,
-                          real_t *iterationsNorm,
-                          real_t *tTotalRefinement,
-                          real_t *avgTimeNorm);
+                          real_t *restrict iterationsNorm,
+                          real_t *restrict tTotalRefinement,
+                          real_t *restrict avgTimeNorm);
 
 #endif

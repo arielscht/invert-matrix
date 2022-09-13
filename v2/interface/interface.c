@@ -16,9 +16,9 @@
   \param size Ponteiro para a variável que armazena o tamanho da matriz
 */
 void handleArgs(int argc,
-                char *argv[],
-                char *inputFilename,
-                char *outputFilename,
+                char *restrict argv[],
+                char *restrict inputFilename,
+                char *restrict outputFilename,
                 int *iterations,
                 uint *size)
 {
@@ -105,7 +105,7 @@ void handleArgs(int argc,
   *
   \returns O status de execução da função do tipo FunctionStatus
 */
-FunctionStatus handleFile(FILE **inputFile, char *filename, char *fileMode)
+FunctionStatus handleFile(FILE **inputFile, char *restrict filename, char *restrict fileMode)
 {
     FunctionStatus status = success;
 
