@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <float.h>
-// #include <likwid.h>
+#include <likwid.h>
 #include "../methods/methods.h"
 #include "../utils/utils.h"
 #include "../memoryAlloc/memoryAlloc.h"
