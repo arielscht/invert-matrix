@@ -35,9 +35,13 @@ void initIdentityMatrix(real_t **matrix, unsigned int size);
 void initArrayWithIndexes(int *array, uint size);
 void applyLineSwaps(uint *lineSwaps, real_t **matrix, uint size);
 void applyLineSwapsOnArray(uint *lineSwaps, real_t *array, uint size);
-void copyMatrix(real_t **origin, real_t **destination, uint size);
+void copyMatrix(real_t **restrict origin,
+                real_t **restrict destination,
+                uint size);
 void printMatrix(real_t **matrix, uint size);
-void copyArray(real_t *origin, real_t *destination, uint size);
+void copyArray(real_t *restrict origin,
+               real_t *restrict destination,
+               uint size);
 void setMainDiagonal(real_t **matrix, real_t value, uint size);
 void cleanMatrix(real_t **matrix, uint size);
 void printMatrixInFile(real_t **matrix, uint size, FILE *outputFile);

@@ -105,15 +105,15 @@ real_t *allocDoubleArray(uint size)
   \param outputFile Ponteiro para o arquivo de saida
 */
 void freeMainMemory(
-    real_t **A,
-    real_t **L,
-    real_t **U,
-    real_t **invertedMatrix,
+    real_t **restrict A,
+    real_t **restrict L,
+    real_t **restrict U,
+    real_t **restrict invertedMatrix,
     uint *lineSwaps,
     real_t *iterationsNorm,
     uint size,
-    FILE *inputFile,
-    FILE *outputFile)
+    FILE *restrict inputFile,
+    FILE *restrict outputFile)
 {
     freeMatrix(A, size);
     freeMatrix(L, size);
@@ -140,10 +140,10 @@ void freeMainMemory(
   *
   \returns O status de execução da função do tipo FunctionStatus
 */
-FunctionStatus verifyMainAllocs(real_t **A,
-                                real_t **L,
-                                real_t **U,
-                                real_t **invertedMatrix,
+FunctionStatus verifyMainAllocs(real_t **restrict A,
+                                real_t **restrict L,
+                                real_t **restrict U,
+                                real_t **restrict invertedMatrix,
                                 uint *lineSwaps,
                                 real_t *iterationsNorm)
 {
@@ -161,12 +161,11 @@ FunctionStatus verifyMainAllocs(real_t **A,
   \param identity Ponteiro para a matriz identidade
   \param residuals Ponteiro para a matriz de residuos
   \param curSol Ponteiro para a solução atual
-  \param auxSL Ponteiro para o sistema linear auxiliar
   *
   \returns O status de execução da função do tipo FunctionStatus
 */
-FunctionStatus verifyRefinementAllocs(real_t **identity,
-                                      real_t **residuals,
+FunctionStatus verifyRefinementAllocs(real_t **restrict identity,
+                                      real_t **restrict residuals,
                                       real_t *curSol)
 {
     FunctionStatus status = success;
@@ -183,13 +182,12 @@ FunctionStatus verifyRefinementAllocs(real_t **identity,
   \param identity Ponteiro para a matriz identidade
   \param residuals Ponteiro para a matriz de residuos
   \param curSol Ponteiro para a solução atual
-  \param auxSL Ponteiro para o sistema linear auxiliar
   \param size Tamanho de matriz
   *
   \returns O status de execução da função do tipo FunctionStatus
 */
-void freeRefinementMemory(real_t **identity,
-                          real_t **residuals,
+void freeRefinementMemory(real_t **restrict identity,
+                          real_t **restrict residuals,
                           real_t *curSol,
                           uint size)
 {
@@ -201,18 +199,15 @@ void freeRefinementMemory(real_t **identity,
 /*!
   \brief Verifica se algum dos ponteiros está nulo e retorna um status de erro ou sucesso
   *
-  \param auxSL Ponteiro para o sistema linear auxiliar
-  \param sol Ponteiro para a solução
   \param identity Ponteiro para a matriz identidade
   *
   \returns O status de execução da função do tipo FunctionStatus
 */
-FunctionStatus verifyReverseMatrixAllocs(SistLinear_t *auxSL,
-                                         real_t **identity)
+FunctionStatus verifyReverseMatrixAllocs(real_t **identity)
 {
     FunctionStatus status = success;
 
-    if (!auxSL || !identity)
+    if (!identity)
         status = allocErr;
 
     return status;
@@ -222,16 +217,13 @@ FunctionStatus verifyReverseMatrixAllocs(SistLinear_t *auxSL,
   \brief Faz todas as liberações de memória necessárias
   *
   \param auxSL Ponteiro para o sistema linear auxiliar
-  \param sol Ponteiro para a solução
   \param identity Ponteiro para a matriz identidade
   \param size Tamanho de matriz
   *
   \returns O status de execução da função do tipo FunctionStatus
 */
-void freeReverseMatrixMemory(SistLinear_t *auxSL,
-                             real_t **identity,
+void freeReverseMatrixMemory(real_t **identity,
                              uint size)
 {
-    liberaSisLin(auxSL);
     freeMatrix(identity, size);
 }

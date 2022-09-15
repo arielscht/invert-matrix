@@ -45,6 +45,7 @@ uint findPivot(real_t **A,
   \param matrix Ponteiro para a matriz
   \param line1 Índice da linha 1 a ser trocada
   \param line2 Índice da linha 2 a ser trocada
+  \param size tamanho da matriz
 */
 void swapLines(real_t **matrix,
                uint line1,
@@ -62,17 +63,18 @@ void swapLines(real_t **matrix,
 /*!
   \brief Aplica a retrosubstituição em um sistema linear triangular superior
   *
-  \param SL Ponteiro para o sistema linear
-  \param solution Ponteiro para o array onde a solução será armazenada
+  \param matrix matriz do sl
+  \param indTerms termos independentes do sl
+  \param solution solução do SL
+  \param size tamanho da matriz
   *
   \returns O status de execução da função do tipo FunctionStatus
 */
 FunctionStatus retroSubstitution(real_t **matrix,
-                                 real_t *indTerms,
-                                 real_t *solution,
+                                 real_t *restrict indTerms,
+                                 real_t *restrict solution,
                                  uint size)
 {
-    FunctionStatus status = success;
     __m256d aux;
 
     for (uint line = size; line >= 1; line--)
@@ -97,23 +99,24 @@ FunctionStatus retroSubstitution(real_t **matrix,
 
         solution[actualLine] = solution[actualLine] / matrix[actualLine][actualLine];
     }
-    return status;
+    return success;
 }
 
 /*!
   \brief Aplica a retrosubstituição em um sistema linear triangular inferior
   *
-  \param SL Ponteiro para o sistema linear
-  \param solution Ponteiro para o array onde a solução será armazenada
+  \param matrix matriz do sl
+  \param indTerms termos independentes do sl
+  \param solution solução do SL
+  \param size tamanho da matriz
   *
   \returns O status de execução da função do tipo FunctionStatus
 */
 FunctionStatus reverseRetroSubstitution(real_t **matrix,
-                                        real_t *indTerms,
-                                        real_t *solution,
+                                        real_t *restrict indTerms,
+                                        real_t *restrict solution,
                                         uint size)
 {
-    FunctionStatus status = success;
     __m256d aux;
     __m256d *avxSol = (__m256d *)(solution);
 
@@ -137,7 +140,7 @@ FunctionStatus reverseRetroSubstitution(real_t **matrix,
         solution[line] = solution[line] / matrix[line][line];
     }
 
-    return status;
+    return success;
 }
 
 /*!
@@ -154,7 +157,6 @@ FunctionStatus calcL2Norm(real_t **residual,
                           real_t *result)
 {
     real_t sum = 0.0;
-    FunctionStatus status = success;
     int vectorSize = size / SIMD_DBL_QTD;
     int vectorLimit = size - (size % SIMD_DBL_QTD);
     __m256d aux;
@@ -172,28 +174,26 @@ FunctionStatus calcL2Norm(real_t **residual,
             sum += residual[i][j] * residual[i][j];
     }
     *result = sqrt(sum);
-    return status;
+    return success;
 }
 
 /*!
   \brief Função que vai calcular o resíduo da iteração atual do refinamento
   *
   \param identity Ponteiro para a matriz identidade
-  \param auxSL Ponteiro para o sistema auxiliar durante as contas
-  \param solution Ponteiro para a matriz inversa
-  \param curSol Ponteiro para o vetor de solução atual do refinamento
+  \param matrix Ponteiro para a a solução atual da matriz
+  \param solution Ponteiro para a matriz inversaontas
   \param residuals Ponteiro para a matriz de residuos
   \param size Tamanho da matriz
   *
   \returns O status de execução da função do tipo FunctionStatus
 */
-FunctionStatus calcRefinementResidual(real_t **identity,
-                                      real_t **matrix,
-                                      real_t **solution,
-                                      real_t **residuals,
+FunctionStatus calcRefinementResidual(real_t **restrict identity,
+                                      real_t **restrict matrix,
+                                      real_t **restrict solution,
+                                      real_t **restrict residuals,
                                       uint size)
 {
-    FunctionStatus status = success;
     int vectorSize = size / SIMD_DBL_QTD;
     int unrollLimit = size - (size % SIMD_DBL_QTD);
     __m256d aux;
@@ -216,7 +216,7 @@ FunctionStatus calcRefinementResidual(real_t **identity,
                 residuals[i][j] -= solution[i][l] * matrix[j][l];
         }
     }
-    return status;
+    return success;
 }
 
 /*!
@@ -225,7 +225,6 @@ FunctionStatus calcRefinementResidual(real_t **identity,
   \param lineSwaps Ponteiro para o vetor de troca de linhas
   \param residuals Ponteiro para a matriz de residuos
   \param L Ponteiro para a matriz L
-  \param auxSL Ponteiro para o sistema auxiliar durante as contas
   \param curSol Ponteiro para o vetor de solução atual do refinamento
   \param solution Ponteiro para o vetor de solução da interação anterior
   \param U Ponteiro para a matriz U
@@ -234,15 +233,13 @@ FunctionStatus calcRefinementResidual(real_t **identity,
   \returns O status de execução da função do tipo FunctionStatus
 */
 FunctionStatus calcRefinementNewApproximation(uint *lineSwaps,
-                                              real_t **residuals,
-                                              real_t **L,
+                                              real_t **restrict residuals,
+                                              real_t **restrict L,
                                               real_t *curSol,
-                                              real_t **solution,
-                                              real_t **U,
+                                              real_t **restrict solution,
+                                              real_t **restrict U,
                                               uint size)
 {
-    FunctionStatus status = success;
-
     for (int i = 0; i < size; i++)
     {
         applyLineSwapsOnArray(lineSwaps, residuals[i], size);
@@ -255,5 +252,5 @@ FunctionStatus calcRefinementNewApproximation(uint *lineSwaps,
             solution[i][j] += curSol[j];
     }
 
-    return status;
+    return success;
 }

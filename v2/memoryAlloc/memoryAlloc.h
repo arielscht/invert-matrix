@@ -17,38 +17,36 @@ uint *allocUintArray(uint size);
 
 real_t *allocDoubleArray(uint size);
 
-FunctionStatus verifyMainAllocs(real_t **A,
-                                real_t **L,
-                                real_t **U,
-                                real_t **invertedMatrix,
+FunctionStatus verifyMainAllocs(real_t **restrict A,
+                                real_t **restrict L,
+                                real_t **restrict U,
+                                real_t **restrict invertedMatrix,
                                 uint *lineSwaps,
                                 real_t *iterationsNorm);
 
 void freeMainMemory(
-    real_t **A,
-    real_t **L,
-    real_t **U,
-    real_t **invertedMatrix,
+    real_t **restrict A,
+    real_t **restrict L,
+    real_t **restrict U,
+    real_t **restrict invertedMatrix,
     uint *lineSwaps,
     real_t *iterationsNorm,
     uint size,
-    FILE *inputFile,
-    FILE *outputFile);
+    FILE *restrict inputFile,
+    FILE *restrict outputFile);
 
-FunctionStatus verifyRefinementAllocs(real_t **identity,
-                                      real_t **residuals,
+FunctionStatus verifyRefinementAllocs(real_t **restrict identity,
+                                      real_t **restrict residuals,
                                       real_t *curSol);
 
-void freeRefinementMemory(real_t **identity,
-                          real_t **residuals,
+void freeRefinementMemory(real_t **restrict identity,
+                          real_t **restrict residuals,
                           real_t *curSol,
                           uint size);
 
-FunctionStatus verifyReverseMatrixAllocs(SistLinear_t *auxSL,
-                                         real_t **identity);
+FunctionStatus verifyReverseMatrixAllocs(real_t **identity);
 
-void freeReverseMatrixMemory(SistLinear_t *auxSL,
-                             real_t **identity,
+void freeReverseMatrixMemory(real_t **identity,
                              uint size);
 
 #endif

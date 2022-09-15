@@ -124,8 +124,8 @@ void applyLineSwapsOnArray(uint *lineSwaps,
   \param destination Ponteiro para o array de destino
   \param size Tamanho dos arrays
 */
-void copyArray(real_t *origin,
-               real_t *destination,
+void copyArray(real_t *restrict origin,
+               real_t *restrict destination,
                uint size)
 {
   memcpy(destination, origin, size * sizeof(real_t));
@@ -138,8 +138,8 @@ void copyArray(real_t *origin,
   \param destination Ponteiro para a matriz de destino
   \param size Tamanho das matrizes
 */
-void copyMatrix(real_t **origin,
-                real_t **destination,
+void copyMatrix(real_t **restrict origin,
+                real_t **restrict destination,
                 uint size)
 {
   for (uint i = 0; i < size; i++)

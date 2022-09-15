@@ -19,20 +19,20 @@
   \param iterations Quantidade de iterações a serem executadas no refinamento
   \param iterationsNorm Ponteiro para o vetor das normas de cada iteração
   \param tTotalRefinement Ponteiro para o Tempo total do refinamento
-  \param tTotalResidual Ponteiro para o tempo total do cálculo da norma
+  \param avgTimeNorm Ponteiro para o tempo total do cálculo da norma
   *
   \returns O status de execução da função do tipo FunctionStatus
 */
-FunctionStatus refinement(real_t **A,
-                          real_t **L,
-                          real_t **U,
-                          real_t **solution,
+FunctionStatus refinement(real_t **restrict A,
+                          real_t **restrict L,
+                          real_t **restrict U,
+                          real_t **restrict solution,
                           uint *lineSwaps,
                           uint size,
                           int iterations,
-                          real_t *iterationsNorm,
-                          real_t *tTotalRefinement,
-                          real_t *avgTimeNorm)
+                          real_t *restrict iterationsNorm,
+                          real_t *restrict tTotalRefinement,
+                          real_t *restrict avgTimeNorm)
 {
     FunctionStatus status = success;
     real_t **identity = allocMatrix(size);
@@ -88,14 +88,13 @@ FunctionStatus refinement(real_t **A,
   *
   \returns O status de execução da função do tipo FunctionStatus
 */
-FunctionStatus gaussElimination(real_t **A,
-                                real_t **L,
+FunctionStatus gaussElimination(real_t **restrict A,
+                                real_t **restrict L,
                                 uint *lineSwaps,
                                 uint size,
                                 real_t *tTotal)
 {
     *tTotal = timestamp();
-    FunctionStatus status = success;
     real_t mult;
 
     for (uint line = 0; line < size - 1; line++)
@@ -126,7 +125,7 @@ FunctionStatus gaussElimination(real_t **A,
     }
 
     *tTotal = timestamp() - *tTotal;
-    return status;
+    return success;
 }
 
 /*!
@@ -134,29 +133,26 @@ FunctionStatus gaussElimination(real_t **A,
   *
   \param A Ponteiro para a matriz A
   \param L Ponteiro para a matriz L
-  \param L Ponteiro para a matriz U
+  \param U Ponteiro para a matriz U
   \param lineSwaps Ponteiro para o vetor de troca de linhas
   \param size Tamanho da matriz
   \param tTotal Ponteiro para o Tempo total da eliminação de gauss
   *
   \returns O status de execução da função do tipo FunctionStatus
 */
-FunctionStatus factorizationLU(real_t **A,
-                               real_t **L,
-                               real_t **U,
+FunctionStatus factorizationLU(real_t **restrict A,
+                               real_t **restrict L,
+                               real_t **restrict U,
                                uint *lineSwaps,
                                uint size,
                                real_t *tTotal)
 {
-    FunctionStatus status = success;
-
     copyMatrix(A, U, size);
     cleanMatrix(L, size);
-    if ((status = gaussElimination(U, L, lineSwaps, size, tTotal)) != success)
-        return status;
+    gaussElimination(U, L, lineSwaps, size, tTotal);
     setMainDiagonal(L, 1.0, size);
 
-    return status;
+    return success;
 }
 
 /*!
@@ -164,34 +160,26 @@ FunctionStatus factorizationLU(real_t **A,
   *
   \param A Ponteiro para a matriz A
   \param L Ponteiro para a matriz L
-  \param L Ponteiro para a matriz U
+  \param U Ponteiro para a matriz U
   \param lineSwaps Ponteiro para o vetor de troca de linhas
   \param invertedMatrix Ponteiro para a matriz invertedMatrix
   \param size Tamanho da matriz
-  \param tTotal Ponteiro para o Tempo total da eliminação de gauss
+  \param tFactorization Ponteiro para o Tempo total da eliminação de gauss
   *
   \returns O status de execução da função do tipo FunctionStatus
 */
-FunctionStatus reverseMatrix(real_t **A,
-                             real_t **L,
-                             real_t **U,
+FunctionStatus reverseMatrix(real_t **restrict A,
+                             real_t **restrict L,
+                             real_t **restrict U,
                              uint *lineSwaps,
-                             real_t **invertedMatrix,
+                             real_t **restrict invertedMatrix,
                              uint size,
                              real_t *tFactorization)
 {
     FunctionStatus status = success;
-    // real_t det;
-    // if ((status = calcDet(&det, A, size)) != success || fabs(det) < DBL_EPSILON)
-    // {
-    //     status = status != success ? status : nonInvertibleErr;
-    //     return status;
-    // }
-
-    SistLinear_t *auxSL = alocaSisLin(size, pontPont);
     real_t **identity = allocMatrix(size);
 
-    if ((status = verifyReverseMatrixAllocs(auxSL, identity)) == success)
+    if ((status = verifyReverseMatrixAllocs(identity)) == success)
     {
         initArrayWithIndexes(lineSwaps, size);
         initIdentityMatrix(identity, size);
@@ -210,6 +198,6 @@ FunctionStatus reverseMatrix(real_t **A,
         LIKWID_MARKER_STOP("OP1");
     }
 
-    freeReverseMatrixMemory(auxSL, identity, size);
+    freeReverseMatrixMemory(identity, size);
     return status;
 }
