@@ -7,14 +7,14 @@
 
 #define SIMD_DBL_QTD 4
 
-double hsum_double_avx(__m256d v)
+double calcSumAvxArray(__m256d v)
 {
-    __m128d vlow = _mm256_castpd256_pd128(v);
-    __m128d vhigh = _mm256_extractf128_pd(v, 1); // high 128
-    vlow = _mm_add_pd(vlow, vhigh);              // reduce down to 128
+    __m128d lower = _mm256_castpd256_pd128(v);
+    __m128d higher = _mm256_extractf128_pd(v, 1);
+    lower = _mm_add_pd(lower, higher);
 
-    __m128d high64 = _mm_unpackhi_pd(vlow, vlow);
-    return _mm_cvtsd_f64(_mm_add_sd(vlow, high64)); // reduce to scalar
+    __m128d high64 = _mm_unpackhi_pd(lower, lower);
+    return _mm_cvtsd_f64(_mm_add_sd(lower, high64));
 }
 
 /*!
@@ -91,7 +91,7 @@ FunctionStatus retroSubstitution(real_t **matrix,
             aux = _mm256_mul_pd(
                 _mm256_loadu_pd(&solution[index]),
                 _mm256_loadu_pd(&matrix[actualLine][index]));
-            solution[actualLine] -= hsum_double_avx(aux);
+            solution[actualLine] -= calcSumAvxArray(aux);
         }
 
         for (uint k = unrollLimit; k < size; k++)
@@ -131,7 +131,7 @@ FunctionStatus reverseRetroSubstitution(real_t **matrix,
         for (uint column = 0; column < vectorSize; column++)
         {
             aux = _mm256_mul_pd(avxSol[column], avxMatrix[column]);
-            solution[line] -= hsum_double_avx(aux);
+            solution[line] -= calcSumAvxArray(aux);
         }
 
         for (uint k = unrollLimit; k < line; k++)
@@ -167,7 +167,7 @@ FunctionStatus calcL2Norm(real_t **residual,
         for (uint j = 0; j < vectorSize; j++)
         {
             aux = _mm256_mul_pd(avxResidual[j], avxResidual[j]);
-            sum += hsum_double_avx(aux);
+            sum += calcSumAvxArray(aux);
         }
 
         for (uint j = vectorLimit; j < size; j++)
@@ -209,7 +209,7 @@ FunctionStatus calcRefinementResidual(real_t **restrict identity,
             for (uint k = 0; k < vectorSize; k++)
             {
                 aux = _mm256_mul_pd(avxSol[k], avxMatrix[k]);
-                residuals[i][j] -= hsum_double_avx(aux);
+                residuals[i][j] -= calcSumAvxArray(aux);
             }
 
             for (uint l = unrollLimit; l < size; l++)
