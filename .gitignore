@@ -7,3 +7,5 @@ invmat
 /__pycache__
 /pdfs
 **/bin
+
+!pythonInstructions.txt

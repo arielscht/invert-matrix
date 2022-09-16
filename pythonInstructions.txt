@@ -1,0 +1,11 @@
+Como é de se perceber, os scripts foram feitos em python. Basicamente, são 4 scripts principais:
+  1) generateLogs.py -> Gera os logs do LIKWID, atráves da execução das duas versões do programa para matrizes de tamanhos diferentes e
+  para os contadores do LIKWID desejados. Ambos são declarados e definidos em commonConstants.py
+  2) generateCsv.py -> Gera os csv's necessários, a partir dos criados, para serem interpretados pela bilbioteca matplotlib do python
+  para a geração dos gráficos
+  3) generateGraphs.py -> Gera os gráficos, utilizado os dados dos csv's, para comparação de desempenho entre as duas versões.
+  4) run.py -> Vai rodar os scripts generateLogs.py, generateCsv.py e generateGraphs.py, sequencialmente.
+
+O arquivo commonConstants.py é um arquivo de controle, ou seja, lá você consegue manipular diversas coisas, tais como: Limite superior
+de tamanho de matrizes para o programa ser executado, se você quer rodar somente o v1 ou o v2, você pode adicionar e retirar algum
+contador de interesse do LIKWID (não esqueça de atualizar as regex). Portanto, para fazer essas manipulações, basta seguir o padrão do arquivo
